@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="AChat_Full.ChatPage"
+    Title="Чат">
+
+    <Grid RowSpacing="0">
+        <!-- Сообщения -->
+        <CollectionView
+        x:Name="MessagesView"
+        ItemsSource="{Binding Messages}"
+        Grid.Row="0"
+        BackgroundColor="#FFF">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <!-- Входящее сообщение -->
+                        <Frame
+                Grid.Column="0"
+                BackgroundColor="#E0E0E0"
+                Padding="10"
+                IsVisible="{Binding IsIncoming}"
+                HorizontalOptions="Start"
+                CornerRadius="8">
+                            <Label Text="{Binding Text}" />
+                        </Frame>
+                        <!-- Исходящее сообщение -->
+                        <Frame
+                Grid.Column="2"
+                BackgroundColor="#0084FF"
+                Padding="10"
+                IsVisible="{Binding IsIncoming, Converter={StaticResource InverseBoolConverter}}"
+                HorizontalOptions="End"
+                CornerRadius="8">
+                            <Label Text="{Binding Text}"
+                     TextColor="White" />
+                        </Frame>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Ввод сообщения -->
+        <Grid
+        Grid.Row="1"
+        Padding="8"
+        BackgroundColor="#F5F5F5"
+        ColumnSpacing="8"
+        RowDefinitions="Auto">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Entry
+          x:Name="MessageEntry"
+          Placeholder="Введите сообщение..."
+          Grid.Column="0"
+          VerticalOptions="Center" />
+
+            <Button
+          Text="Отправить"
+          Grid.Column="1"
+          VerticalOptions="Center" />
+        </Grid>
+    </Grid>
+</ContentPage>
