@@ -23,5 +23,15 @@ namespace AChatFull.Views
         public string LastMessage { get; set; }
         public DateTime LastTimestamp { get; set; }
         public int UnreadCount { get; set; }
+
+        public ChatSummary(string chatId, string title, string lastMessage,
+                       DateTime lastTimestamp, int unreadCount = 0)
+        {
+            ChatId = chatId;
+            Title = title;
+            LastMessage = lastMessage;
+            LastTimestamp = lastTimestamp;
+            UnreadCount = unreadCount;
+        }
     }
 }

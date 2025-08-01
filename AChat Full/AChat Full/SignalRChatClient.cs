@@ -3,6 +3,7 @@ using AChatFull.Views;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.SignalR.Client;
+using System.Diagnostics;
 
 namespace AChatFull
 {
@@ -23,6 +24,8 @@ namespace AChatFull
 
         public async Task ConnectAsync(string accessToken = null)
         {
+            Debug.WriteLine("TESTLOG ConnectAsync: accessToken" + accessToken);
+
             _connection = new HubConnectionBuilder()
                 .WithUrl(_hubUrl, opts =>
                 {
@@ -56,6 +59,15 @@ namespace AChatFull
                 throw new InvalidOperationException("SignalR is not connected.");
 
             return await _connection.InvokeAsync<List<ChatSummary>>("GetChats");
+        }
+        public async Task<List<ChatSummary>> GetTestChatsAsync()
+        {
+            List<ChatSummary> TestData = new List<ChatSummary>();;
+            TestData.Add(new ChatSummary("001", "Xeno1", "Сам решу", new DateTime(), 4));
+            TestData.Add(new ChatSummary("002", "Xeno2", "Сам решу1", new DateTime(), 3));
+            TestData.Add(new ChatSummary("003", "Xeno3", "Сам решу2", new DateTime(), 0));
+
+            return TestData;
         }
 
         public async Task SendMessageAsync(string chatId, string text)

@@ -1,6 +1,4 @@
-﻿using System;
-using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
+﻿using Xamarin.Forms;
 using AChatFull.Views;
 
 namespace AChatFull
@@ -11,7 +9,7 @@ namespace AChatFull
         {
             InitializeComponent();
 
-            MainPage = new ChatsList("Test");
+            MainPage = new ChatsList(ChatsViewModel.USER_TOKEN_TEST);
         }
 
         protected override void OnStart()

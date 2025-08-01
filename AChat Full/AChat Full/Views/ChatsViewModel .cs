@@ -5,11 +5,14 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
+using System.Diagnostics;
 
 namespace AChatFull.Views
 {
     public class ChatsViewModel : INotifyPropertyChanged
     {
+        public static string USER_TOKEN_TEST = "TestUser";
+
         private readonly SignalRChatClient _chatClient;
         public ObservableCollection<ChatSummary> Chats { get; } = new ObservableCollection<ChatSummary>();
 
@@ -30,8 +33,43 @@ namespace AChatFull.Views
 
         public async Task InitializeAsync(string token)
         {
-            await _chatClient.ConnectAsync(token);
-            await LoadChatsAsync();
+            Debug.WriteLine("TESTLOG InitializeAsync: token" + token);
+
+            if (token.Equals(USER_TOKEN_TEST)) {
+                await LoadTestChatsAsync();
+            }
+            else
+            {
+                await _chatClient.ConnectAsync(token);
+                await LoadChatsAsync();
+            }
+        }
+
+        private async Task LoadTestChatsAsync()
+        {
+            Debug.WriteLine("TESTLOG LoadTestChatsAsync: IsBusy" + IsBusy);
+
+            if (IsBusy) return;
+            IsBusy = true;
+
+            try
+            {
+                var list = await _chatClient.GetTestChatsAsync();
+                Chats.Clear();
+                foreach (var c in list)
+                    Chats.Add(c);
+
+                Debug.WriteLine("TESTLOG Chats count: " + Chats.Count);
+            }
+            catch (Exception ex)
+            {
+                // Обработка ошибки (например, через MessagingCenter)
+                Debug.WriteLine("TESTLOG LoadTestChatsAsync Exception " + ex.Message+" "+ ex.StackTrace);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private async Task LoadChatsAsync()
