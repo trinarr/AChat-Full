@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AChatFull
+namespace AChatFull.Views
 {
     /// <summary>
     /// Представление одного сообщения в чате.
@@ -15,5 +15,13 @@ namespace AChatFull
 
         /// <summary>Метка времени (необязательно).</summary>
         public DateTime Timestamp { get; set; } = DateTime.Now;
+    }
+    public class ChatSummary
+    {
+        public string ChatId { get; set; }
+        public string Title { get; set; }
+        public string LastMessage { get; set; }
+        public DateTime LastTimestamp { get; set; }
+        public int UnreadCount { get; set; }
     }
 }

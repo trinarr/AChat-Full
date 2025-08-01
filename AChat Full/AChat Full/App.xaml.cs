@@ -11,7 +11,7 @@ namespace AChatFull
         {
             InitializeComponent();
 
-            MainPage = new ChatsList();
+            MainPage = new ChatsList("Test");
         }
 
         protected override void OnStart()
