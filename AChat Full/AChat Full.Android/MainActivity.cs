@@ -1,9 +1,8 @@
-﻿using System;
-
-using Android.App;
+﻿using Android.App;
 using Android.Content.PM;
 using Android.Runtime;
 using Android.OS;
+using Android.Views;
 
 namespace AChatFull.Droid
 {
@@ -13,6 +12,10 @@ namespace AChatFull.Droid
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            Window.SetFlags(
+                WindowManagerFlags.Secure,
+                WindowManagerFlags.Secure);
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);

@@ -1,4 +1,6 @@
 ﻿using Xamarin.Forms;
+using System;
+using System.Diagnostics;
 
 namespace AChatFull.Views
 {
@@ -15,10 +17,20 @@ namespace AChatFull.Views
 
         private async void OnChatSelected(object sender, SelectionChangedEventArgs e)
         {
+            Debug.WriteLine("TESTLOG OnChatSelected");
+
             if (e.CurrentSelection.Count == 0) return;
             var chat = e.CurrentSelection[0] as ChatSummary;
             ((CollectionView)sender).SelectedItem = null;
-            await Navigation.PushAsync(new ChatsList(chat.ChatId));
+
+            try
+            {
+                await Navigation.PushAsync(new ChatPage(chat.ChatId, ChatsViewModel.USER_TOKEN_TEST));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("TESTLOG OnChatSelected Exception " + ex.Message + " " + ex.StackTrace);
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ namespace AChatFull
         {
             InitializeComponent();
 
-            MainPage = new ChatsList(ChatsViewModel.USER_TOKEN_TEST);
+            MainPage = new NavigationPage(new ChatsList(ChatsViewModel.USER_TOKEN_TEST));
         }
 
         protected override void OnStart()
