@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AChat_Full
+namespace AChatFull
 {
     /// <summary>
     /// Представление одного сообщения в чате.

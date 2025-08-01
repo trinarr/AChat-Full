@@ -1,8 +1,9 @@
 ﻿using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using AChatFull.Views;
 
-namespace AChat_Full
+namespace AChatFull
 {
     public partial class App : Application
     {
@@ -10,7 +11,7 @@ namespace AChat_Full
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            MainPage = new ChatsList();
         }
 
         protected override void OnStart()

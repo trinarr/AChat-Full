@@ -1,12 +1,8 @@
 ﻿using System;
-using System.IO;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 
-namespace AChat_Full
+namespace AChatFull
 {
     public class SignalRChatClient : IDisposable
     {
