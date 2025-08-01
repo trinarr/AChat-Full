@@ -10,7 +10,7 @@ namespace AChat_Full
         {
             InitializeComponent();
 
-            MainPage = new ChatPage();
+            MainPage = new MainPage();
         }
 
         protected override void OnStart()

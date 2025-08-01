@@ -123,14 +123,17 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client">
+      <Version>9.0.7</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\AChat Full\AChat Full.csproj">
-      <Project>{02EB6090-6C2E-4AEC-9F20-A75F12F1EB51}</Project>
-      <Name>AChat Full</Name>
+    <ProjectReference Include="..\AChat Full\AChatFull.csproj">
+      <Project>{5F17BE78-397F-4249-9639-10BC971EDA94}</Project>
+      <Name>AChatFull</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
