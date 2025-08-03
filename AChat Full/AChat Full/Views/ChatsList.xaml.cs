@@ -1,18 +1,36 @@
 ﻿using Xamarin.Forms;
 using System;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace AChatFull.Views
 {
     public partial class ChatsList : ContentPage
     {
-        private ChatsViewModel Vm => BindingContext as ChatsViewModel;
+        //private ChatsViewModel Vm => BindingContext as ChatsViewModel;
 
-        public ChatsList(string userToken)
+        private readonly ChatRepository _repo;
+        public ObservableCollection<ChatSummary> Chats { get; }
+            = new ObservableCollection<ChatSummary>();
+
+        public ChatsList(string userToken, ChatRepository repo)
         {
             InitializeComponent();
+            BindingContext = this;
+
+            _repo = repo;
+            _ = LoadChatsAsync();
+
             // Инициализируем SignalR и загружаем чаты
-            _ = Vm.InitializeAsync(userToken);
+            //_ = Vm.InitializeAsync(userToken);
+        }
+        private async Task LoadChatsAsync()
+        {
+            var list = await _repo.GetChatSummariesAsync();
+            Chats.Clear();
+            foreach (var chat in list)
+                Chats.Add(chat);
         }
 
         private async void OnChatSelected(object sender, SelectionChangedEventArgs e)

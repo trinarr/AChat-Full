@@ -63,9 +63,9 @@ namespace AChatFull
         public async Task<List<ChatSummary>> GetTestChatsAsync()
         {
             List<ChatSummary> TestData = new List<ChatSummary>();;
-            TestData.Add(new ChatSummary("001", "Xeno1", "Сам решу", new DateTime(), 4));
-            TestData.Add(new ChatSummary("002", "Xeno2", "Сам решу1", new DateTime(), 3));
-            TestData.Add(new ChatSummary("003", "Xeno3", "Сам решу2", new DateTime(), 0));
+            //TestData.Add(new ChatSummary("001", "Xeno1", "Сам решу", new DateTime(), 4));
+            //TestData.Add(new ChatSummary("002", "Xeno2", "Сам решу1", new DateTime(), 3));
+            //TestData.Add(new ChatSummary("003", "Xeno3", "Сам решу2", new DateTime(), 0));
 
             return TestData;
         }

@@ -1,4 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using SQLite;
+using System.Diagnostics;
 
 namespace AChatFull.Views
 {
@@ -18,20 +23,134 @@ namespace AChatFull.Views
     }
     public class ChatSummary
     {
+        [PrimaryKey]
         public string ChatId { get; set; }
         public string Title { get; set; }
         public string LastMessage { get; set; }
         public DateTime LastTimestamp { get; set; }
-        public int UnreadCount { get; set; }
+        public bool IsRead { get; set; }
+    }
 
-        public ChatSummary(string chatId, string title, string lastMessage,
-                       DateTime lastTimestamp, int unreadCount = 0)
+    /// <summary>
+    /// Таблица чатов (Chats)
+    /// </summary>
+    [Table("Chats")]
+    public class Chat
+    {
+        [PrimaryKey]
+        public string ChatId { get; set; }
+    }
+
+    // Модель таблицы Users
+    [Table("Users")]
+    public class User
+    {
+        [PrimaryKey]
+        public string UserId { get; set; }
+        public string UserName { get; set; }
+    }
+
+    // Модель таблицы ChatParticipants
+    [Table("ChatParticipants")]
+    public class ChatParticipant
+    {
+        [Indexed]
+        public string ChatId { get; set; }
+
+        [Indexed]
+        public string UserId { get; set; }
+    }
+
+    /// <summary>
+    /// Таблица сообщений (Messages)
+    /// </summary>
+    [Table("Messages")]
+    public class Message
+    {
+        [PrimaryKey, AutoIncrement]
+        public int MessageId { get; set; }
+        [Indexed]
+        public string ChatId { get; set; }
+        public string SenderId { get; set; }
+        public string Text { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public bool IsRead { get; set; }
+    }
+
+    /// <summary>
+    /// Репозиторий для работы с SQLite-базой чатов
+    /// </summary>
+    public class ChatRepository
+    {
+        private readonly SQLiteAsyncConnection _db;
+        private readonly string _currentUserId;
+
+        public ChatRepository(string dbPath, string currentUserId)
         {
-            ChatId = chatId;
-            Title = title;
-            LastMessage = lastMessage;
-            LastTimestamp = lastTimestamp;
-            UnreadCount = unreadCount;
+            _db = new SQLiteAsyncConnection(dbPath);
+            _currentUserId = currentUserId;
+        }
+
+        /// <summary>
+        /// Возвращает список ChatSummary, сгруппированный по ChatId,
+        /// с информацией о последнем сообщении и его статусе.
+        /// </summary>
+        public async Task<List<ChatSummary>> GetChatSummariesAsync()
+        {
+            Debug.WriteLine("TESTLOG GetChatSummariesAsync");
+
+            // Получаем все чаты
+            var chats = await _db.Table<Chat>().ToListAsync();
+            var result = new List<ChatSummary>(chats.Count);
+
+            foreach (var chat in chats)
+            {
+                // 1) берём последнее сообщение
+                var last = await _db.Table<Message>()
+                                    .Where(m => m.ChatId == chat.ChatId)
+                                    .OrderByDescending(m => m.CreatedAt)
+                                    .FirstOrDefaultAsync();
+
+                if (last == null) continue;
+
+                // 2) находим собеседника
+                var participants = await _db.Table<ChatParticipant>()
+                                            .Where(p => p.ChatId == chat.ChatId)
+                                            .ToListAsync();
+
+                var other = participants
+                .Select(p => p.UserId)
+                .FirstOrDefault(uid => uid != _currentUserId);
+                string title;
+                if (other != null)
+                {
+                    var user = await _db.Table<User>()
+                                        .Where(u => u.UserId == other)
+                                        .FirstOrDefaultAsync();
+                    title = user?.UserName ?? other;
+                }
+                else
+                {
+                    // однопользовательский чат? fallback на ChatId
+                    title = chat.ChatId;
+                }
+
+                result.Add(new ChatSummary
+                {
+                    ChatId = chat.ChatId,
+                    Title = title,
+                    LastMessage = last.Text,
+                    LastTimestamp = last.CreatedAt,
+                    IsRead = last.IsRead
+                });
+            }
+
+            Debug.WriteLine("TESTLOG GetChatSummariesAsync result "+ result.Count);
+
+            // сортируем по дате последнего сообщения (сначала свежие)
+            return result
+                   .OrderByDescending(x => x.LastTimestamp)
+                   .ToList();
         }
     }
 }
