@@ -11,7 +11,7 @@ namespace AChatFull.Views
 {
     public class ChatsViewModel : INotifyPropertyChanged
     {
-        public static string USER_TOKEN_TEST = "TestUser";
+        public static string USER_TOKEN_TEST = "user1";
 
         private readonly SignalRChatClient _chatClient;
         public ObservableCollection<ChatSummary> Chats { get; } = new ObservableCollection<ChatSummary>();

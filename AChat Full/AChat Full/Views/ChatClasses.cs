@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SQLite;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace AChatFull.Views
 {
@@ -73,9 +74,18 @@ namespace AChatFull.Views
         public string ChatId { get; set; }
         public string SenderId { get; set; }
         public string Text { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public string CreatedAt { get; set; }
         public bool IsRead { get; set; }
+
+        [Ignore]
+        public DateTime CreatedAtDate
+        => DateTime.ParseExact(
+             CreatedAt,
+             "yyyy-MM-dd HH:mm:ss",
+             CultureInfo.InvariantCulture);
     }
+
+    class RawCreated { public string Raw { get; set; } }
 
     /// <summary>
     /// Репозиторий для работы с SQLite-базой чатов
@@ -103,6 +113,12 @@ namespace AChatFull.Views
             var chats = await _db.Table<Chat>().ToListAsync();
             var result = new List<ChatSummary>(chats.Count);
 
+            // Посмотрим первые несколько CreatedAt как строку
+            var raws = await _db.QueryAsync<RawCreated>(
+                "SELECT CreatedAt AS Raw FROM Messages LIMIT 5;");
+            foreach (var r in raws)
+                Debug.WriteLine($"Raw CreatedAt: '{r.Raw}'");
+
             foreach (var chat in chats)
             {
                 // 1) берём последнее сообщение
@@ -113,7 +129,6 @@ namespace AChatFull.Views
 
                 if (last == null) continue;
 
-                // 2) находим собеседника
                 var participants = await _db.Table<ChatParticipant>()
                                             .Where(p => p.ChatId == chat.ChatId)
                                             .ToListAsync();
@@ -140,7 +155,7 @@ namespace AChatFull.Views
                     ChatId = chat.ChatId,
                     Title = title,
                     LastMessage = last.Text,
-                    LastTimestamp = last.CreatedAt,
+                    LastTimestamp = last.CreatedAtDate,
                     IsRead = last.IsRead
                 });
             }
