@@ -27,12 +27,27 @@
                         <Grid ColumnSpacing="10">
                             <!-- Колонки: текст и время+статус -->
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
+                           <!-- Аватар -->
+                            <Frame
+                            Grid.Column="0"
+
+                            WidthRequest="48" HeightRequest="48"
+                            CornerRadius="24"
+                            Padding="0"
+                            IsClippedToBounds="True"
+                            VerticalOptions="Center">
+                                <Image
+                                    Source=""
+                                    Aspect="AspectFill" />
+                            </Frame>
+
                             <!-- Левый столбец: имя и последнее сообщение -->
-                            <StackLayout Grid.Column="0" Spacing="2">
+                            <StackLayout Grid.Column="1" Spacing="2">
                                 <Label
                                     Text="{Binding Title}"
                                     FontAttributes="Bold"
@@ -48,7 +63,7 @@
 
                             <!-- Правый столбец: время и статус -->
                             <StackLayout
-                                Grid.Column="1"
+                                Grid.Column="2"
                                 Spacing="4"
                                 VerticalOptions="Center"
                                 HorizontalOptions="End">

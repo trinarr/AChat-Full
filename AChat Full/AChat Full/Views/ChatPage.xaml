@@ -42,7 +42,7 @@
         IsClippedToBounds="True"
         VerticalOptions="Center">
                 <Image
-          Source="{Binding PeerAvatarUrl}"
+          Source=""
           Aspect="AspectFill" />
             </Frame>
 
