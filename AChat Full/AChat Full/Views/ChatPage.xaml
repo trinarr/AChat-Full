@@ -1,78 +1,97 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    xmlns="http://xamarin.com/schemas/2014/forms"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:vm="clr-namespace:AChatFull.Views"
-    x:Class="AChatFull.Views.ChatPage"
-    Title="Чат">
+  xmlns="http://xamarin.com/schemas/2014/forms"
+  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+  xmlns:vm="clr-namespace:AChatFull.Views"
+  xmlns:conv="clr-namespace:AChatFull"
+  x:Class="AChatFull.Views.ChatPage"
+  Title="Чат"
+  BackgroundColor="White">
+
+    <!-- Регистрируем локально InverseBoolConverter -->
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <conv:InverseBoolConverter x:Key="InverseBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <ContentPage.BindingContext>
         <vm:ChatViewModel />
     </ContentPage.BindingContext>
 
-    <Grid RowSpacing="0">
-        <!-- Сообщения -->
+    <Grid RowDefinitions="*,Auto" RowSpacing="0">
+
+        <!-- 1) Секция сообщений -->
         <CollectionView
-        x:Name="MessagesView"
-        ItemsSource="{Binding Messages}"
-        Grid.Row="0"
-        BackgroundColor="#FFF">
+      x:Name="MessagesView"
+      ItemsSource="{Binding Messages}"
+      Grid.Row="0"
+      BackgroundColor="White"
+      Margin="0,0,0,0">
             <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Padding="10">
+                <DataTemplate x:DataType="vm:ChatMessage">
+                    <Grid Padding="8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <!-- Входящее сообщение -->
+
+                        <!-- Входящее (слева) -->
                         <Frame
-                Grid.Column="0"
-                BackgroundColor="#E0E0E0"
-                Padding="10"
-                IsVisible="{Binding IsIncoming}"
-                HorizontalOptions="Start"
-                CornerRadius="8">
-                            <Label Text="{Binding Text}" />
+              Grid.Column="0"
+              BackgroundColor="#E0E0E0"
+              Padding="10"
+              CornerRadius="8"
+              IsVisible="{Binding IsIncoming}"
+              HorizontalOptions="Start">
+                            <Label
+                Text="{Binding Text}"
+                TextColor="Black" />
                         </Frame>
-                        <!-- Исходящее сообщение -->
+
+                        <!-- Исходящее (справа) -->
                         <Frame
-                Grid.Column="2"
-                BackgroundColor="#0084FF"
-                Padding="10"
-                IsVisible="{Binding IsIncoming}"
-                HorizontalOptions="End"
-                CornerRadius="8">
-                            <Label Text="{Binding Text}"
-                     TextColor="White" />
+              Grid.Column="2"
+              BackgroundColor="#0084FF"
+              Padding="10"
+              CornerRadius="8"
+              IsVisible="{Binding IsIncoming, Converter={StaticResource InverseBoolConverter}}"
+              HorizontalOptions="End">
+                            <Label
+                Text="{Binding Text}"
+                TextColor="White" />
                         </Frame>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <!-- Ввод сообщения -->
+        <!-- 2) Фиксированная панель ввода внизу -->
         <Grid
-        Grid.Row="1"
-        Padding="8"
-        BackgroundColor="#F5F5F5"
-        ColumnSpacing="8"
-        RowDefinitions="Auto">
+      Grid.Row="1"
+      Padding="8"
+      BackgroundColor="White"
+      ColumnSpacing="8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <Entry
-          x:Name="MessageEntry"
-          Placeholder="Введите сообщение..."
-          Grid.Column="0"
-          VerticalOptions="Center" />
+        x:Name="MessageEntry"
+        Text="{Binding MessageText}"
+        Placeholder="Введите сообщение..."
+        VerticalOptions="Center"
+        BackgroundColor="#F0F0F0"
+        Margin="0" />
 
             <Button
-          Text="Отправить"
-          Grid.Column="1"
-          VerticalOptions="Center" />
+        Text="Отправить"
+        Command="{Binding SendCommand}"
+        Grid.Column="1"
+        VerticalOptions="Center" />
         </Grid>
+
     </Grid>
 </ContentPage>
