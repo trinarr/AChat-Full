@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 public static class PreloadDatabase
 {
-    const string ResourcePath = "AChatFull.Resources.ChatDB.db"; // namespace + папка + имя
+    public const string ResourcePath = "AChatFull.Resources.ChatDB.db"; // namespace + папка + имя
 
     public static async Task<string> GetDatabasePathAsync()
     {

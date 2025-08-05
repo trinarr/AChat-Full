@@ -6,6 +6,8 @@ namespace AChatFull
 {
     public partial class App : Application
     {
+        public static string USER_TOKEN_TEST = "user1";
+
         public App()
         {
             InitializeComponent();
@@ -15,8 +17,8 @@ namespace AChatFull
         {
             var dbPath = await PreloadDatabase.GetDatabasePathAsync();
             // например, сохраняем в DependencyService или сразу передаём в ViewModel:
-            var repo = new ChatRepository(dbPath, ChatsViewModel.USER_TOKEN_TEST);
-            MainPage = new NavigationPage(new ChatsList(ChatsViewModel.USER_TOKEN_TEST, repo));
+            var repo = new ChatRepository(dbPath, USER_TOKEN_TEST);
+            MainPage = new NavigationPage(new ChatsListPage(USER_TOKEN_TEST, repo));
         }
 
         protected override void OnStart()

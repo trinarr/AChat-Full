@@ -2,8 +2,13 @@
 <ContentPage
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:AChatFull.Views"
     x:Class="AChatFull.Views.ChatPage"
     Title="Чат">
+
+    <ContentPage.BindingContext>
+        <vm:ChatViewModel />
+    </ContentPage.BindingContext>
 
     <Grid RowSpacing="0">
         <!-- Сообщения -->
@@ -35,7 +40,7 @@
                 Grid.Column="2"
                 BackgroundColor="#0084FF"
                 Padding="10"
-                IsVisible="{Binding IsIncoming, Converter={StaticResource InverseBoolConverter}}"
+                IsVisible="{Binding IsIncoming}"
                 HorizontalOptions="End"
                 CornerRadius="8">
                             <Label Text="{Binding Text}"

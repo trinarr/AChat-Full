@@ -6,31 +6,22 @@ using System.Threading.Tasks;
 
 namespace AChatFull.Views
 {
-    public partial class ChatsList : ContentPage
+    public partial class ChatsListPage : ContentPage
     {
-        //private ChatsViewModel Vm => BindingContext as ChatsViewModel;
+        private ChatRepository _repo;
 
-        private readonly ChatRepository _repo;
-        public ObservableCollection<ChatSummary> Chats { get; }
-            = new ObservableCollection<ChatSummary>();
-
-        public ChatsList(string userToken, ChatRepository repo)
+        public ChatsListPage(string userToken, ChatRepository repo)
         {
             InitializeComponent();
-            BindingContext = this;
+
+            var vm = new ChatsListViewModel(repo, userToken);
+            BindingContext = vm;
 
             _repo = repo;
-            _ = LoadChatsAsync();
+            _ = vm.LoadChatsAsync();
 
             // Инициализируем SignalR и загружаем чаты
             //_ = Vm.InitializeAsync(userToken);
-        }
-        private async Task LoadChatsAsync()
-        {
-            var list = await _repo.GetChatSummariesAsync();
-            Chats.Clear();
-            foreach (var chat in list)
-                Chats.Add(chat);
         }
 
         private async void OnChatSelected(object sender, SelectionChangedEventArgs e)
@@ -43,7 +34,7 @@ namespace AChatFull.Views
 
             try
             {
-                await Navigation.PushAsync(new ChatPage(chat.ChatId, ChatsViewModel.USER_TOKEN_TEST));
+                await Navigation.PushAsync(new ChatPage(chat.ChatId, App.USER_TOKEN_TEST, _repo));
             }
             catch (Exception ex)
             {

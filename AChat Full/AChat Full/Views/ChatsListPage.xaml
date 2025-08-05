@@ -3,12 +3,12 @@
   xmlns="http://xamarin.com/schemas/2014/forms"
   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
   xmlns:vm="clr-namespace:AChatFull.Views"
-  x:Class="AChatFull.Views.ChatsList"
+  x:Class="AChatFull.Views.ChatsListPage"
   Title="Чаты"
   BackgroundColor="White">
 
     <ContentPage.BindingContext>
-        <vm:ChatsViewModel />
+        <vm:ChatsListViewModel />
     </ContentPage.BindingContext>
 
     <StackLayout>

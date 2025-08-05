@@ -20,7 +20,7 @@ namespace AChatFull.Views
         public bool IsIncoming { get; set; }
 
         /// <summary>Метка времени (необязательно).</summary>
-        public DateTime Timestamp { get; set; } = DateTime.Now;
+        public DateTime Timestamp { get; set; }
     }
     public class ChatSummary
     {
@@ -85,8 +85,6 @@ namespace AChatFull.Views
              CultureInfo.InvariantCulture);
     }
 
-    class RawCreated { public string Raw { get; set; } }
-
     /// <summary>
     /// Репозиторий для работы с SQLite-базой чатов
     /// </summary>
@@ -112,12 +110,6 @@ namespace AChatFull.Views
             // Получаем все чаты
             var chats = await _db.Table<Chat>().ToListAsync();
             var result = new List<ChatSummary>(chats.Count);
-
-            // Посмотрим первые несколько CreatedAt как строку
-            var raws = await _db.QueryAsync<RawCreated>(
-                "SELECT CreatedAt AS Raw FROM Messages LIMIT 5;");
-            foreach (var r in raws)
-                Debug.WriteLine($"Raw CreatedAt: '{r.Raw}'");
 
             foreach (var chat in chats)
             {
@@ -166,6 +158,15 @@ namespace AChatFull.Views
             return result
                    .OrderByDescending(x => x.LastTimestamp)
                    .ToList();
+        }
+
+        // Новый метод:
+        public Task<List<Message>> GetMessagesForChatAsync(string chatId)
+        {
+            return _db.Table<Message>()
+                      .Where(m => m.ChatId == chatId)
+                      .OrderBy(m => m.CreatedAt)      // по возрастанию (старые вверху)
+                      .ToListAsync();
         }
     }
 }
