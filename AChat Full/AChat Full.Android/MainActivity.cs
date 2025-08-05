@@ -13,9 +13,9 @@ namespace AChatFull.Droid
         {
             base.OnCreate(savedInstanceState);
 
-            Window.SetFlags(
+            /*Window.SetFlags(
                 WindowManagerFlags.Secure,
-                WindowManagerFlags.Secure);
+                WindowManagerFlags.Secure);*/
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             Xamarin.Forms.Forms.Init(this, savedInstanceState);

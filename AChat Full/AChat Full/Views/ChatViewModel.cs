@@ -17,6 +17,20 @@ namespace AChatFull.Views
         public ObservableCollection<ChatMessage> Messages { get; }
             = new ObservableCollection<ChatMessage>();
 
+        private string _peerName;
+        public string PeerName
+        {
+            get => _peerName;
+            set => SetProperty(ref _peerName, value);
+        }
+
+        private string _peerStatus;
+        public string PeerStatus
+        {
+            get => _peerStatus;
+            set => SetProperty(ref _peerStatus, value);
+        }
+
         private string _messageText;
         public string MessageText
         {
@@ -41,11 +55,14 @@ namespace AChatFull.Views
             };*/
         }
 
-        public ChatViewModel(ChatRepository repo, string chatId, string currentUserId)
+        public ChatViewModel(ChatRepository repo, string chatId, string currentUserId, string peerName)
         {
             _repo = repo;
             _chatId = chatId;
             _currentUserId = currentUserId;
+
+            PeerName = peerName;
+            PeerStatus = "Не в сети";
 
             /*LoadMessagesCommand = new Command(async () => await LoadMessagesAsync());
             SendCommand = new Command(async () => await SendMessageAsync(),

@@ -1,12 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-  xmlns="http://xamarin.com/schemas/2014/forms"
-  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-  xmlns:vm="clr-namespace:AChatFull.Views"
-  xmlns:conv="clr-namespace:AChatFull"
-  x:Class="AChatFull.Views.ChatPage"
-  Title="Чат"
-  BackgroundColor="White">
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:AChatFull.Views"
+    xmlns:conv="clr-namespace:AChatFull"
+    x:Class="AChatFull.Views.ChatPage"
+    BackgroundColor="White">
 
     <!-- Регистрируем локально InverseBoolConverter -->
     <ContentPage.Resources>
@@ -19,8 +18,57 @@
         <vm:ChatViewModel />
     </ContentPage.BindingContext>
 
-    <Grid RowDefinitions="*,Auto" RowSpacing="0">
+    <NavigationPage.TitleView>
+        <Grid Padding="0" RowSpacing="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <!-- аватар -->
+                <ColumnDefinition Width="*" />
+                <!-- текст -->
+            </Grid.ColumnDefinitions>
+            <!-- 2 строки для текста -->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
+            <!-- Аватар -->
+            <Frame
+        Grid.Column="0"
+        Grid.RowSpan="2"
+        WidthRequest="36" HeightRequest="36"
+        CornerRadius="18"
+        Padding="0"
+        IsClippedToBounds="True"
+        VerticalOptions="Center">
+                <Image
+          Source="{Binding PeerAvatarUrl}"
+          Aspect="AspectFill" />
+            </Frame>
+
+            <!-- Имя собеседника -->
+            <Label
+        Grid.Column="1"
+        Grid.Row="0"
+        Text="{Binding PeerName}"
+        TextColor="White"
+        FontAttributes="Bold"
+        FontSize="Medium"
+        VerticalOptions="End" />
+
+            <!-- Статус (в сети, был(а) недавно и т.п.) -->
+            <Label
+        Grid.Column="1"
+        Grid.Row="1"
+        Text="{Binding PeerStatus}"
+        TextColor="White"
+        FontSize="Small"
+        VerticalOptions="Start" />
+        </Grid>
+    </NavigationPage.TitleView>
+
+    <Grid RowDefinitions="*,Auto" RowSpacing="0">
+        
         <!-- 1) Секция сообщений -->
         <CollectionView
       x:Name="MessagesView"

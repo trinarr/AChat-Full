@@ -20,11 +20,11 @@ namespace AChatFull.Views
             InitializeComponent();
         }
 
-        public ChatPage(string chatId, string userToken, ChatRepository repo)
+        public ChatPage(string chatId, string userToken, ChatRepository repo, string peerName)
         {
             InitializeComponent();
 
-            var vm = new ChatViewModel(repo, chatId, userToken);
+            var vm = new ChatViewModel(repo, chatId, userToken, peerName);
             BindingContext = vm;
 
             _ = vm.LoadMessagesAsync();
@@ -79,6 +79,11 @@ namespace AChatFull.Views
                     Messages[Messages.Count - 1],
                     position: ScrollToPosition.End,
                     animate: false);*/
+        }
+
+        private async void OnBackButtonClicked(object sender, EventArgs e)
+        {
+            await Navigation.PopAsync();
         }
 
         private async void OnSendClicked(object sender, EventArgs e)
