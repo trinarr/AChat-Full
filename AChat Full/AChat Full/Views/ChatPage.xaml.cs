@@ -14,6 +14,11 @@ namespace AChatFull.Views
         private readonly string _chatId;
         private readonly ChatRepository _repo;
 
+        private double _singleLineHeight;
+        private double _maxHeight;
+
+        private const int MaxVisibleLines = 6;
+
         public ChatPage(string chatId, string userToken, ChatRepository repo, string peerName)
         {
             InitializeComponent();
@@ -27,6 +32,31 @@ namespace AChatFull.Views
             {
                 await ScrollToTop(true);
             });
+
+            // Получаем приближённую высоту строки
+            _singleLineHeight = MessageEditor.FontSize * 1.2;
+            _maxHeight = MaxVisibleLines * _singleLineHeight;
+
+            // Подписываемся на изменение размера
+            MessageEditor.SizeChanged += (s, e) =>
+            {
+                MessagesView.ScrollTo(
+                MessagesView.ItemsSource.Cast<ChatMessage>().Last(),
+                position: ScrollToPosition.End,
+                animate: false);
+
+                // когда фактическая высота больше максимума —
+                // жёстко фиксим максимальную
+                /*if (MessageEditor.Height > _maxHeight)
+                {
+                    MessageEditor.HeightRequest = _maxHeight;
+                }
+                else
+                {
+                    // иначе даём редактору подгоняться сам
+                    MessageEditor.HeightRequest = -1;
+                }*/
+            };
 
             /*_chatClient = new SignalRChatClient("https://yourserver.com/chathub");
             _chatClient.Connected += () => Device.BeginInvokeOnMainThread(() =>

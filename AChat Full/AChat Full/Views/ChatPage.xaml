@@ -64,7 +64,7 @@
     </NavigationPage.TitleView>
 
     <Grid RowDefinitions="*,Auto" RowSpacing="0">
-        
+
         <!-- 1) Секция сообщений -->
         <CollectionView
       x:Name="MessagesView"
@@ -122,13 +122,14 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Entry
-        x:Name="MessageEntry"
-        Text="{Binding MessageText}"
-        Placeholder="Введите сообщение..."
-        VerticalOptions="Center"
-        BackgroundColor="#F0F0F0"
-        Margin="0" />
+            <Editor
+                IsSpellCheckEnabled="true"
+                x:Name="MessageEditor"
+                Text="{Binding MessageText}"
+                AutoSize="TextChanges"
+                VerticalOptions="Start"
+                Placeholder="Сообщение"
+                Margin="0"/>
 
             <Button
         Text="Отправить"
