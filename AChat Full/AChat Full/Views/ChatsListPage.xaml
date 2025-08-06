@@ -7,10 +7,6 @@
   Title="Чаты"
   BackgroundColor="White">
 
-    <ContentPage.BindingContext>
-        <vm:ChatsListViewModel />
-    </ContentPage.BindingContext>
-
     <StackLayout>
         <ActivityIndicator
       IsRunning="{Binding IsBusy}"

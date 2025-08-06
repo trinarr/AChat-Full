@@ -75,7 +75,7 @@ namespace AChatFull.Views
         public string SenderId { get; set; }
         public string Text { get; set; }
         public string CreatedAt { get; set; }
-        public bool IsRead { get; set; }
+        //public bool IsRead { get; set; }
 
         [Ignore]
         public DateTime CreatedAtDate
@@ -148,7 +148,7 @@ namespace AChatFull.Views
                     Title = title,
                     LastMessage = last.Text,
                     LastTimestamp = last.CreatedAtDate,
-                    IsRead = last.IsRead
+                    //IsRead = last.IsRead
                 });
             }
 
@@ -167,6 +167,19 @@ namespace AChatFull.Views
                       .Where(m => m.ChatId == chatId)
                       .OrderBy(m => m.CreatedAt)      // по возрастанию (старые вверху)
                       .ToListAsync();
+        }
+
+        /// <summary>
+        /// Вставляет новое сообщение в таблицу Messages.
+        /// Возвращает число затронутых строк (1 при успехе).
+        /// </summary>
+        public Task<int> InsertMessageAsync(Message message)
+        {
+            // Если вам нужно заменять существующее при совпадении PK:
+            // return _db.InsertOrReplaceAsync(message);
+
+            // Обычный Insert
+            return _db.InsertAsync(message);
         }
     }
 }

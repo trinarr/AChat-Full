@@ -1,8 +1,6 @@
 ﻿using Xamarin.Forms;
 using System;
 using System.Diagnostics;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 
 namespace AChatFull.Views
 {

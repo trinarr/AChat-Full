@@ -14,10 +14,6 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <ContentPage.BindingContext>
-        <vm:ChatViewModel />
-    </ContentPage.BindingContext>
-
     <NavigationPage.TitleView>
         <Grid Padding="0" RowSpacing="0">
             <Grid.ColumnDefinitions>

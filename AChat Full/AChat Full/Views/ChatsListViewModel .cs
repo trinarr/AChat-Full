@@ -3,9 +3,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using Xamarin.Forms;
-using System.Diagnostics;
 
 namespace AChatFull.Views
 {
@@ -25,12 +22,6 @@ namespace AChatFull.Views
 
         //public ICommand LoadChatsCommand { get; }
 
-        public ChatsListViewModel()
-        {
-            //_chatClient = new SignalRChatClient("https://yourserver.com/chathub");
-            //LoadChatsCommand = new Command(async () => await LoadChatsAsync());
-        }
-
         public ChatsListViewModel(ChatRepository repo, string currentUserId)
         {
             _repo = repo;
@@ -47,7 +38,6 @@ namespace AChatFull.Views
                     ((Command)SendCommand).ChangeCanExecute();
             };*/
         }
-
 
         public async Task LoadChatsAsync()
         {

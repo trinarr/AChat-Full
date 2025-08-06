@@ -1,43 +1,32 @@
 ﻿using System;
 using System.Linq;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace AChatFull.Views
 {
     public partial class ChatPage : ContentPage
     {
         //private readonly SignalRChatClient _chatClient;
-        //private readonly ChatViewModel _vm;
+        private readonly ChatViewModel _vm;
 
         private readonly string _chatId;
         private readonly ChatRepository _repo;
-
-        public ChatPage()
-        {
-            InitializeComponent();
-        }
 
         public ChatPage(string chatId, string userToken, ChatRepository repo, string peerName)
         {
             InitializeComponent();
 
-            var vm = new ChatViewModel(repo, chatId, userToken, peerName);
-            BindingContext = vm;
+            _vm = new ChatViewModel(repo, chatId, userToken, peerName);
+            BindingContext = _vm;
 
-            _ = vm.LoadMessagesAsync();
+            _ = _vm.LoadMessagesAsync();
 
-            //Messages = new ObservableCollection<ChatMessage>();
-            //BindingContext = this;
-
-            /*_chatId = chatId;
-            _repo = repo;
-            _ = LoadMessagesAsync();*/
-
-            //_vm = new ChatViewModel(_repo, chatId);
-            //BindingContext = _vm;
+            MessagingCenter.Subscribe<ChatViewModel>(this, "ScrollToEnd", async sender =>
+            {
+                await ScrollToTop(true);
+            });
 
             /*_chatClient = new SignalRChatClient("https://yourserver.com/chathub");
             _chatClient.Connected += () => Device.BeginInvokeOnMainThread(() =>
@@ -70,15 +59,8 @@ namespace AChatFull.Views
 
         protected override async void OnAppearing()
         {
-            /*base.OnAppearing();
-            await LoadMessagesAsync();
-            // прокрутка вниз, если нужно:
-
-            if (Messages.Count > 0)
-                MessagesView.ScrollTo(
-                    Messages[Messages.Count - 1],
-                    position: ScrollToPosition.End,
-                    animate: false);*/
+            base.OnAppearing();
+            await ScrollToTop(false);
         }
 
         private async void OnBackButtonClicked(object sender, EventArgs e)
@@ -88,34 +70,20 @@ namespace AChatFull.Views
 
         private async void OnSendClicked(object sender, EventArgs e)
         {
-            var text = MessageEntry.Text?.Trim();
-            if (string.IsNullOrEmpty(text)) return;
+            Debug.WriteLine("TESTLOG OnSendClicked");
 
-            // сохраняем в базу
-            /*var newMsg = new Message
-            {
-                ChatId = _vm.ChatId,
-                SenderId = currentUserId,
-                Text = text,
-                CreatedAt = DateTime.UtcNow,
-                IsRead = false
-            };
-            await repo.InsertAsync(newMsg);*/
+            await ScrollToTop(true);
+        }
 
-            // обновляем UI
-            /*_vm.Messages.Add(new ChatMessage
-            {
-                Text = text,
-                IsIncoming = false,
-                Timestamp = newMsg.CreatedAt
-            });
-            MessageEntry.Text = string.Empty;
-            MessagesView.ScrollTo(_vm.Messages.Last(), ScrollToPosition.End, true);*/
+        private async Task ScrollToTop(bool animate)
+        {
+            await Task.Delay(50);
 
-            // и при желании: послать через вебсокет/SignalR
-
-            // Посылаем на сервер
-            //await _chatClient.SendMessageAsync(_chatId, text);
+            // Прокрутить к последнему элементу
+            MessagesView.ScrollTo(
+                MessagesView.ItemsSource.Cast<ChatMessage>().Last(),
+                position: ScrollToPosition.End,
+                animate: animate);
         }
 
         protected override void OnDisappearing()

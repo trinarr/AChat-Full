@@ -5,6 +5,8 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
+using System.Globalization;
+using System.Diagnostics;
 
 namespace AChatFull.Views
 {
@@ -43,16 +45,7 @@ namespace AChatFull.Views
 
         public ChatViewModel()
         {
-            /*LoadMessagesCommand = new Command(async () => await LoadMessagesAsync());
-            SendCommand = new Command(async () => await SendMessageAsync(),
-                                              () => !string.IsNullOrWhiteSpace(MessageText));
 
-            // Чтобы автоматически обновлять доступность команды Send
-            this.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == nameof(MessageText))
-                    ((Command)SendCommand).ChangeCanExecute();
-            };*/
         }
 
         public ChatViewModel(ChatRepository repo, string chatId, string currentUserId, string peerName)
@@ -64,16 +57,16 @@ namespace AChatFull.Views
             PeerName = peerName;
             PeerStatus = "Не в сети";
 
-            /*LoadMessagesCommand = new Command(async () => await LoadMessagesAsync());
             SendCommand = new Command(async () => await SendMessageAsync(),
-                                              () => !string.IsNullOrWhiteSpace(MessageText));
+                                  () => !string.IsNullOrWhiteSpace(MessageText));
+            LoadMessagesCommand = new Command(async () => await LoadMessagesAsync());
 
             // Чтобы автоматически обновлять доступность команды Send
-            this.PropertyChanged += (s, e) =>
+            PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(MessageText))
                     ((Command)SendCommand).ChangeCanExecute();
-            };*/
+            };
         }
 
         /// <summary>
@@ -99,30 +92,36 @@ namespace AChatFull.Views
         /// </summary>
         private async Task SendMessageAsync()
         {
-            var text = MessageText?.Trim();
-            if (string.IsNullOrEmpty(text))
-                return;
+            Debug.WriteLine("TESTLOG SendMessageAsync VM");
 
-            // 1) Сохраняем в БД
-            /*var newMsg = new Message
+            var text = MessageText?.Trim();
+            if (string.IsNullOrEmpty(text)) return;
+
+            // 1) Формируем новую запись Message
+            var newMsg = new Message
             {
                 ChatId = _chatId,
                 SenderId = _currentUserId,
                 Text = text,
-                CreatedAt = DateTime.UtcNow,
-                IsRead = true
+                CreatedAt = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
+                //IsRead = true
             };
-            await _repo.InsertMessageAsync(newMsg);*/
 
-            // 2) Добавляем в UI
-            /*Messages.Add(new ChatMessage
+            // 2) Сохраняем её в локальную SQLite-базу
+            await _repo.InsertMessageAsync(newMsg);
+
+            // 3) Добавляем в коллекцию ObservableCollection<ChatMessage>,
+            //    к которой привязан CollectionView
+            Messages.Add(new ChatMessage
             {
                 Text = text,
                 IsIncoming = false,
-                Timestamp = newMsg
+                Timestamp = newMsg.CreatedAtDate
             });
 
-            MessageText = string.Empty;*/
+            // 4) Очищаем поле ввода
+            MessageText = string.Empty;
+            MessagingCenter.Send(this, "ScrollToEnd");
         }
 
         #region INotifyPropertyChanged
