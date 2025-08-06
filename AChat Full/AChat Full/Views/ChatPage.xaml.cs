@@ -40,10 +40,13 @@ namespace AChatFull.Views
             // Подписываемся на изменение размера
             MessageEditor.SizeChanged += (s, e) =>
             {
-                MessagesView.ScrollTo(
-                MessagesView.ItemsSource.Cast<ChatMessage>().Last(),
-                position: ScrollToPosition.End,
-                animate: false);
+                if (MessagesView.ItemsSource.Cast<ChatMessage>().Count() > 0)
+                {
+                    MessagesView.ScrollTo(
+                        MessagesView.ItemsSource.Cast<ChatMessage>().Last(),
+                        position: ScrollToPosition.End,
+                        animate: false);
+                }
 
                 // когда фактическая высота больше максимума —
                 // жёстко фиксим максимальную
