@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+    x:Class="AChatFull.Views.PhonePage"
+    Title="Вход по телефону"
+    Padding="20">
+
+    <StackLayout Spacing="20" VerticalOptions="CenterAndExpand">
+        <Label Text="Введите номер телефона"
+           FontSize="Large"
+           HorizontalOptions="Center" />
+
+        <Entry
+            x:Name="PhoneEntry"
+            Keyboard="Telephone"
+            Placeholder="+7 (000) 000-00-00">
+            <Entry.Behaviors>
+                <!-- маска +7 (xxx) xxx-xx-xx -->
+                <xct:MaskedBehavior
+                    Mask="+7 (000) 000-00-00"
+                    UnMaskedCharacter="0" />
+            </Entry.Behaviors>
+        </Entry>
+
+        <Button
+            Text="Получить код"
+            Clicked="OnSendCodeClicked"
+            IsEnabled="{Binding CanSendCode}" />
+    </StackLayout>
+</ContentPage>

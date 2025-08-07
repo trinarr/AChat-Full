@@ -11,14 +11,7 @@ namespace AChatFull
         public App()
         {
             InitializeComponent();
-            _ = InitAsync();
-        }
-        private async Task InitAsync()
-        {
-            var dbPath = await PreloadDatabase.GetDatabasePathAsync();
-            // например, сохраняем в DependencyService или сразу передаём в ViewModel:
-            var repo = new ChatRepository(dbPath, USER_TOKEN_TEST);
-            MainPage = new NavigationPage(new ChatsListPage(USER_TOKEN_TEST, repo));
+            MainPage = new NavigationPage(new PhonePage());
         }
 
         protected override void OnStart()

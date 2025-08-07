@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="AChatFull.Views.SmsCodePage"
+    Title="Введите код"
+    Padding="20">
+
+    <StackLayout Spacing="20" VerticalOptions="CenterAndExpand">
+        <Label x:Name="InfoLabel"
+           TextColor="Gray"
+           HorizontalOptions="Center" />
+
+        <Entry x:Name="CodeEntry"
+           MaxLength="4"
+           Placeholder="Код из СМС"
+           Keyboard="Numeric" />
+
+        <Button Text="Подтвердить"
+            Clicked="OnVerifyCodeClicked"
+            IsEnabled="{Binding CanVerify}" />
+
+        <Label Text="{Binding CountdownText}"
+           TextColor="Gray"
+           HorizontalOptions="Center" />
+
+        <Button Text="Отправить код заново"
+            Clicked="OnResendClicked"
+            IsEnabled="{Binding CanResend}" />
+    </StackLayout>
+
+</ContentPage>
