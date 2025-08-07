@@ -7,8 +7,9 @@ using System.Windows.Input;
 using Xamarin.Forms;
 using System.Globalization;
 using System.Diagnostics;
+using AChatFull.Views;
 
-namespace AChatFull.Views
+namespace AChatFull.ViewModels
 {
     public class ChatViewModel : INotifyPropertyChanged
     {

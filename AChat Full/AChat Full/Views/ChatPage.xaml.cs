@@ -3,6 +3,7 @@ using System.Linq;
 using Xamarin.Forms;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using AChatFull.ViewModels;
 
 namespace AChatFull.Views
 {
