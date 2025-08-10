@@ -8,6 +8,9 @@ using Xamarin.Forms;
 using System.Globalization;
 using System.Diagnostics;
 using AChatFull.Views;
+using System.Threading;
+using System.IO;
+using Xamarin.Essentials;
 
 namespace AChatFull.ViewModels
 {
@@ -16,6 +19,27 @@ namespace AChatFull.ViewModels
         private readonly ChatRepository _repo;
         private readonly string _chatId;
         private readonly string _currentUserId;
+
+        private readonly IChatTransport _transport;
+        private readonly IFileService _files;
+
+        public interface IFileService
+        {
+            Task<string> UploadAsync(Stream content, string fileName, string mime, IProgress<double> progress, CancellationToken ct);
+            Task<string> DownloadAsync(string url, string fileName, IProgress<double> progress, CancellationToken ct);
+        }
+
+        public interface IChatTransport  
+        {
+            Task SendTextAsync(string chatId, string text);
+            Task SendDocumentAsync(string chatId, string remoteUrl, string fileName, long size, string mime);
+        }
+
+        public ICommand SendCommand { get; }
+        public ICommand AttachDocumentCommand { get; }
+        public ICommand DownloadDocumentCommand { get; }
+        public ICommand OpenDocumentCommand { get; }
+        public ICommand LoadMessagesCommand { get; }
 
         public ObservableCollection<ChatMessage> Messages { get; }
             = new ObservableCollection<ChatMessage>();
@@ -41,9 +65,6 @@ namespace AChatFull.ViewModels
             set => SetProperty(ref _messageText, value);
         }
 
-        public ICommand LoadMessagesCommand { get; }
-        public ICommand SendCommand { get; }
-
         public ChatViewModel()
         {
 
@@ -62,12 +83,50 @@ namespace AChatFull.ViewModels
                                   () => !string.IsNullOrWhiteSpace(MessageText));
             LoadMessagesCommand = new Command(async () => await LoadMessagesAsync());
 
+            AttachDocumentCommand = new Command(async () => await PickAndSendDocumentAsync());
+            DownloadDocumentCommand = new Command<ChatMessage>(async msg => await DownloadDocumentAsync(msg));
+            OpenDocumentCommand = new Command<ChatMessage>(async msg => await OpenDocumentAsync(msg));
+
             // Чтобы автоматически обновлять доступность команды Send
             PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(MessageText))
                     ((Command)SendCommand).ChangeCanExecute();
             };
+        }
+
+        public async Task OnIncomingDocumentAsync(string remoteUrl, string fileName, long fileSize, string mime, string ts, string senderId)
+        {
+            var m = new Message
+            {
+                ChatId = _chatId,
+                SenderId = senderId,
+                CreatedAt = ts,
+                //IsRead = false,
+                Kind = (int)MessageKind.Document,
+                FileName = fileName,
+                FileSize = fileSize,
+                MimeType = mime,
+                RemoteUrl = remoteUrl
+            };
+            await _repo.InsertMessageAsync(m);
+
+            Messages.Add(new ChatMessage
+            {
+                Kind = MessageKind.Document,
+                IsIncoming = true,
+                Timestamp = DateTime.ParseExact(
+                    ts,
+                    "yyyy-MM-dd HH:mm:ss",
+                    CultureInfo.InvariantCulture),
+                Document = new DocumentInfo
+                {
+                    FileName = fileName,
+                    FileSize = fileSize,
+                    MimeType = mime,
+                    RemoteUrl = remoteUrl
+                }
+            });
         }
 
         /// <summary>
@@ -86,6 +145,117 @@ namespace AChatFull.ViewModels
                     Timestamp = m.CreatedAtDate
                 });
             }
+        }
+
+        private async Task PickAndSendDocumentAsync()
+        {
+            try
+            {
+                var picked = await FilePicker.PickAsync(new PickOptions { PickerTitle = "Выберите документ" });
+                if (picked == null) return;
+
+                // метаданные
+                var fileName = picked.FileName;
+                var contentType = picked.ContentType; // может быть null на части устройств
+                long size = 0;
+                string remoteUrl = null;
+
+                using (var s = await picked.OpenReadAsync())
+                {
+                    // Если поток поддерживает Length — возьмём размер
+                    if (s.CanSeek)
+                        size = s.Length;
+
+                    // при необходимости можно сбросить позицию:
+                    // if (s.CanSeek) s.Position = 0;
+
+                    var progress = new Progress<double>(p =>
+                    {
+                        // обновляйте прогресс активного сообщения при желании
+                    });
+
+                    remoteUrl = await _files.UploadAsync(
+                        s,              // сам поток файла
+                        fileName,
+                        contentType,
+                        progress,
+                        CancellationToken.None);
+                }
+
+                // сохраняем как сообщение-документ
+                var msg = new Message
+                {
+                    ChatId = _chatId,
+                    SenderId = _currentUserId,
+                    CreatedAt = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
+                    //IsRead = true,
+                    Kind = (int)MessageKind.Document,
+                    FileName = fileName,
+                    FileSize = size,
+                    MimeType = contentType,
+                    RemoteUrl = remoteUrl,
+                    LocalPath = null
+                };
+                await _repo.InsertMessageAsync(msg);
+
+                var vmMsg = new ChatMessage
+                {
+                    Kind = MessageKind.Document,
+                    IsIncoming = false,
+                    Timestamp = msg.CreatedAtDate,
+                    Document = new DocumentInfo
+                    {
+                        FileName = fileName,
+                        FileSize = size,
+                        MimeType = contentType,
+                        RemoteUrl = remoteUrl,
+                        LocalPath = null,
+                        IsDownloaded = false
+                    }
+                };
+                Messages.Add(vmMsg);
+
+                // оповестим собеседника (SignalR)
+                _ = _transport.SendDocumentAsync(_chatId, remoteUrl, fileName, size, contentType);
+            }
+            catch (Exception ex)
+            {
+                // TODO: показать alert/log
+            }
+        }
+
+        private async Task DownloadDocumentAsync(ChatMessage msg)
+        {
+            if (msg?.Document == null || string.IsNullOrEmpty(msg.Document.RemoteUrl)) return;
+            if (msg.Document.IsDownloaded) { await OpenDocumentAsync(msg); return; }
+
+            msg.Document.IsDownloading = true;
+            var progress = new Progress<double>(p => msg.Document.Progress = p);
+            try
+            {
+                var localPath = await _files.DownloadAsync(msg.Document.RemoteUrl, msg.Document.FileName, progress, CancellationToken.None);
+                msg.Document.LocalPath = localPath;
+                msg.Document.IsDownloaded = true;
+            }
+            finally
+            {
+                msg.Document.IsDownloading = false;
+            }
+        }
+
+        private async Task OpenDocumentAsync(ChatMessage msg)
+        {
+            if (msg?.Document == null) return;
+            if (string.IsNullOrEmpty(msg.Document.LocalPath))
+            {
+                await DownloadDocumentAsync(msg);
+                if (string.IsNullOrEmpty(msg.Document.LocalPath)) return;
+            }
+
+            await Launcher.OpenAsync(new OpenFileRequest
+            {
+                File = new ReadOnlyFile(msg.Document.LocalPath)
+            });
         }
 
         /// <summary>

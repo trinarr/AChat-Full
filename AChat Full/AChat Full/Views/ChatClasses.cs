@@ -8,13 +8,17 @@ using System.Globalization;
 
 namespace AChatFull.Views
 {
+    public enum MessageKind { Text = 0, Document = 1 }
+
     /// <summary>
     /// Представление одного сообщения в чате.
     /// </summary>
     public class ChatMessage
     {
-        /// <summary>Текст сообщения.</summary>
+        public MessageKind Kind { get; set; } = MessageKind.Text;
         public string Text { get; set; }
+
+        public DocumentInfo Document { get; set; }    // если Kind=Document
 
         /// <summary>Флаг: входящее (true) или исходящее (false).</summary>
         public bool IsIncoming { get; set; }
@@ -76,6 +80,14 @@ namespace AChatFull.Views
         public string Text { get; set; }
         public string CreatedAt { get; set; }
         //public bool IsRead { get; set; }
+
+        // NEW:
+        public int Kind { get; set; }                 // 0=Text, 1=Document
+        public string FileName { get; set; }
+        public long FileSize { get; set; }
+        public string MimeType { get; set; }
+        public string RemoteUrl { get; set; }
+        public string LocalPath { get; set; }
 
         [Ignore]
         public DateTime CreatedAtDate

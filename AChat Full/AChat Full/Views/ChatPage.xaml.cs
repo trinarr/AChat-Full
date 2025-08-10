@@ -9,7 +9,7 @@ namespace AChatFull.Views
 {
     public partial class ChatPage : ContentPage
     {
-        //private readonly SignalRChatClient _chatClient;
+        //private readonly SignalRChatClient _chatClient;   
         private readonly ChatViewModel _vm;
 
         private readonly string _chatId;

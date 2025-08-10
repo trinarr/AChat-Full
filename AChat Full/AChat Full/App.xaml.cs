@@ -1,6 +1,5 @@
 ﻿using Xamarin.Forms;
 using AChatFull.Views;
-using System.Threading.Tasks;
 
 namespace AChatFull
 {
@@ -12,7 +11,7 @@ namespace AChatFull
         {
             InitializeComponent();
             MainPage = new NavigationPage(new PhonePage());
-        }
+        }   
 
         protected override void OnStart()
         {

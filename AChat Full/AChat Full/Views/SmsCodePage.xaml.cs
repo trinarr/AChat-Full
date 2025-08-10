@@ -75,7 +75,7 @@ namespace AChatFull.Views
 
         private async Task ChatInitAsync()
         {
-            var dbPath = await PreloadDatabase.GetDatabasePathAsync();
+            var dbPath = await Utils.PreloadDatabase.GetDatabasePathAsync();
 
             // например, сохраняем в DependencyService или сразу передаём в ViewModel:
             var repo = new ChatRepository(dbPath, App.USER_TOKEN_TEST);

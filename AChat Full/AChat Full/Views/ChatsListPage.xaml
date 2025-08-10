@@ -55,7 +55,7 @@
                                     Text="{Binding Title}"
                                     FontAttributes="Bold"
                                     FontSize="Medium" 
-                                    TextColor="#666" />
+                                    TextColor="#000" />
                                 <Label
                                     Text="{Binding LastMessage}"
                                     FontSize="Small"

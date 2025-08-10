@@ -3,7 +3,7 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:AChatFull.Views"
-    xmlns:conv="clr-namespace:AChatFull"
+    xmlns:conv="clr-namespace:AChatFull.Utils"
     x:Class="AChatFull.Views.ChatPage"
     BackgroundColor="White">
 
@@ -120,11 +120,20 @@
       BackgroundColor="White"
       ColumnSpacing="8">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
+            <!-- скрепка -->
+            <ImageButton Grid.Column="0"
+               Source="ic_attach.png"
+               BackgroundColor="Transparent"
+               Command="{Binding AttachDocumentCommand}"
+               WidthRequest="28" HeightRequest="28" />
+
             <Editor
+                Grid.Column="1"
                 IsSpellCheckEnabled="true"
                 x:Name="MessageEditor"
                 Text="{Binding MessageText}"
@@ -133,10 +142,9 @@
                 Placeholder="Сообщение"
                 Margin="0"/>
 
-            <Button
+            <Button Grid.Column="2"
         Text="Отправить"
         Command="{Binding SendCommand}"
-        Grid.Column="1"
         VerticalOptions="Center" />
         </Grid>
 
