@@ -66,14 +66,36 @@
                       SelectionMode="None">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid Padding="12" ColumnDefinitions="48,*,Auto">
-                            <Frame CornerRadius="24" WidthRequest="40" HeightRequest="40" HasShadow="False" VerticalOptions="Center" BackgroundColor="#EEE">
-                                <Label Text="{Binding DisplayName, Converter={x:Reference Name=NameFirstLetter}}" />
+                        <Grid Padding="15,4,15,4" ColumnDefinitions="60,*,Auto">
+                            <Frame WidthRequest="40" HeightRequest="40" HasShadow="False" VerticalOptions="Start">
+                                <Label Text="{Binding UserName, Converter={StaticResource FirstLetterConverter}}" TextColor="#333" FontSize="Medium"/>
                             </Frame>
-                            <StackLayout Grid.Column="1" Spacing="2">
-                                <Label x:Name="NameFirstLetter" Text="{Binding DisplayName}" FontAttributes="Bold" />
-                                <Label Text="{Binding LastSeenUnix}" FontSize="12" TextColor="#666"/>
-                            </StackLayout>
+                            <Grid ColumnSpacing="10" Grid.Column="1">
+                                <!-- Колонки: текст и время+статус -->
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <!-- Аватар -->
+                                <Frame
+                                Grid.Column="0"
+                                BackgroundColor="#CCCCCC"
+                                HasShadow="False"
+                                WidthRequest="48" 
+                                HeightRequest="48"
+                                CornerRadius="24"
+                                Padding="0"
+                                IsClippedToBounds="True"
+                                VerticalOptions="Center">
+                                    <Image
+                                    Source=""
+                                    Aspect="AspectFill" />
+                                </Frame>
+                                <StackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                    <Label x:Name="NameFirstLetter" Text="{Binding UserName}" FontAttributes="Bold" TextColor="#000" FontSize="Medium" />
+                                    <Label Text="был(а) в 14:05" TextColor="#666" FontSize="Small" />
+                                </StackLayout>
+                            </Grid>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

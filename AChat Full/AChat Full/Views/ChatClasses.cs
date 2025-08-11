@@ -53,6 +53,9 @@ namespace AChatFull.Views
         [PrimaryKey]
         public string UserId { get; set; }
         public string UserName { get; set; }
+
+        // 1 = ещё нет чата (показывать в списке Контактов), 0 = чат уже был
+        public int IsContact { get; set; } = 0;
     }
 
     // Модель таблицы ChatParticipants
@@ -97,17 +100,6 @@ namespace AChatFull.Views
              CultureInfo.InvariantCulture);
     }
 
-    [Table("Contacts")]
-    public class Contact
-    {
-        [PrimaryKey, AutoIncrement] public int Id { get; set; }
-        [Indexed] public string UserId { get; set; }
-        [Indexed] public string ContactId { get; set; }
-        public string DisplayName { get; set; }
-        public long LastSeenUnix { get; set; } // Unix time
-        public string AvatarUrl { get; set; }
-    }
-
     /// <summary>
     /// Репозиторий для работы с SQLite-базой чатов
     /// </summary>
@@ -122,56 +114,27 @@ namespace AChatFull.Views
             _currentUserId = currentUserId;
         }
 
-        /// <summary>
-        /// Убедиться, что таблица Contacts создана
-        /// </summary>
-        public Task EnsureContactsTableAsync()
+        public Task<List<User>> GetContactsAsync(string search = null, string sort = "name")
         {
-            return _db.CreateTableAsync<Contact>();
-        }
+            var q = _db.Table<User>().Where(u => u.UserId != _currentUserId && u.IsContact == 1);
 
-        /// <summary>
-        /// Добавляет или обновляет контакт текущего пользователя
-        /// </summary>
-        public async Task AddOrUpdateContactAsync(Contact c)
-        {
-            await EnsureContactsTableAsync();
-            var existing = await _db.Table<Contact>()
-                .Where(x => x.UserId == _currentUserId && x.ContactId == c.ContactId)
-                .FirstOrDefaultAsync();
-            if (existing == null)
-            {
-                c.UserId = _currentUserId;
-                await _db.InsertAsync(c);
-            }
-            else
-            {
-                existing.DisplayName = c.DisplayName;
-                existing.LastSeenUnix = c.LastSeenUnix;
-                existing.AvatarUrl = c.AvatarUrl;
-                await _db.UpdateAsync(existing);
-            }
-        }
-
-        public async Task<List<Contact>> GetContactsAsync(string search = null, string sort = "name")
-        {
-            await EnsureContactsTableAsync();
-            var q = _db.Table<Contact>().Where(x => x.UserId == _currentUserId);
-            var list = await q.ToListAsync();
             if (!string.IsNullOrWhiteSpace(search))
             {
                 var s = search.Trim().ToLowerInvariant();
-                list = list.Where(x => (x.DisplayName ?? "").ToLowerInvariant().Contains(s)).ToList();
+                q = q.Where(u => (u.UserName ?? "").ToLower().Contains(s));
             }
-            if (sort == "lastseen")
-            {
-                list = list.OrderByDescending(x => x.LastSeenUnix).ThenBy(x => x.DisplayName).ToList();
-            }
-            else
-            {
-                list = list.OrderBy(x => x.DisplayName).ThenByDescending(x => x.LastSeenUnix).ToList();
-            }
-            return list;
+
+            if (string.Equals(sort, "name", StringComparison.OrdinalIgnoreCase))
+                q = q.OrderBy(u => u.UserName);
+
+            //Debug.WriteLine("TESTLOG GetContactsAsync "+q.ToListAsync().);
+
+            return q.ToListAsync();
+        }
+
+        public Task MarkUserAsContactAsync(string otherUserId)
+        {
+            return _db.ExecuteAsync("UPDATE Users SET IsContact = 1 WHERE UserId = ?", otherUserId);
         }
 
         /// <summary>

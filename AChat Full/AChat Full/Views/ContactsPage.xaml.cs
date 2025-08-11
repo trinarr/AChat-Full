@@ -1,5 +1,6 @@
 ﻿using Xamarin.Forms;
 using AChatFull.ViewModels;
+using System.Diagnostics;
 
 namespace AChatFull.Views
 {
@@ -15,6 +16,8 @@ namespace AChatFull.Views
 
         protected override async void OnAppearing()
         {
+            Debug.WriteLine("TESTLOG OnAppearing");
+
             base.OnAppearing();
             VM.IsSearchMode = false;   // гарантируем обычный режим при входе
             await VM.LoadAsync();

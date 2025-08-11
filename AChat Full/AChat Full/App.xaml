@@ -12,6 +12,7 @@
             <conv:InverseBoolConverter x:Key="InverseBoolConverter" />
             <conv:FileSizeConverter x:Key="FileSizeConverter" />
             <conv:BoolToTextConverter x:Key="BoolToTextConverter" />
+            <conv:FirstLetterConverter x:Key="FirstLetterConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

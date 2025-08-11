@@ -50,7 +50,8 @@
                             <!-- Левый столбец: имя и последнее сообщение -->
                             <StackLayout 
                                 Grid.Column="1" 
-                                Spacing="2">
+                                Spacing="2"
+                                VerticalOptions="Center">
                                 <Label
                                     Text="{Binding Title}"
                                     FontAttributes="Bold"

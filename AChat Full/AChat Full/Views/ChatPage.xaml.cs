@@ -91,8 +91,6 @@ namespace AChatFull.Views
             _ = _chatClient.ConnectAsync(userToken);*/
         }
 
-
-
         protected override async void OnAppearing()
         {
             base.OnAppearing();
