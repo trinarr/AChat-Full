@@ -17,12 +17,6 @@ namespace AChatFull
                 IconImageSource = "tab_chat.png"
             };
 
-            var calls = new NavigationPage(new CallsPage())
-            {
-                Title = "Звонки",
-                IconImageSource = "tab_call.png"
-            };
-
             var contacts = new NavigationPage(new ContactsPage(repo))
             {
                 Title = "Контакты",
@@ -36,7 +30,6 @@ namespace AChatFull
             };
 
             Children.Add(chats);
-            Children.Add(calls);
             Children.Add(contacts);
             Children.Add(settings);
 

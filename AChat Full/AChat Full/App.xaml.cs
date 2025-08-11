@@ -10,8 +10,18 @@ namespace AChatFull
         public App()
         {
             InitializeComponent();
-            MainPage = new NavigationPage(new PhonePage());
-        }   
+
+            InitAsync();
+
+        }
+
+        private async void InitAsync()
+        {
+            var dbPath = await Utils.PreloadDatabase.GetDatabasePathAsync();
+
+            var repo = new ChatRepository(dbPath, USER_TOKEN_TEST);
+            Current.MainPage = new MainTabsPage(USER_TOKEN_TEST, repo);
+        }
 
         protected override void OnStart()
         {
