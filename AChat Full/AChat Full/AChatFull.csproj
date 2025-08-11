@@ -67,5 +67,6 @@
 	<EmbeddedResource Include="Resources\ChatDB.db" />
 	<EmbeddedResource Include="Resources\Icons\attach_file.png" />
 	<EmbeddedResource Include="Resources\Icons\arrow_back.svg" />
+	<EmbeddedResource Include="Resources\Icons\arrow_back.png" />
   </ItemGroup>
 </Project>

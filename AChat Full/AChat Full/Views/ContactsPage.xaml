@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:ffsvg="clr-namespace:FFImageLoading.Svg.Forms;assembly=FFImageLoading.Svg.Forms"
              x:Class="AChatFull.Views.ContactsPage"
-             Title="Контакты">
+             Title="Контакты"
+             x:Name="ThisPage">
 
     <NavigationPage.TitleView>
         <Grid Padding="8" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">
@@ -19,7 +20,7 @@
                     Aspect="AspectFit"
                     WidthRequest="24"
                     HeightRequest="24"
-                    Source="resource://AChatFull.Resources.Icons.arrow_back.svg" />
+                    Source="resource://AChatFull.Resources.Icons.arrow_back.png?assembly=AChatFull" />
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Tapped="OnSearchBackClicked" />
                 </Grid.GestureRecognizers>
@@ -71,7 +72,12 @@
                                 <Label Text="{Binding UserName, Converter={StaticResource FirstLetterConverter}}" TextColor="#333" FontSize="Medium"/>
                             </Frame>
                             <Grid ColumnSpacing="10" Grid.Column="1">
-                                <!-- Колонки: текст и время+статус -->
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding BindingContext.OpenChatCommand, Source={x:Reference ThisPage}}"
+                                        CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />

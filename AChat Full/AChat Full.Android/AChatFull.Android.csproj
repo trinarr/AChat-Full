@@ -90,6 +90,12 @@
     <AndroidResource Include="..\AChat Full\Resources\Icons\attach_file.png">
       <Link>Resources\drawable\attach_file.png</Link>
     </AndroidResource>
+	<AndroidResource Include="..\AChat Full\Resources\Icons\arrow_back.svg">
+      <Link>Resources\drawable\arrow_back.svg</Link>
+    </AndroidResource>
+	<AndroidResource Include="..\AChat Full\Resources\Icons\arrow_back.png">
+      <Link>Resources\drawable\arrow_back.png</Link>
+    </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\search.png">
       <Link>Resources\drawable\search.png</Link>
     </AndroidResource>

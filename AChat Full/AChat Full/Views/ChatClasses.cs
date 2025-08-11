@@ -137,6 +137,43 @@ namespace AChatFull.Views
             return _db.ExecuteAsync("UPDATE Users SET IsContact = 1 WHERE UserId = ?", otherUserId);
         }
 
+        public async Task<string> GetOrCreateDirectChatIdAsync(string otherUserId)
+        {
+            // все чаты, где участвует текущий пользователь
+            var myParts = await _db.Table<ChatParticipant>()
+                                   .Where(p => p.UserId == _currentUserId)
+                                   .ToListAsync();
+
+            // перебираем чаты и ищем тот, где второй участник = otherUserId
+            foreach (var chatId in myParts.Select(p => p.ChatId).Distinct())
+            {
+                var other = await _db.Table<ChatParticipant>()
+                                     .Where(p => p.ChatId == chatId && p.UserId == otherUserId)
+                                     .FirstOrDefaultAsync();
+
+                if (other != null)
+                    return chatId; // нашли существующий 1:1
+            }
+
+            // 2) Чата нет — создаём новый
+            /*var newChatId = Guid.NewGuid().ToString();
+
+            var chat = new Chat
+            {
+                ChatId = newChatId,
+                IsDirect = 1,
+                CreatedAt = DateTime.UtcNow
+            };
+            await _db.InsertAsync(chat);
+
+            await _db.InsertAsync(new ChatParticipant { ChatId = newChatId, UserId = _currentUserId });
+            await _db.InsertAsync(new ChatParticipant { ChatId = newChatId, UserId = otherUserId });
+
+            return newChatId;*/
+
+            return null;
+        }
+
         /// <summary>
         /// Возвращает список ChatSummary, сгруппированный по ChatId,
         /// с информацией о последнем сообщении и его статусе.

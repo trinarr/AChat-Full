@@ -40,7 +40,7 @@
         Aspect="AspectFit"
         WidthRequest="24"
         HeightRequest="24"
-        Source="resource://AChatFull.Resources.Icons.arrow_back.svg" />
+        Source="resource://AChatFull.Resources.Icons.arrow_back.png" />
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Tapped="OnBackClicked" />
                 </Grid.GestureRecognizers>

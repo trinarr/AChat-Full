@@ -5,19 +5,25 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 using System.Diagnostics;
+using AChatFull.Views;
+using System;
 
 namespace AChatFull.ViewModels
 {
     public class ContactsViewModel : INotifyPropertyChanged
     {
-        private readonly Views.ChatRepository _repo;
+        private readonly ChatRepository _repo;
         private string _searchText;
         private bool _isSearching;
         private string _sortMode = "name"; // name | lastseen
         private bool _isSearchMode;
         private bool _isBusy;
+        private bool _busyNav;
 
-        public ObservableCollection<Views.User> Items { get; } = new ObservableCollection<Views.User>();
+        private readonly INavigation _nav;           // если не Shell
+        private bool _isNavigating;
+
+        public ObservableCollection<User> Items { get; } = new ObservableCollection<User>();
         public bool IsBusy
         {
             get => _isBusy;
@@ -63,6 +69,7 @@ namespace AChatFull.ViewModels
         public ICommand ToggleSearchCommand { get; }
         public ICommand SortByNameCommand { get; }
         public ICommand SortByLastSeenCommand { get; }
+        public ICommand OpenChatCommand { get; }
 
         public ContactsViewModel(Views.ChatRepository repo)
         {
@@ -72,6 +79,29 @@ namespace AChatFull.ViewModels
             SortByLastSeenCommand = new Command(() => SortMode = "lastseen");
 
             RefreshCommand = new Command(async () => await LoadAsync(force: true));
+            OpenChatCommand = new Command<Views.User>(async u => await OpenChatAsync(u), u => !_isNavigating);
+        }
+
+        private async Task OpenChatAsync(User u)
+        {
+            if (u == null || _busyNav) return;
+            _busyNav = true; (OpenChatCommand as Command)?.ChangeCanExecute();
+            try
+            {
+                var chatId = await _repo.GetOrCreateDirectChatIdAsync(u.UserId);
+                await _repo.MarkUserAsContactAsync(u.UserId);
+
+                var chatPage = new ChatPage(chatId, App.USER_TOKEN_TEST, _repo, u.UserName);
+                await Application.Current.MainPage.Navigation.PushModalAsync(new NavigationPage(chatPage));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("TESTLOG OpenChatAsync Exception " + ex.Message + " " + ex.StackTrace);
+            }
+            finally 
+            { 
+                _busyNav = false; (OpenChatCommand as Command)?.ChangeCanExecute(); 
+            }
         }
 
         public async Task LoadAsync()
