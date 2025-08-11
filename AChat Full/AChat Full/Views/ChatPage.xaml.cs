@@ -91,6 +91,8 @@ namespace AChatFull.Views
             _ = _chatClient.ConnectAsync(userToken);*/
         }
 
+
+
         protected override async void OnAppearing()
         {
             base.OnAppearing();
@@ -118,6 +120,20 @@ namespace AChatFull.Views
                 MessagesView.ItemsSource.Cast<ChatMessage>().Last(),
                 position: ScrollToPosition.End,
                 animate: animate);
+        }
+
+        private async void OnBackClicked(object sender, EventArgs e)
+        {
+            // Если открывали модально:
+            if (Application.Current.MainPage?.Navigation?.ModalStack?.Count > 0)
+                await Application.Current.MainPage.Navigation.PopModalAsync();
+            else
+                await Navigation.PopAsync();
+        }
+
+        private async void OnSearchClicked(object sender, EventArgs e)
+        {
+            //
         }
 
         protected override void OnDisappearing()

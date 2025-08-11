@@ -80,6 +80,29 @@
     <None Include="Assets\AboutAssets.txt" />
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
+    <ItemGroup>
+	<AndroidResource Include="..\AChat Full\Resources\Icons\attach_file.png">
+    <Link>Resources\drawable\attach_file.png</Link>
+  </AndroidResource>
+  <AndroidResource Include="..\AChat Full\Resources\Icons\search.png">
+    <Link>Resources\drawable\search.png</Link>
+  </AndroidResource>
+  <AndroidResource Include="..\AChat Full\Resources\Icons\arrow_back.png">
+    <Link>Resources\drawable\arrow_back.png</Link>
+  </AndroidResource>
+  <AndroidResource Include="..\AChat Full\Resources\Icons\tab_chat.png">
+    <Link>Resources\drawable\tab_chat.png</Link>
+  </AndroidResource>
+  <AndroidResource Include="..\AChat Full\Resources\Icons\tab_settings.png">
+    <Link>Resources\drawable\tab_settings.png</Link>
+  </AndroidResource>  
+  <AndroidResource Include="..\AChat Full\Resources\Icons\tab_contacts.png">
+    <Link>Resources\drawable\tab_contacts.png</Link>
+  </AndroidResource>
+  <AndroidResource Include="..\AChat Full\Resources\Icons\tab_call.png">
+    <Link>Resources\drawable\tab_call.png</Link>
+  </AndroidResource>
+</ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\styles.xml" />
     <AndroidResource Include="Resources\values\colors.xml" />

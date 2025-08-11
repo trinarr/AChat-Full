@@ -79,7 +79,7 @@ namespace AChatFull.Views
 
             // например, сохраняем в DependencyService или сразу передаём в ViewModel:
             var repo = new ChatRepository(dbPath, App.USER_TOKEN_TEST);
-            Application.Current.MainPage = new NavigationPage(new ChatsListPage(App.USER_TOKEN_TEST, repo));
+            Application.Current.MainPage = new MainTabsPage(App.USER_TOKEN_TEST, repo);
         }
 
         private async void OnResendClicked(object sender, EventArgs e)

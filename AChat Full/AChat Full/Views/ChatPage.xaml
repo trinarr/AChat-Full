@@ -19,9 +19,9 @@
         <Grid Padding="0" RowSpacing="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <!-- аватар -->
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*" />
-                <!-- текст -->
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <!-- 2 строки для текста -->
             <Grid.RowDefinitions>
@@ -29,9 +29,21 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
+            <ImageButton 
+                Grid.Column="0"
+                Grid.RowSpan="2"
+                Source="arrow_back.png"
+                WidthRequest="24" HeightRequest="24"
+                BackgroundColor="Transparent"
+                Clicked="OnBackClicked"
+                Margin="0,0,8,0"
+                AutomationId="BackButton"
+                HorizontalOptions="Start" 
+                VerticalOptions="Center"/>
+            
             <!-- Аватар -->
             <Frame
-        Grid.Column="0"
+        Grid.Column="1"
         Grid.RowSpan="2"
         WidthRequest="36" HeightRequest="36"
         CornerRadius="18"
@@ -45,7 +57,7 @@
 
             <!-- Имя собеседника -->
             <Label
-        Grid.Column="1"
+        Grid.Column="2"
         Grid.Row="0"
         Text="{Binding PeerName}"
         TextColor="White"
@@ -55,12 +67,25 @@
 
             <!-- Статус (в сети, был(а) недавно и т.п.) -->
             <Label
-        Grid.Column="1"
+        Grid.Column="2"
         Grid.Row="1"
         Text="{Binding PeerStatus}"
         TextColor="White"
         FontSize="Small"
         VerticalOptions="Start" />
+
+            <ImageButton 
+                 Margin="0,0,8,0"
+                Grid.Column="3"
+                Grid.RowSpan="2"
+                Source="search.png"
+                WidthRequest="24" HeightRequest="24"
+                BackgroundColor="Transparent"
+                Clicked="OnSearchClicked"
+                AutomationId="SearchButton"
+                HorizontalOptions="Start" 
+                VerticalOptions="Center">
+            </ImageButton>
         </Grid>
     </NavigationPage.TitleView>
 
@@ -87,9 +112,9 @@
 
                         <!-- Документ -->
                         <Frame Padding="10" CornerRadius="8" HasShadow="False"
-             IsVisible="{Binding Kind, Converter={StaticResource EqualConverter}, ConverterParameter=Document}"
-             HorizontalOptions="{Binding IsIncoming, Converter={StaticResource BoolToHorzOptionsConverter}}"
-             BackgroundColor="{Binding IsIncoming, Converter={StaticResource IncomingBgConverter}}">
+                               IsVisible="{Binding Kind, Converter={StaticResource EqualConverter}, ConverterParameter=Document}"
+                               HorizontalOptions="{Binding IsIncoming, Converter={StaticResource BoolToHorzOptionsConverter}}"
+                               BackgroundColor="{Binding IsIncoming, Converter={StaticResource IncomingBgConverter}}">
                             <Grid ColumnDefinitions="Auto,* ,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8">
                                 <!-- иконка файла -->
                                 <Image Grid.RowSpan="2" Grid.Column="0" Source="attachment.png" WidthRequest="24" HeightRequest="24" />

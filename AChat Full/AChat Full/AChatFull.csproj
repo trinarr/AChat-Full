@@ -16,10 +16,8 @@
 
   <ItemGroup>
     <None Remove="Resources\ChatDB.db" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\ChatDB.db" />
+    <None Remove="Resources\Icons\arrow_back.png" />
+    <None Remove="Resources\Icons\attach_file.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,21 +27,33 @@
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2291" />
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
   </ItemGroup>
+  
+  <ItemGroup>
+  <Compile Update="Properties\Resources.Designer.cs">
+    <DesignTime>True</DesignTime>
+    <AutoGen>True</AutoGen>
+    <DependentUpon>Resources.resx</DependentUpon>
+  </Compile>
+</ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\ChatPage.xaml.cs">
-      <DependentUpon>ChatPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\ChatsListPage.xaml.cs">
-      <DependentUpon>ChatsListPage.xaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\CallsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Views\ChatsListPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="Views\ContactsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Views\PhonePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\SettingsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\SmsCodePage.xaml">
@@ -52,10 +62,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\Icons\attach_file.svg" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Resources\Icons\" />
+	<EmbeddedResource Include="Resources\ChatDB.db" />
+	<EmbeddedResource Include="Resources\Icons\arrow_back.png" />
+	<EmbeddedResource Include="Resources\Icons\attach_file.png" />
   </ItemGroup>
 </Project>
