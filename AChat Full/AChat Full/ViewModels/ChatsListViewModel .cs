@@ -28,6 +28,8 @@ namespace AChatFull.ViewModels
             _repo = repo;
             _currentUserId = currentUserId;
 
+            Xamarin.Forms.MessagingCenter.Subscribe<ChatPage, string>(this, "ChatClosed", async (_, chatId) => await LoadChatsAsync());
+
             /*LoadMessagesCommand = new Command(async () => await LoadMessagesAsync());
             SendCommand = new Command(async () => await SendMessageAsync(),
                                               () => !string.IsNullOrWhiteSpace(MessageText));

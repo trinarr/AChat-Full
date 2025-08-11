@@ -24,6 +24,7 @@ namespace AChatFull.Views
         {
             InitializeComponent();
 
+            _chatId = chatId;
             _vm = new ChatViewModel(repo, chatId, userToken, peerName);
             BindingContext = _vm;
 
@@ -137,6 +138,7 @@ namespace AChatFull.Views
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
+            Xamarin.Forms.MessagingCenter.Send(this, "ChatClosed", _chatId);
             //_chatClient.Dispose();
         }
     }
