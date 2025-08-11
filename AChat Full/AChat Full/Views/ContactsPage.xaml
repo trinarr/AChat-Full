@@ -69,7 +69,7 @@
                     <DataTemplate>
                         <Grid Padding="15,4,15,4" ColumnDefinitions="60,*,Auto">
                             <Frame WidthRequest="40" HeightRequest="40" HasShadow="False" VerticalOptions="Start">
-                                <Label Text="{Binding UserName, Converter={StaticResource FirstLetterConverter}}" TextColor="#333" FontSize="Medium"/>
+                                <Label Text="{Binding FirstName, Converter={StaticResource FirstLetterConverter}}" TextColor="#333" FontSize="Medium"/>
                             </Frame>
                             <Grid ColumnSpacing="10" Grid.Column="1">
                                 <Grid.GestureRecognizers>
@@ -98,7 +98,7 @@
                                     Aspect="AspectFill" />
                                 </Frame>
                                 <StackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                                    <Label x:Name="NameFirstLetter" Text="{Binding UserName}" FontAttributes="Bold" TextColor="#000" FontSize="Medium" />
+                                    <Label x:Name="NameFirstLetter" Text="{Binding FirstName}" FontAttributes="Bold" TextColor="#000" FontSize="Medium" />
                                     <Label Text="был(а) в 14:05" TextColor="#666" FontSize="Small" />
                                 </StackLayout>
                             </Grid>

@@ -1,9 +1,77 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="AChatFull.Views.SettingsPage">
-    <StackLayout Padding="16">
-        <Label Text="Настройки" FontSize="Large" />
-        <Label Text="Страница-заглушка." />
-    </StackLayout>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="AChatFull.Views.SettingsPage"
+    x:Name="PageRoot"
+    Title="Настройки">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Сохранить" Command="{Binding SaveCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <StackLayout Padding="16" Spacing="20">
+
+            <!-- Профиль -->
+            <StackLayout Spacing="8">
+                <Label Text="Профиль" FontAttributes="Bold" FontSize="Medium" />
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <Entry Grid.Column="0" Placeholder="Имя" Text="{Binding FirstName}" />
+                    <Entry Grid.Column="1" Placeholder="Фамилия" Text="{Binding LastName}" />
+                </Grid>
+
+                <DatePicker Date="{Binding BirthDate}" Format="dd.MM.yyyy" />
+                <Editor Placeholder="О себе" AutoSize="TextChanges" Text="{Binding About}" />
+            </StackLayout>
+
+            <!-- Статус (как в WhatsApp) -->
+            <StackLayout Spacing="8">
+                <Label Text="Статус" FontAttributes="Bold" FontSize="Medium" />
+                <Entry Placeholder="Свой статус" Text="{Binding Status}" />
+                <FlexLayout Wrap="Wrap" JustifyContent="Start" AlignItems="Start" BindableLayout.ItemsSource="{Binding StatusPresets}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Frame Padding="8,4" Margin="0,6,6,0" CornerRadius="16" HasShadow="False" BackgroundColor="#EEF2F7">
+                                <Label>
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={x:Reference Name=PageRoot}, Path=BindingContext.SetStatusCommand}" CommandParameter="{Binding .}" />
+                                    </Label.GestureRecognizers>
+                                    <Label.Text>
+                                        <Binding />
+                                    </Label.Text>
+                                </Label>
+                            </Frame>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+            </StackLayout>
+
+            <!-- Приложение -->
+            <StackLayout Spacing="8">
+                <Label Text="Приложение" FontAttributes="Bold" FontSize="Medium" />
+
+                <Grid ColumnDefinitions="Auto,*" RowSpacing="12">
+                    <Label Grid.Column="0" Text="Язык" VerticalTextAlignment="Center" />
+                    <Picker Grid.Column="1"
+                  Title="Выберите язык"
+                  ItemsSource="{Binding Languages}"
+                  SelectedItem="{Binding SelectedLanguage}" />
+                </Grid>
+
+                <Grid ColumnDefinitions="Auto,*,Auto" RowSpacing="12">
+                    <Label Grid.Column="0" Text="Вибрация" VerticalTextAlignment="Center" />
+                    <Switch Grid.Column="2" IsToggled="{Binding VibrateOnMessage}" />
+                </Grid>
+
+                <Grid ColumnDefinitions="Auto,*,Auto" RowSpacing="12">
+                    <Label Grid.Column="0" Text="Звуки" VerticalTextAlignment="Center" />
+                    <Switch Grid.Column="2" IsToggled="{Binding SoundOnMessage}" />
+                </Grid>
+            </StackLayout>
+
+            <!-- Индикатор сохранения/загрузки -->
+            <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" HorizontalOptions="Center" />
+        </StackLayout>
+    </ScrollView>
 </ContentPage>

@@ -52,10 +52,23 @@ namespace AChatFull.Views
     {
         [PrimaryKey]
         public string UserId { get; set; }
-        public string UserName { get; set; }
 
         // 1 = ещё нет чата (показывать в списке Контактов), 0 = чат уже был
         public int IsContact { get; set; } = 0;
+
+        // Профиль
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string BirthDate { get; set; } 
+        public string About { get; set; }    // «О себе»
+        public string Status { get; set; }    // «Статус как в WhatsApp»
+
+        [Ignore]
+        public DateTime BirthDateDate
+            => DateTime.ParseExact(
+                 BirthDate,
+                 "yyyy-MM-dd HH:mm:ss",
+                 CultureInfo.InvariantCulture);
     }
 
     // Модель таблицы ChatParticipants
@@ -114,6 +127,15 @@ namespace AChatFull.Views
             _currentUserId = currentUserId;
         }
 
+        public async Task<User> GetCurrentUserProfileAsync() =>
+    await _db.Table<User>().Where(u => u.UserId == _currentUserId).FirstOrDefaultAsync();
+
+        public async Task SaveCurrentUserProfileAsync(User profile)
+        {
+            profile.UserId = _currentUserId;
+            await _db.InsertOrReplaceAsync(profile);
+        }
+
         public Task<List<User>> GetContactsAsync(string search = null, string sort = "name")
         {
             var q = _db.Table<User>().Where(u => u.UserId != _currentUserId && u.IsContact == 1);
@@ -121,11 +143,11 @@ namespace AChatFull.Views
             if (!string.IsNullOrWhiteSpace(search))
             {
                 var s = search.Trim().ToLowerInvariant();
-                q = q.Where(u => (u.UserName ?? "").ToLower().Contains(s));
+                q = q.Where(u => (u.FirstName ?? "").ToLower().Contains(s));
             }
 
             if (string.Equals(sort, "name", StringComparison.OrdinalIgnoreCase))
-                q = q.OrderBy(u => u.UserName);
+                q = q.OrderBy(u => u.FirstName);
 
             //Debug.WriteLine("TESTLOG GetContactsAsync "+q.ToListAsync().);
 
@@ -209,7 +231,7 @@ namespace AChatFull.Views
                     var user = await _db.Table<User>()
                                         .Where(u => u.UserId == other)
                                         .FirstOrDefaultAsync();
-                    title = user?.UserName ?? other;
+                    title = user?.FirstName ?? other;
                 }
                 else
                 {

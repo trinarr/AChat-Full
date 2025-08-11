@@ -71,7 +71,7 @@ namespace AChatFull.ViewModels
         public ICommand SortByLastSeenCommand { get; }
         public ICommand OpenChatCommand { get; }
 
-        public ContactsViewModel(Views.ChatRepository repo)
+        public ContactsViewModel(ChatRepository repo)
         {
             _repo = repo;
             ToggleSearchCommand = new Command(() => IsSearching = !IsSearching);
@@ -79,7 +79,7 @@ namespace AChatFull.ViewModels
             SortByLastSeenCommand = new Command(() => SortMode = "lastseen");
 
             RefreshCommand = new Command(async () => await LoadAsync(force: true));
-            OpenChatCommand = new Command<Views.User>(async u => await OpenChatAsync(u), u => !_isNavigating);
+            OpenChatCommand = new Command<User>(async u => await OpenChatAsync(u), u => !_isNavigating);
         }
 
         private async Task OpenChatAsync(User u)
@@ -91,7 +91,7 @@ namespace AChatFull.ViewModels
                 var chatId = await _repo.GetOrCreateDirectChatIdAsync(u.UserId);
                 await _repo.MarkUserAsContactAsync(u.UserId);
 
-                var chatPage = new ChatPage(chatId, App.USER_TOKEN_TEST, _repo, u.UserName);
+                var chatPage = new ChatPage(chatId, App.USER_TOKEN_TEST, _repo, u.FirstName);
                 await Application.Current.MainPage.Navigation.PushModalAsync(new NavigationPage(chatPage));
             }
             catch (Exception ex)
@@ -106,15 +106,10 @@ namespace AChatFull.ViewModels
 
         public async Task LoadAsync()
         {
-            Debug.WriteLine("TESTLOG ContactsViewModel LoadAsync");
-
             var data = await _repo.GetContactsAsync(SearchText, SortMode);
-            Debug.WriteLine($"TESTLOG repo returned: {data?.Count}");
             Items.Clear();
             foreach (var u in data)
                 Items.Add(u);
-
-            Debug.WriteLine($"TESTLOG Items after fill: {Items.Count}");
         }
 
         private bool _loadedOnce;
