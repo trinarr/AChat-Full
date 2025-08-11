@@ -158,6 +158,7 @@ namespace AChatFull.ViewModels
             if (picked == null) return;
 
             var fileName = string.IsNullOrWhiteSpace(picked.FileName) ? "Документ" : picked.FileName;
+            return;
 
             if (_useDocumentPlaceholders)
             {
@@ -284,7 +285,7 @@ namespace AChatFull.ViewModels
 
         private async Task DownloadDocumentAsync(ChatMessage msg)
         {
-            if (msg == null || msg.Document == null)
+            /*if (msg == null || msg.Document == null)
                 return;
 
             if (string.IsNullOrEmpty(msg.Document.RemoteUrl))
@@ -311,7 +312,7 @@ namespace AChatFull.ViewModels
             finally
             {
                 msg.Document.IsDownloading = false;
-            }
+            }*/
         }
 
         private async Task OpenDocumentAsync(ChatMessage msg)

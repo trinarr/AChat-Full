@@ -42,10 +42,19 @@ namespace AChatFull.ViewModels
 
         public async Task LoadChatsAsync()
         {
-            var list = await _repo.GetChatSummariesAsync();
-            Chats.Clear();
-            foreach (var chat in list)
-                Chats.Add(chat);
+            IsBusy = true;
+
+            try
+            {
+                var data = await _repo.GetChatSummariesAsync();
+                Chats.Clear();
+                foreach (var chat in data)
+                    Chats.Add(chat);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         #region INotifyPropertyChanged

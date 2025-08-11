@@ -13,6 +13,7 @@
             <conv:FileSizeConverter x:Key="FileSizeConverter" />
             <conv:BoolToTextConverter x:Key="BoolToTextConverter" />
             <conv:FirstLetterConverter x:Key="FirstLetterConverter" />
+            <conv:FirstLetterConverter x:Key="BoolToGridColumnConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

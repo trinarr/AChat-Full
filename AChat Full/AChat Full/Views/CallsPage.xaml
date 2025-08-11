@@ -4,6 +4,6 @@
              x:Class="AChatFull.Views.CallsPage">
     <StackLayout Padding="16">
         <Label Text="Звонки" FontSize="Large" />
-        <Label Text="Страница-заглушка. Замените на вашу реализацию." />
+        <Label Text="Страница-заглушка." />
     </StackLayout>
 </ContentPage>

@@ -7,11 +7,16 @@
   Title="Чаты"
   BackgroundColor="White">
 
+    <!-- Loader -->
     <StackLayout>
         <ActivityIndicator
       IsRunning="{Binding IsBusy}"
       IsVisible="{Binding IsBusy}"
-      HorizontalOptions="Center" />
+      VerticalOptions="Center"
+        HorizontalOptions="Center"
+        WidthRequest="50"
+        HeightRequest="50" 
+            Color="Gray"/>
 
         <CollectionView
     ItemsSource="{Binding Chats}"
