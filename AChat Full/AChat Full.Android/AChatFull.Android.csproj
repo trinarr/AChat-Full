@@ -67,6 +67,12 @@
     <PackageReference Include="Xamarin.CommunityToolkit">
       <Version>2.0.6</Version>
     </PackageReference>
+    <PackageReference Include="Xamarin.FFImageLoading.Forms">
+      <Version>2.4.11.982</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms">
+      <Version>2.4.11.982</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
   </ItemGroup>
@@ -80,29 +86,26 @@
     <None Include="Assets\AboutAssets.txt" />
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
-    <ItemGroup>
-	<AndroidResource Include="..\AChat Full\Resources\Icons\attach_file.png">
-    <Link>Resources\drawable\attach_file.png</Link>
-  </AndroidResource>
-  <AndroidResource Include="..\AChat Full\Resources\Icons\search.png">
-    <Link>Resources\drawable\search.png</Link>
-  </AndroidResource>
-  <AndroidResource Include="..\AChat Full\Resources\Icons\arrow_back.png">
-    <Link>Resources\drawable\arrow_back.png</Link>
-  </AndroidResource>
-  <AndroidResource Include="..\AChat Full\Resources\Icons\tab_chat.png">
-    <Link>Resources\drawable\tab_chat.png</Link>
-  </AndroidResource>
-  <AndroidResource Include="..\AChat Full\Resources\Icons\tab_settings.png">
-    <Link>Resources\drawable\tab_settings.png</Link>
-  </AndroidResource>  
-  <AndroidResource Include="..\AChat Full\Resources\Icons\tab_contacts.png">
-    <Link>Resources\drawable\tab_contacts.png</Link>
-  </AndroidResource>
-  <AndroidResource Include="..\AChat Full\Resources\Icons\tab_call.png">
-    <Link>Resources\drawable\tab_call.png</Link>
-  </AndroidResource>
-</ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="..\AChat Full\Resources\Icons\attach_file.png">
+      <Link>Resources\drawable\attach_file.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\AChat Full\Resources\Icons\search.png">
+      <Link>Resources\drawable\search.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\AChat Full\Resources\Icons\tab_chat.png">
+      <Link>Resources\drawable\tab_chat.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\AChat Full\Resources\Icons\tab_settings.png">
+      <Link>Resources\drawable\tab_settings.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\AChat Full\Resources\Icons\tab_contacts.png">
+      <Link>Resources\drawable\tab_contacts.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\AChat Full\Resources\Icons\tab_call.png">
+      <Link>Resources\drawable\tab_call.png</Link>
+    </AndroidResource>
+  </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\styles.xml" />
     <AndroidResource Include="Resources\values\colors.xml" />
@@ -119,9 +122,7 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\icon.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\drawable\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\AChat Full\AChatFull.csproj">
       <Project>{5F17BE78-397F-4249-9639-10BC971EDA94}</Project>

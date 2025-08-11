@@ -1,9 +1,83 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="AChatFull.Views.ContactsPage">
-    <StackLayout Padding="16">
-        <Label Text="Контакты" FontSize="Large" />
-        <Label Text="Страница-заглушка. Замените на вашу реализацию." />
-    </StackLayout>
+             xmlns:ffsvg="clr-namespace:FFImageLoading.Svg.Forms;assembly=FFImageLoading.Svg.Forms"
+             x:Class="AChatFull.Views.ContactsPage"
+             Title="Контакты">
+
+    <NavigationPage.TitleView>
+        <Grid Padding="8" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">
+            <!-- Кнопка Назад (видна только в режиме поиска) -->
+            <Grid Grid.Column="0"
+      WidthRequest="24" HeightRequest="24"
+      BackgroundColor="Transparent"
+      Margin="0,0,8,0"
+      HorizontalOptions="Start"
+      IsVisible="{Binding IsSearchMode}"
+      VerticalOptions="Center">
+                <ffsvg:SvgCachedImage
+                    Aspect="AspectFit"
+                    WidthRequest="24"
+                    HeightRequest="24"
+                    Source="resource://AChatFull.Resources.Icons.arrow_back.svg" />
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnSearchBackClicked" />
+                </Grid.GestureRecognizers>
+            </Grid>
+
+            <!-- Заголовок (виден, когда НЕ в режиме поиска) -->
+            <Label Grid.Column="1"
+             Text="Контакты"
+             TextColor="#fff"
+             FontAttributes="Bold"
+             FontSize="18"
+             VerticalTextAlignment="Center"
+             IsVisible="{Binding IsSearchMode, Converter={StaticResource InverseBoolConverter}}" />
+
+            <!-- Поле поиска (видимо только в режиме поиска) -->
+            <Entry x:Name="SearchEntry"
+                   Grid.Column="1"
+                   Placeholder="Поиск"
+                   Text="{Binding SearchText}"
+                   ClearButtonVisibility="WhileEditing"
+                   IsVisible="{Binding IsSearchMode}"
+                   VerticalOptions="Center" />
+
+            <!-- Иконка поиска (видима, когда НЕ в режиме поиска) -->
+            <ImageButton Grid.Column="2"
+                   Source="search.png"
+                   WidthRequest="24" HeightRequest="24"
+                   BackgroundColor="Transparent"
+                   VerticalOptions="Center"
+                   IsVisible="{Binding IsSearchMode, Converter={StaticResource InverseBoolConverter}}"
+                   Clicked="OnSearchIconClicked" />
+        </Grid>
+    </NavigationPage.TitleView>
+
+    <ContentPage.Content>
+        <StackLayout>
+            <!-- Переключатели сортировки -->
+            <Grid Padding="12" ColumnDefinitions="*,*" >
+                <Button Text="По имени" Command="{Binding SortByNameCommand}" />
+                <Button Grid.Column="1" Text="По заходу" Command="{Binding SortByLastSeenCommand}" />
+            </Grid>
+
+            <CollectionView ItemsSource="{Binding Items}"
+                      SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="12" ColumnDefinitions="48,*,Auto">
+                            <Frame CornerRadius="24" WidthRequest="40" HeightRequest="40" HasShadow="False" VerticalOptions="Center" BackgroundColor="#EEE">
+                                <Label Text="{Binding DisplayName, Converter={x:Reference Name=NameFirstLetter}}" />
+                            </Frame>
+                            <StackLayout Grid.Column="1" Spacing="2">
+                                <Label x:Name="NameFirstLetter" Text="{Binding DisplayName}" FontAttributes="Bold" />
+                                <Label Text="{Binding LastSeenUnix}" FontSize="12" TextColor="#666"/>
+                            </StackLayout>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+    </ContentPage.Content>
 </ContentPage>

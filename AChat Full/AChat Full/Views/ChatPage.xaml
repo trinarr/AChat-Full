@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:AChatFull.Views"
     xmlns:conv="clr-namespace:AChatFull.Utils"
+    xmlns:ffsvg="clr-namespace:FFImageLoading.Svg.Forms;assembly=FFImageLoading.Svg.Forms"
     x:Class="AChatFull.Views.ChatPage"
     x:Name="PageRoot"
     BackgroundColor="White">
@@ -21,7 +22,6 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <!-- 2 строки для текста -->
             <Grid.RowDefinitions>
@@ -29,18 +29,23 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <ImageButton 
-                Grid.Column="0"
-                Grid.RowSpan="2"
-                Source="arrow_back.png"
-                WidthRequest="24" HeightRequest="24"
-                BackgroundColor="Transparent"
-                Clicked="OnBackClicked"
-                Margin="0,0,8,0"
-                AutomationId="BackButton"
-                HorizontalOptions="Start" 
-                VerticalOptions="Center"/>
-            
+            <Grid Grid.Column="0"
+      Grid.RowSpan="2"
+      WidthRequest="24" HeightRequest="24"
+      BackgroundColor="Transparent"
+      Margin="0,0,8,0"
+      HorizontalOptions="Start"
+      VerticalOptions="Center">
+                <ffsvg:SvgCachedImage
+        Aspect="AspectFit"
+        WidthRequest="24"
+        HeightRequest="24"
+        Source="resource://AChatFull.Resources.Icons.arrow_back.svg" />
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnBackClicked" />
+                </Grid.GestureRecognizers>
+            </Grid>
+
             <!-- Аватар -->
             <Frame
         Grid.Column="1"
@@ -73,19 +78,6 @@
         TextColor="White"
         FontSize="Small"
         VerticalOptions="Start" />
-
-            <ImageButton 
-                 Margin="0,0,8,0"
-                Grid.Column="3"
-                Grid.RowSpan="2"
-                Source="search.png"
-                WidthRequest="24" HeightRequest="24"
-                BackgroundColor="Transparent"
-                Clicked="OnSearchClicked"
-                AutomationId="SearchButton"
-                HorizontalOptions="Start" 
-                VerticalOptions="Center">
-            </ImageButton>
         </Grid>
     </NavigationPage.TitleView>
 

@@ -23,7 +23,7 @@ namespace AChatFull
                 IconImageSource = "tab_call.png"
             };
 
-            var contacts = new NavigationPage(new ContactsPage())
+            var contacts = new NavigationPage(new ContactsPage(repo))
             {
                 Title = "Контакты",
                 IconImageSource = "tab_contacts.png"

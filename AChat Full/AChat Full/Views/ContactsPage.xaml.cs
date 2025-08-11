@@ -1,14 +1,35 @@
 ﻿using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
+using AChatFull.ViewModels;
 
 namespace AChatFull.Views
 {
-    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ContactsPage : ContentPage
     {
-        public ContactsPage()
+        public ContactsViewModel VM => BindingContext as ContactsViewModel;
+
+        public ContactsPage(ChatRepository repo)
         {
             InitializeComponent();
+            BindingContext = new ContactsViewModel(repo);
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            VM.IsSearchMode = false;   // гарантируем обычный режим при входе
+            await VM.LoadAsync();
+        }
+
+        private void OnSearchIconClicked(object sender, System.EventArgs e)
+        {
+            VM.IsSearchMode = true;
+            Device.BeginInvokeOnMainThread(() => SearchEntry?.Focus());
+        }
+
+        private void OnSearchBackClicked(object sender, System.EventArgs e)
+        {
+            VM.SearchText = string.Empty; // очистим фильтр
+            VM.IsSearchMode = false;
         }
     }
 }

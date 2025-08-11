@@ -97,6 +97,17 @@ namespace AChatFull.Views
              CultureInfo.InvariantCulture);
     }
 
+    [Table("Contacts")]
+    public class Contact
+    {
+        [PrimaryKey, AutoIncrement] public int Id { get; set; }
+        [Indexed] public string UserId { get; set; }
+        [Indexed] public string ContactId { get; set; }
+        public string DisplayName { get; set; }
+        public long LastSeenUnix { get; set; } // Unix time
+        public string AvatarUrl { get; set; }
+    }
+
     /// <summary>
     /// Репозиторий для работы с SQLite-базой чатов
     /// </summary>
@@ -109,6 +120,58 @@ namespace AChatFull.Views
         {
             _db = new SQLiteAsyncConnection(dbPath);
             _currentUserId = currentUserId;
+        }
+
+        /// <summary>
+        /// Убедиться, что таблица Contacts создана
+        /// </summary>
+        public Task EnsureContactsTableAsync()
+        {
+            return _db.CreateTableAsync<Contact>();
+        }
+
+        /// <summary>
+        /// Добавляет или обновляет контакт текущего пользователя
+        /// </summary>
+        public async Task AddOrUpdateContactAsync(Contact c)
+        {
+            await EnsureContactsTableAsync();
+            var existing = await _db.Table<Contact>()
+                .Where(x => x.UserId == _currentUserId && x.ContactId == c.ContactId)
+                .FirstOrDefaultAsync();
+            if (existing == null)
+            {
+                c.UserId = _currentUserId;
+                await _db.InsertAsync(c);
+            }
+            else
+            {
+                existing.DisplayName = c.DisplayName;
+                existing.LastSeenUnix = c.LastSeenUnix;
+                existing.AvatarUrl = c.AvatarUrl;
+                await _db.UpdateAsync(existing);
+            }
+        }
+
+        public async Task<List<Contact>> GetContactsAsync(string search = null, string sort = "name")
+        {
+            await EnsureContactsTableAsync();
+            var q = _db.Table<Contact>().Where(x => x.UserId == _currentUserId);
+            var list = await q.ToListAsync();
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var s = search.Trim().ToLowerInvariant();
+                list = list.Where(x => (x.DisplayName ?? "").ToLowerInvariant().Contains(s)).ToList();
+            }
+            if (sort == "lastseen")
+            {
+                list = list.OrderByDescending(x => x.LastSeenUnix).ThenBy(x => x.DisplayName).ToList();
+            }
+            else
+            {
+                list = list.OrderBy(x => x.DisplayName).ThenByDescending(x => x.LastSeenUnix).ToList();
+            }
+            return list;
         }
 
         /// <summary>
