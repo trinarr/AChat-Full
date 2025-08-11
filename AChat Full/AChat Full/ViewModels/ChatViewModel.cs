@@ -19,6 +19,7 @@ namespace AChatFull.ViewModels
         private readonly ChatRepository _repo;
         private readonly string _chatId;
         private readonly string _currentUserId;
+        private readonly bool _useDocumentPlaceholders = true;
 
         private readonly IChatTransport _transport;
         private readonly IFileService _files;
@@ -103,7 +104,7 @@ namespace AChatFull.ViewModels
                 SenderId = senderId,
                 CreatedAt = ts,
                 //IsRead = false,
-                Kind = (int)MessageKind.Document,
+                Type = (int)MessageKind.Document,
                 FileName = fileName,
                 FileSize = fileSize,
                 MimeType = mime,
@@ -149,55 +150,34 @@ namespace AChatFull.ViewModels
 
         private async Task PickAndSendDocumentAsync()
         {
-            try
+            if (_repo == null) throw new InvalidOperationException("_repo is null");
+            if (Messages == null) throw new InvalidOperationException("Messages is null");
+
+            // 1) выбрать файл (только чтобы взять имя; поток не открываем)
+            var picked = await FilePicker.PickAsync(new PickOptions { PickerTitle = "Выберите документ" });
+            if (picked == null) return;
+
+            var fileName = string.IsNullOrWhiteSpace(picked.FileName) ? "Документ" : picked.FileName;
+
+            if (_useDocumentPlaceholders)
             {
-                var picked = await FilePicker.PickAsync(new PickOptions { PickerTitle = "Выберите документ" });
-                if (picked == null) return;
-
-                // метаданные
-                var fileName = picked.FileName;
-                var contentType = picked.ContentType; // может быть null на части устройств
-                long size = 0;
-                string remoteUrl = null;
-
-                using (var s = await picked.OpenReadAsync())
-                {
-                    // Если поток поддерживает Length — возьмём размер
-                    if (s.CanSeek)
-                        size = s.Length;
-
-                    // при необходимости можно сбросить позицию:
-                    // if (s.CanSeek) s.Position = 0;
-
-                    var progress = new Progress<double>(p =>
-                    {
-                        // обновляйте прогресс активного сообщения при желании
-                    });
-
-                    remoteUrl = await _files.UploadAsync(
-                        s,              // сам поток файла
-                        fileName,
-                        contentType,
-                        progress,
-                        CancellationToken.None);
-                }
-
-                // сохраняем как сообщение-документ
+                // 2) сохраняем «пустой» документ в БД (без размера/URL)
                 var msg = new Message
                 {
                     ChatId = _chatId,
                     SenderId = _currentUserId,
                     CreatedAt = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
                     //IsRead = true,
-                    Kind = (int)MessageKind.Document,
+                    Type = (int)MessageKind.Document,
                     FileName = fileName,
-                    FileSize = size,
-                    MimeType = contentType,
-                    RemoteUrl = remoteUrl,
+                    FileSize = 0,                       // неизвестно
+                    MimeType = null,
+                    RemoteUrl = null,                    // нет ссылки
                     LocalPath = null
                 };
                 await _repo.InsertMessageAsync(msg);
 
+                // 3) добавляем плейсхолдер в UI
                 var vmMsg = new ChatMessage
                 {
                     Kind = MessageKind.Document,
@@ -206,27 +186,118 @@ namespace AChatFull.ViewModels
                     Document = new DocumentInfo
                     {
                         FileName = fileName,
+                        FileSize = 0,               // для конвертера «размер неизвестен»
+                        MimeType = null,
+                        RemoteUrl = null,
+                        LocalPath = null,
+                        IsDownloaded = false,
+                        IsDownloading = false,
+                        Progress = 0
+                    }
+                };
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    Messages.Add(vmMsg);
+                    MessagingCenter.Send(this, "ScrollToEnd");
+                });
+
+                // 4) НИЧЕГО НЕ ОТПРАВЛЯЕМ на сервер и НЕ ЧИТАЕМ поток
+                return;
+
+                /*try
+                {
+                    var picked = await FilePicker.PickAsync(new PickOptions { PickerTitle = "Выберите документ" });
+                    if (picked == null) return;
+
+                    // метаданные
+                    var fileName = picked.FileName;
+                    var contentType = picked.ContentType; // может быть null на части устройств
+                    long size = 0;
+                    string remoteUrl = null;
+
+                    using (var s = await picked.OpenReadAsync())
+                    {
+                        // Если поток поддерживает Length — возьмём размер
+                        if (s.CanSeek)
+                            size = s.Length;
+
+                        // при необходимости можно сбросить позицию:
+                        // if (s.CanSeek) s.Position = 0;
+
+                        var progress = new Progress<double>(p =>
+                        {
+                            // обновляйте прогресс активного сообщения при желании
+                        });
+
+                        remoteUrl = await _files.UploadAsync(
+                            s,              // сам поток файла
+                            fileName,
+                            contentType,
+                            progress,
+                            CancellationToken.None);
+                    }
+
+                    // сохраняем как сообщение-документ
+                    var msg = new Message
+                    {
+                        ChatId = _chatId,
+                        SenderId = _currentUserId,
+                        CreatedAt = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
+                        //IsRead = true,
+                        Kind = (int)MessageKind.Document,
+                        FileName = fileName,
                         FileSize = size,
                         MimeType = contentType,
                         RemoteUrl = remoteUrl,
-                        LocalPath = null,
-                        IsDownloaded = false
-                    }
-                };
-                Messages.Add(vmMsg);
+                        LocalPath = null
+                    };
+                    await _repo.InsertMessageAsync(msg);
 
-                // оповестим собеседника (SignalR)
-                _ = _transport.SendDocumentAsync(_chatId, remoteUrl, fileName, size, contentType);
-            }
-            catch (Exception ex)
-            {
-                // TODO: показать alert/log
+                    var vmMsg = new ChatMessage
+                    {
+                        Kind = MessageKind.Document,
+                        IsIncoming = false,
+                        Timestamp = msg.CreatedAtDate,
+                        Document = new DocumentInfo
+                        {
+                            FileName = fileName,
+                            FileSize = size,
+                            MimeType = contentType,
+                            RemoteUrl = remoteUrl,
+                            LocalPath = null,
+                            IsDownloaded = false
+                        }
+                    };
+                    Messages.Add(vmMsg);
+
+                    // оповестим собеседника (SignalR)
+                    _ = _transport.SendDocumentAsync(_chatId, remoteUrl, fileName, size, contentType);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("TESTLOG PickAndSendDocumentAsync "+ex.Message+" " + ex.StackTrace);
+                    // TODO: показать alert/log
+                }*/
             }
         }
 
         private async Task DownloadDocumentAsync(ChatMessage msg)
         {
-            if (msg?.Document == null || string.IsNullOrEmpty(msg.Document.RemoteUrl)) return;
+            if (msg == null || msg.Document == null)
+                return;
+
+            if (string.IsNullOrEmpty(msg.Document.RemoteUrl))
+            {
+                await Application.Current.MainPage.DisplayAlert(
+                    "Файл недоступен",
+                    "Этот документ пока как заглушка и ещё не загружен на сервер.",
+                    "ОК");
+                return;
+            }
+
+            //if (msg?.Document == null || string.IsNullOrEmpty(msg.Document.RemoteUrl)) return;
+
             if (msg.Document.IsDownloaded) { await OpenDocumentAsync(msg); return; }
 
             msg.Document.IsDownloading = true;

@@ -82,7 +82,7 @@ namespace AChatFull.Views
         //public bool IsRead { get; set; }
 
         // NEW:
-        public int Kind { get; set; }                 // 0=Text, 1=Document
+        public int Type { get; set; }                 // 0=Text, 1=Document
         public string FileName { get; set; }
         public long FileSize { get; set; }
         public string MimeType { get; set; }

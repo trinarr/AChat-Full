@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using AChatFull.Views;
 using Xamarin.Forms;
 
 namespace AChatFull.Utils
@@ -32,6 +33,10 @@ namespace AChatFull.Utils
     {
         public object Convert(object v, Type t, object p, CultureInfo c)
         {
+            var hasUrl = false;
+            if (p as string == "fromMsg" && v is ChatMessage m && m.Document != null)
+                hasUrl = !string.IsNullOrEmpty(m.Document.RemoteUrl);
+
             if (v is long b)
             {
                 string[] units = { "Б", "КБ", "МБ", "ГБ" };
@@ -39,7 +44,8 @@ namespace AChatFull.Utils
                 while (s >= 1024 && i < units.Length - 1) { s /= 1024; i++; }
                 return $"{s:0.#} {units[i]}";
             }
-            return "";
+
+            return "Размер неизвестен";
         }
         public object ConvertBack(object v, Type t, object p, CultureInfo c) => throw new NotSupportedException();
     }
@@ -53,5 +59,47 @@ namespace AChatFull.Utils
             return (value is bool b && b) ? parts[0] : (parts.Length > 1 ? parts[1] : parts[0]);
         }
         public object ConvertBack(object v, Type t, object p, CultureInfo c) => throw new NotSupportedException();
+    }
+
+    public class BoolToHorzOptionsConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var incoming = value is bool b && b;
+            // true = входящее (слева), false = исходящее (справа)
+            return incoming ? LayoutOptions.Start : LayoutOptions.End;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotSupportedException();
+    }
+
+    public class IncomingBgConverter : IValueConverter
+    {
+        // Можно переопределить через XAML сеттерами, если захотите другие цвета
+        public Color IncomingColor { get; set; } = Color.FromHex("#f5f5f5"); // серый
+        public Color OutgoingColor { get; set; } = Color.FromHex("#0084FF"); // синий
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var incoming = value is bool b && b;
+            return incoming ? IncomingColor : OutgoingColor;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotSupportedException();
+    }
+
+    public class IncomingTextColorConverter : IValueConverter
+    {
+        public Color IncomingText { get; set; } = Color.Black;
+        public Color OutgoingText { get; set; } = Color.White;
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var incoming = value is bool b && b;
+            return incoming ? IncomingText : OutgoingText;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotSupportedException();
     }
 }

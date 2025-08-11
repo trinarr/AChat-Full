@@ -1,8 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:conv="clr-namespace:AChatFull.Utils;assembly=AChatFull"
              x:Class="AChatFull.App">
     <Application.Resources>
-
+        <ResourceDictionary>
+            <conv:IncomingBgConverter x:Key="IncomingBgConverter" />
+            <conv:IncomingTextColorConverter x:Key="IncomingTextColorConverter" />
+            <conv:BoolToHorzOptionsConverter x:Key="BoolToHorzOptionsConverter" />
+            <conv:EqualConverter x:Key="EqualConverter" />
+            <conv:InverseBoolConverter x:Key="InverseBoolConverter" />
+            <conv:FileSizeConverter x:Key="FileSizeConverter" />
+            <conv:BoolToTextConverter x:Key="BoolToTextConverter" />
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -5,6 +5,7 @@
     xmlns:vm="clr-namespace:AChatFull.Views"
     xmlns:conv="clr-namespace:AChatFull.Utils"
     x:Class="AChatFull.Views.ChatPage"
+    x:Name="PageRoot"
     BackgroundColor="White">
 
     <!-- Регистрируем локально InverseBoolConverter -->
@@ -75,38 +76,40 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="vm:ChatMessage">
                     <Grid Padding="8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Входящее (слева) -->
-                        <Frame
-              Grid.Column="0"
-              BackgroundColor="#f5f5f5"
-              Padding="10"
-              HasShadow="False"
-              CornerRadius="8"
-              IsVisible="{Binding IsIncoming}"
-              HorizontalOptions="Start">
-                            <Label
-                Text="{Binding Text}"
-                TextColor="Black" />
+                        <!-- Текст -->
+                        <Frame Padding="10" CornerRadius="8" HasShadow="False"
+             IsVisible="{Binding Kind, Converter={StaticResource EqualConverter}, ConverterParameter=Text}"
+             HorizontalOptions="{Binding IsIncoming, Converter={StaticResource BoolToHorzOptionsConverter}}"
+             BackgroundColor="{Binding IsIncoming, Converter={StaticResource IncomingBgConverter}}">
+                            <Label Text="{Binding Text}" TextColor="{Binding IsIncoming, Converter={StaticResource IncomingTextColorConverter}}"
+               LineBreakMode="WordWrap"/>
                         </Frame>
 
-                        <!-- Исходящее (справа) -->
-                        <Frame
-              Grid.Column="2"
-              BackgroundColor="#0084FF"
-              Padding="10"
-              HasShadow="False"
-              CornerRadius="8"
-              IsVisible="{Binding IsIncoming, Converter={StaticResource InverseBoolConverter}}"
-              HorizontalOptions="End">
-                            <Label
-                Text="{Binding Text}"
-                TextColor="White" />
+                        <!-- Документ -->
+                        <Frame Padding="10" CornerRadius="8" HasShadow="False"
+             IsVisible="{Binding Kind, Converter={StaticResource EqualConverter}, ConverterParameter=Document}"
+             HorizontalOptions="{Binding IsIncoming, Converter={StaticResource BoolToHorzOptionsConverter}}"
+             BackgroundColor="{Binding IsIncoming, Converter={StaticResource IncomingBgConverter}}">
+                            <Grid ColumnDefinitions="Auto,* ,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8">
+                                <!-- иконка файла -->
+                                <Image Grid.RowSpan="2" Grid.Column="0" Source="attachment.png" WidthRequest="24" HeightRequest="24" />
+
+                                <!-- название -->
+                                <Label Grid.Column="1" Grid.Row="0" Text="{Binding Document.FileName}" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
+                                <!-- размер -->
+                                <Label Grid.Column="1" Grid.Row="1" Text="{Binding Document.FileSize, Converter={StaticResource FileSizeConverter}}" FontSize="Small" TextColor="Gray"/>
+
+                                <!-- кнопка -->
+                                <Button Grid.Column="2" Grid.RowSpan="2"
+                  Text="{Binding Document.IsDownloaded, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Открыть|Скачать'}"
+                   Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.OpenDocumentCommand}"
+                  CommandParameter="{Binding}" />
+
+                                <!-- прогресс -->
+                                <ProgressBar Grid.ColumnSpan="3" Grid.Row="2" Margin="0,8,0,0"
+                       IsVisible="{Binding Document.IsDownloading}"
+                       Progress="{Binding Document.Progress}" />
+                            </Grid>
                         </Frame>
                     </Grid>
                 </DataTemplate>
@@ -127,7 +130,7 @@
 
             <!-- скрепка -->
             <ImageButton Grid.Column="0"
-               Source="ic_attach.png"
+               Source="attach_file.png"
                BackgroundColor="Transparent"
                Command="{Binding AttachDocumentCommand}"
                WidthRequest="28" HeightRequest="28" />
