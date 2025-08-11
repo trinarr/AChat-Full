@@ -1,5 +1,8 @@
 ﻿using Xamarin.Forms;
 using AChatFull.Views;
+using Xamarin.Essentials;
+using System;
+using System.Threading.Tasks;
 
 namespace AChatFull
 {
@@ -7,32 +10,79 @@ namespace AChatFull
     {
         public static string USER_TOKEN_TEST = "user1";
 
+        // Грейс‑период (сек), в течение которого не спрашиваем PIN после быстрого свитча
+        const int LockGraceSeconds = 0; // поставь 10–30, если нужно
+
+        static bool _lockShown;        // чтобы не открыть PinPage дважды
+        static DateTime _lastSleepUtc; // когда ушли в фон
+
         public App()
         {
             InitializeComponent();
-
-            InitAsync();
-
+            MainPage = new ContentPage { Content = new ActivityIndicator { IsRunning = true, VerticalOptions = LayoutOptions.Center, HorizontalOptions = LayoutOptions.Center } };
+            _ = InitAsync();
         }
 
-        private async void InitAsync()
+        private async Task InitAsync()
         {
-            var dbPath = await Utils.PreloadDatabase.GetDatabasePathAsync();
+            var pin = await SecureStorage.GetAsync("user_pin");
+            var bio = (await SecureStorage.GetAsync("bio_enabled")) == "1";
 
-            var repo = new ChatRepository(dbPath, USER_TOKEN_TEST);
-            Current.MainPage = new MainTabsPage(USER_TOKEN_TEST, repo);
-        }
-
-        protected override void OnStart()
-        {
+            if (string.IsNullOrEmpty(pin))
+                MainPage = new NavigationPage(new PinPage(isFirstRun: true, biometricsEnabled: false, OnPinSuccess));
+            else
+                MainPage = new NavigationPage(new PinPage(isFirstRun: false, biometricsEnabled: true, OnPinSuccess));
         }
 
         protected override void OnSleep()
         {
+            _lastSleepUtc = DateTime.UtcNow;
         }
 
-        protected override void OnResume()
+        protected override async void OnResume()
         {
+            // если нет PIN — ничего не делаем
+            var pin = await SecureStorage.GetAsync("user_pin");
+            if (string.IsNullOrEmpty(pin)) return;
+
+            // грейс‑период
+            if ((DateTime.UtcNow - _lastSleepUtc).TotalSeconds < LockGraceSeconds) return;
+
+            await ShowLockAsync();
+        }
+
+        // Унифицированный показ PinPage как МОДАЛКИ
+        public static async Task ShowLockAsync()
+        {
+            if (_lockShown) return;
+            _lockShown = true;
+
+            var bio = (await SecureStorage.GetAsync("bio_enabled")) == "1";
+
+            var nav = Current?.MainPage?.Navigation;
+            if (nav == null) { _lockShown = false; return; }
+
+            // объявим переменную заранее — понадобится в колбэке
+            PinPage pinPage = null;
+
+            pinPage = new PinPage(isFirstRun: false, biometricsEnabled: bio, onSuccess: async () =>
+            {
+                // закрываем модалку
+                await Device.InvokeOnMainThreadAsync(async () => await nav.PopModalAsync());
+                _lockShown = false;
+            });
+
+            // ПУШИМ ИМЕННО pinPage (без NavigationPage-обёртки)
+            await nav.PushModalAsync(pinPage, animated: true);
+        }
+
+        // Колбэк для первого запуска (когда MainPage = PinPage)
+        private async Task OnPinSuccess()
+        {
+            var dbPath = await Utils.PreloadDatabase.GetDatabasePathAsync();
+
+            var repo = new ChatRepository(dbPath, App.USER_TOKEN_TEST);
+            App.Current.MainPage = new MainTabsPage(App.USER_TOKEN_TEST, repo);
         }
     }
 }

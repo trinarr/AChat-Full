@@ -61,6 +61,9 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client">
       <Version>9.0.7</Version>
     </PackageReference>
+    <PackageReference Include="Plugin.Fingerprint">
+      <Version>2.1.5</Version>
+    </PackageReference>
     <PackageReference Include="sqlite-net-pcl">
       <Version>1.9.172</Version>
     </PackageReference>
@@ -90,10 +93,10 @@
     <AndroidResource Include="..\AChat Full\Resources\Icons\attach_file.png">
       <Link>Resources\drawable\attach_file.png</Link>
     </AndroidResource>
-	<AndroidResource Include="..\AChat Full\Resources\Icons\arrow_back.svg">
+    <AndroidResource Include="..\AChat Full\Resources\Icons\arrow_back.svg">
       <Link>Resources\drawable\arrow_back.svg</Link>
     </AndroidResource>
-	<AndroidResource Include="..\AChat Full\Resources\Icons\arrow_back.png">
+    <AndroidResource Include="..\AChat Full\Resources\Icons\arrow_back.png">
       <Link>Resources\drawable\arrow_back.png</Link>
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\search.png">

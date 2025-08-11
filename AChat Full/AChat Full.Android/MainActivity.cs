@@ -2,6 +2,8 @@
 using Android.Content.PM;
 using Android.Runtime;
 using Android.OS;
+using Xamarin.Essentials;
+using Plugin.Fingerprint;
 
 namespace AChatFull.Droid
 {
@@ -21,6 +23,8 @@ namespace AChatFull.Droid
 
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init(enableFastRenderer: true);
             FFImageLoading.Svg.Forms.SvgCachedImage.Init();
+
+            CrossFingerprint.SetCurrentActivityResolver(() => Platform.CurrentActivity);
 
             LoadApplication(new App());
         }
