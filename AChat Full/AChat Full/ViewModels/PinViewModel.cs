@@ -14,24 +14,21 @@ namespace AChatFull.ViewModels
 
     public class PinViewModel : INotifyPropertyChanged
     {
-        // ===== INotifyPropertyChanged =====
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string name = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        // ===== Константы ключей =====
         private const string PinKey = "user_pin";
         private const string BioKey = "bio_enabled"; // "1" / "0"
 
-        // ===== Внутреннее состояние =====
         private readonly Func<Task> _onSuccess;
         private string _entered = string.Empty;
         private string _firstPin = null;
         private PinMode _mode;
         private string _titleText;
         private bool _biometricsEnabled;
+        private bool _bioBusy;
 
-        // ===== Публичные свойства для биндингов =====
         public PinMode Mode
         {
             get => _mode;
@@ -44,24 +41,35 @@ namespace AChatFull.ViewModels
             private set { if (_titleText != value) { _titleText = value; OnPropertyChanged(); } }
         }
 
+        private bool _showBiometricButton;
+        public bool ShowBiometricButton
+        {
+            get => _showBiometricButton;
+            private set
+            {
+                if (_showBiometricButton != value)
+                {
+                    _showBiometricButton = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public bool BiometricsEnabled
         {
             get => _biometricsEnabled;
             private set { if (_biometricsEnabled != value) { _biometricsEnabled = value; OnPropertyChanged(); } }
         }
 
-        // Индикаторы-точки
         public bool Dot1 => _entered.Length > 0;
         public bool Dot2 => _entered.Length > 1;
         public bool Dot3 => _entered.Length > 2;
         public bool Dot4 => _entered.Length > 3;
 
-        // Команды клавиатуры
         public ICommand NumberCommand { get; }
         public ICommand DeleteCommand { get; }
         public ICommand BiometricsCommand { get; }
 
-        // ===== Конструктор =====
         public PinViewModel(bool isFirstRun, bool biometricsEnabled, Func<Task> onSuccess)
         {
             _onSuccess = onSuccess ?? (() => Task.CompletedTask);
@@ -69,17 +77,18 @@ namespace AChatFull.ViewModels
             Mode = isFirstRun ? PinMode.Create : PinMode.Verify;
             TitleText = isFirstRun ? "Придумайте PIN‑код" : "Введите PIN‑код";
             BiometricsEnabled = biometricsEnabled;
+            ShowBiometricButton = biometricsEnabled; // показывать кнопку только если разрешено
 
             NumberCommand = new Command<string>(OnNumber);
             DeleteCommand = new Command(OnDelete);
-            BiometricsCommand = new Command(async () => await TryBiometricsAsync());
+            // Кнопка слева внизу — всегда форсирует показ диалога
+            BiometricsCommand = new Command(async () => await TryBiometricsAsync(force: true));
 
-            // Если это не первый запуск и биометрия уже разрешена — можно сразу попытаться
+            // Автозапуск при обычном входе (если включено в настройках)
             if (!isFirstRun && biometricsEnabled)
-                Device.BeginInvokeOnMainThread(async () => await TryBiometricsAsync());
+                Device.BeginInvokeOnMainThread(async () => await TryBiometricsAsync(force: false));
         }
 
-        // ===== Обработка ввода =====
         private void OnNumber(string num)
         {
             if (string.IsNullOrEmpty(num)) return;
@@ -107,7 +116,6 @@ namespace AChatFull.ViewModels
             OnPropertyChanged(nameof(Dot4));
         }
 
-        // ===== Основная логика состояний =====
         private async Task ProcessPinAsync()
         {
             switch (Mode)
@@ -127,9 +135,7 @@ namespace AChatFull.ViewModels
                         _entered = string.Empty;
                         RaiseDots();
 
-                        // спросим про биометрию один раз
                         await AskBiometricsPermissionAsync();
-
                         await _onSuccess();
                     }
                     else
@@ -167,29 +173,47 @@ namespace AChatFull.ViewModels
             RaiseDots();
         }
 
-        // ===== Биометрия =====
-        private async Task TryBiometricsAsync()
+        private async Task TryBiometricsAsync(bool force)
         {
-            // Биометрию показываем только если разрешена настройкой и доступна на устройстве
-            if (!BiometricsEnabled) return;
-
-            var available = await CrossFingerprint.Current.IsAvailableAsync(true);
-            if (!available) return;
-
-            var result = await CrossFingerprint.Current.AuthenticateAsync(
-                new AuthenticationRequestConfiguration("Вход", "Подтвердите по отпечатку"));
-
-            if (result.Authenticated)
+            if (_bioBusy) return;
+            _bioBusy = true;
+            try
             {
-                _entered = string.Empty;
-                RaiseDots();
-                await _onSuccess();
+                // есть ли вообще биометрия на устройстве
+                var available = await CrossFingerprint.Current.IsAvailableAsync(true);
+                if (!available)
+                {
+                    await Application.Current.MainPage.DisplayAlert(
+                        "Биометрия недоступна",
+                        "На устройстве не настроен отпечаток/FaceID.",
+                        "OK");
+                    return;
+                }
+
+                // если вызов НЕ форсируемый и пользователь её отключил — выходим
+                if (!force && !BiometricsEnabled) return;
+
+                var cfg = new AuthenticationRequestConfiguration("Вход", "Подтвердите по отпечатку")
+                {
+                    // опционально:
+                    CancelTitle = "Отмена",
+                    FallbackTitle = "Использовать PIN"
+                };
+
+                var result = await CrossFingerprint.Current.AuthenticateAsync(cfg);
+                if (result.Authenticated)
+                {
+                    _entered = string.Empty;
+                    RaiseDots();
+                    await _onSuccess();
+                }
+                // если неуспех — просто остаёмся на экране PIN
             }
+            finally { _bioBusy = false; }
         }
 
         private async Task AskBiometricsPermissionAsync()
         {
-            // проверить наличие сенсора
             var available = await CrossFingerprint.Current.IsAvailableAsync(true);
             if (!available)
             {
@@ -202,6 +226,7 @@ namespace AChatFull.ViewModels
                 "Биометрия", "Включить вход по отпечатку пальца?", "Да", "Нет");
 
             BiometricsEnabled = allow;
+            ShowBiometricButton = allow;
             await SecureStorage.SetAsync(BioKey, allow ? "1" : "0");
         }
     }

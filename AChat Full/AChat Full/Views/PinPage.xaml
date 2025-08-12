@@ -93,11 +93,9 @@
 
             <!-- левый нижний — отпечаток -->
             <ImageButton Grid.Row="3" Grid.Column="0"
-                   Source="fingerprint.png"
-                   BackgroundColor="#33FFFFFF"
-                   CornerRadius="48"
-                   HeightRequest="96" WidthRequest="96"
-                   Command="{Binding FingerprintCommand}"/>
+             Source="fingerprint.png"
+             Command="{Binding BiometricsCommand}"
+             IsVisible="{Binding ShowBiometricButton}" />
 
             <!-- 0 -->
             <Button Text="0" Grid.Row="3" Grid.Column="1" Command="{Binding NumberCommand}" CommandParameter="0"/>
