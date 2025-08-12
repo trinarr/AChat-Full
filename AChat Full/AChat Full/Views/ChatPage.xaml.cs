@@ -92,6 +92,43 @@ namespace AChatFull.Views
             _ = _chatClient.ConnectAsync(userToken);*/
         }
 
+        private async void OnAudioCallClicked(object sender, EventArgs e)
+        {
+            bool answer = await DisplayAlert("Аудио-звонок", "Начать аудио-звонок?", "Да", "Отмена");
+            if (answer)
+            {
+                // Логика старта аудио
+            }
+        }
+
+        private async void OnVideoCallClicked(object sender, EventArgs e)
+        {
+            bool answer = await DisplayAlert("Видео-звонок", "Начать видео-звонок?", "Да", "Отмена");
+            if (answer)
+            {
+                // Логика старта видео
+            }
+        }
+
+        private async void OnMoreClicked(object sender, EventArgs e)
+        {
+            string action = await DisplayActionSheet("Меню", "Отмена", null,
+                "Просмотреть контакт", "Заблокировать", "Удалить чат");
+
+            switch (action)
+            {
+                case "Просмотреть контакт":
+                    // открыть инфо
+                    break;
+                case "Заблокировать":
+                    // блок
+                    break;
+                case "Удалить чат":
+                    // удалить
+                    break;
+            }
+        }
+
         protected override async void OnAppearing()
         {
             base.OnAppearing();

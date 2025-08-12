@@ -90,6 +90,15 @@
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
+  <AndroidResource Include="..\AChat Full\Resources\Icons\header_call.png">
+      <Link>Resources\drawable\header_call.png</Link>
+    </AndroidResource>
+  <AndroidResource Include="..\AChat Full\Resources\Icons\header_video.png">
+      <Link>Resources\drawable\header_video.png</Link>
+    </AndroidResource>
+  <AndroidResource Include="..\AChat Full\Resources\Icons\header_more.png">
+      <Link>Resources\drawable\header_more.png</Link>
+    </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\attach_file.png">
       <Link>Resources\drawable\attach_file.png</Link>
     </AndroidResource>

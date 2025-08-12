@@ -9,7 +9,6 @@
     x:Name="PageRoot"
     BackgroundColor="White">
 
-    <!-- Регистрируем локально InverseBoolConverter -->
     <ContentPage.Resources>
         <ResourceDictionary>
             <conv:InverseBoolConverter x:Key="InverseBoolConverter" />
@@ -20,10 +19,16 @@
         <Grid Padding="0" RowSpacing="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
+                <!-- Стрелка -->
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*" />
+                <!-- Аватар -->
+                <ColumnDefinition Width="*"/>
+                <!-- Имя + статус -->
+                <ColumnDefinition Width="Auto"/>
+                <!-- Иконки справа -->
             </Grid.ColumnDefinitions>
-            <!-- 2 строки для текста -->
+
+            <!-- 2 строки -->
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -78,6 +83,36 @@
         TextColor="White"
         FontSize="Small"
         VerticalOptions="Start" />
+
+            <!-- Иконки справа -->
+            <StackLayout Grid.Column="3"
+                     Grid.RowSpan="2"
+                     Orientation="Horizontal"
+                     Spacing="20"
+                     HorizontalOptions="End"
+                     VerticalOptions="Center">
+
+                <!-- Аудио -->
+                <ImageButton Source="header_call.png"
+                         BackgroundColor="Transparent"
+                         HeightRequest="24"
+                         WidthRequest="24"
+                         Clicked="OnAudioCallClicked" />
+
+                <!-- Видео -->
+                <ImageButton Source="header_video.png"
+                         BackgroundColor="Transparent"
+                         HeightRequest="24"
+                         WidthRequest="24"
+                         Clicked="OnVideoCallClicked" />
+
+                <!-- Три точки -->
+                <ImageButton Source="header_more.png"
+                         BackgroundColor="Transparent"
+                         HeightRequest="24"
+                         WidthRequest="24"
+                         Clicked="OnMoreClicked" />
+            </StackLayout>
         </Grid>
     </NavigationPage.TitleView>
 

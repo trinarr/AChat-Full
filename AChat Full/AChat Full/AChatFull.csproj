@@ -18,6 +18,9 @@
     <None Remove="Resources\ChatDB.db" />
     <None Remove="Resources\Icons\arrow_back.svg" />
     <None Remove="Resources\Icons\attach_file.png" />
+    <None Remove="Resources\Icons\header_call.png" />
+    <None Remove="Resources\Icons\header_more.png" />
+    <None Remove="Resources\Icons\header_video.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -72,5 +75,8 @@
 	<EmbeddedResource Include="Resources\Icons\attach_file.png" />
 	<EmbeddedResource Include="Resources\Icons\arrow_back.svg" />
 	<EmbeddedResource Include="Resources\Icons\arrow_back.png" />
+	<EmbeddedResource Include="Resources\Icons\header_call.png" />
+	<EmbeddedResource Include="Resources\Icons\header_more.png" />
+	<EmbeddedResource Include="Resources\Icons\header_video.png" />
   </ItemGroup>
 </Project>

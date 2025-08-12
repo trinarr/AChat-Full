@@ -10,11 +10,11 @@ namespace AChatFull
     {
         public static string USER_TOKEN_TEST = "user1";
 
-        // Грейс‑период (сек), в течение которого не спрашиваем PIN после быстрого свитча
-        const int LockGraceSeconds = 0; // поставь 10–30, если нужно
+        // период (сек), в течение которого не спрашиваем PIN после быстрого свитча
+        const int LockGraceSeconds = 10; 
 
-        static bool _lockShown;        // чтобы не открыть PinPage дважды
-        static DateTime _lastSleepUtc; // когда ушли в фон
+        static bool _lockShown;       
+        static DateTime _lastSleepUtc; 
 
         public App()
         {
