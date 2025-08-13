@@ -29,6 +29,39 @@ namespace AChatFull.ViewModels
         private bool _biometricsEnabled;
         private bool _bioBusy;
 
+        private bool _isProcessing;
+        public bool IsProcessing
+        {
+            get => _isProcessing;
+            private set
+            {
+                if (_isProcessing != value)
+                {
+                    _isProcessing = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(IsInputEnabled));
+                }
+            }
+        }
+
+        private bool _isLocked;
+        public bool IsLocked
+        {
+            get => _isLocked;
+            private set
+            {
+                if (_isLocked != value)
+                {
+                    _isLocked = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(IsInputEnabled));
+                }
+            }
+        }
+
+        // Удобно биндить на клавиатуру и кнопки
+        public bool IsInputEnabled => !_isProcessing && !_isLocked;
+
         public PinMode Mode
         {
             get => _mode;
@@ -91,6 +124,7 @@ namespace AChatFull.ViewModels
 
         private void OnNumber(string num)
         {
+            if (!IsInputEnabled) return;
             if (string.IsNullOrEmpty(num)) return;
             if (_entered.Length >= 4) return;
 
@@ -103,6 +137,7 @@ namespace AChatFull.ViewModels
 
         private void OnDelete()
         {
+            if (!IsInputEnabled) return;
             if (_entered.Length == 0) return;
             _entered = _entered.Substring(0, _entered.Length - 1);
             RaiseDots();
@@ -136,11 +171,16 @@ namespace AChatFull.ViewModels
                         RaiseDots();
 
                         await AskBiometricsPermissionAsync();
+
+                        IsLocked = true;
+                        IsProcessing = true;
+
                         await _onSuccess();
                     }
                     else
                     {
-                        await Application.Current.MainPage.DisplayAlert("Ошибка",
+                        await Application.Current.MainPage.DisplayAlert(
+                            "Ошибка",
                             "PIN‑коды не совпадают. Придумайте новый.", "OK");
                         ResetToCreate();
                     }
@@ -152,6 +192,11 @@ namespace AChatFull.ViewModels
                     {
                         _entered = string.Empty;
                         RaiseDots();
+
+                        IsLocked = true;
+                        IsProcessing = true;
+                        await Task.Yield();
+
                         await _onSuccess();
                     }
                     else
@@ -205,6 +250,9 @@ namespace AChatFull.ViewModels
                 {
                     _entered = string.Empty;
                     RaiseDots();
+                    IsLocked = true;
+                    IsProcessing = true;
+
                     await _onSuccess();
                 }
                 // если неуспех — просто остаёмся на экране PIN

@@ -59,6 +59,11 @@
 
         <!-- Точки PIN -->
         <Grid Grid.Row="2" ColumnSpacing="14" HorizontalOptions="Center">
+            <Grid.Triggers>
+                <DataTrigger TargetType="Grid" Binding="{Binding IsProcessing}" Value="True">
+                    <Setter Property="IsVisible" Value="False"/>
+                </DataTrigger>
+            </Grid.Triggers>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
@@ -100,8 +105,16 @@
             </BoxView>
         </Grid>
 
+        <!-- Крутилка поверх точек -->
+        <ActivityIndicator Grid.Row="2"
+                   IsRunning="{Binding IsProcessing}"
+                   IsVisible="{Binding IsProcessing}"
+                   WidthRequest="24" HeightRequest="24"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"/>
+
         <!-- Клавиатура у нижнего края (Row=4), компактная -->
-        <Grid Grid.Row="4" RowSpacing="18" ColumnSpacing="18" VerticalOptions="End">
+        <Grid Grid.Row="4" RowSpacing="18" ColumnSpacing="18" VerticalOptions="End" IsEnabled="{Binding IsInputEnabled}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
