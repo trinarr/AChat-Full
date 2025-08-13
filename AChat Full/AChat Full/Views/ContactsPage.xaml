@@ -91,14 +91,15 @@
                          TextColor="#333"/>
                                 </Grid>
                             </Frame>
-                            <Grid Grid.Column="1"
-                    RowDefinitions="Auto,Auto"
-                    MinimumHeightRequest="48"
-                    VerticalOptions="Center">
+
+                            <StackLayout 
+                                Grid.Column="1" 
+                                Spacing="2"
+                                VerticalOptions="Center">
                                 <Label Grid.Row="0"
                        Text="{Binding DisplayName}"
                        FontAttributes="Bold"
-                       FontSize="Medium"
+                       FontSize="18"
                        TextColor="#000"
                        VerticalOptions="Center">
                                     <Label.Triggers>
@@ -112,8 +113,8 @@
                        FontSize="Small"
                        TextColor="#777"
                        IsVisible="{Binding HasStatus}" />
-                            </Grid>
-                            <Grid Grid.ColumnSpan="2">
+                                </StackLayout>
+                                <Grid Grid.ColumnSpan="2">
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding BindingContext.OpenChatCommand, Source={x:Reference ThisPage}}"
                                         CommandParameter="{Binding .}"/>
@@ -170,14 +171,14 @@
                                 </Grid>
                             </Frame>
 
-                            <Grid Grid.Column="1"
-                    RowDefinitions="Auto,Auto"
-                    MinimumHeightRequest="48"
-                    VerticalOptions="Center">
+                            <StackLayout 
+                                Grid.Column="1" 
+                                Spacing="2"
+                                VerticalOptions="Center">
                                 <Label Grid.Row="0"
                        Text="{Binding DisplayName}"
                        FontAttributes="Bold"
-                       FontSize="Medium"
+                       FontSize="18"
                        TextColor="#000"
                        VerticalOptions="Center">
                                     <Label.Triggers>
@@ -186,13 +187,12 @@
                                         </DataTrigger>
                                     </Label.Triggers>
                                 </Label>
-
                                 <Label Grid.Row="1"
                        Text="{Binding DisplayStatus}"
                        FontSize="Small"
                        TextColor="#777"
                        IsVisible="{Binding HasStatus}" />
-                            </Grid>
+                            </StackLayout>
                             <Grid Grid.ColumnSpan="2">
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding BindingContext.OpenChatCommand, Source={x:Reference ThisPage}}"

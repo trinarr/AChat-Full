@@ -108,7 +108,7 @@
                                 <Label
                                     Text="{Binding Title}"
                                     FontAttributes="Bold"
-                                    FontSize="Medium" 
+                                    FontSize="18"
                                     TextColor="#000" />
                                 <Label
                                     Text="{Binding LastMessage}"
