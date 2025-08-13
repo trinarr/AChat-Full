@@ -235,12 +235,10 @@ namespace AChatFull.ViewModels
                     return;
                 }
 
-                // если вызов НЕ форсируемый и пользователь её отключил — выходим
                 if (!force && !BiometricsEnabled) return;
 
                 var cfg = new AuthenticationRequestConfiguration("Вход", "Подтвердите по отпечатку")
                 {
-                    // опционально:
                     CancelTitle = "Отмена",
                     FallbackTitle = "Использовать PIN"
                 };
@@ -252,10 +250,10 @@ namespace AChatFull.ViewModels
                     RaiseDots();
                     IsLocked = true;
                     IsProcessing = true;
+                    await Task.Yield();
 
                     await _onSuccess();
                 }
-                // если неуспех — просто остаёмся на экране PIN
             }
             finally { _bioBusy = false; }
         }
