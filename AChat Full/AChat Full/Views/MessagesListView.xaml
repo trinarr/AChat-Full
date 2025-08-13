@@ -6,80 +6,146 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:viewtypes="clr-namespace:AChatFull.Views">
 
+    <!-- Цвета бабблов (фиксированные; при желании перенесите в App.xaml и сделайте OnAppTheme) -->
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <Color x:Key="BubbleIncomingBg">#FFFFFFFF</Color>
+            <Color x:Key="BubbleOutgoingBg">#2E7AFB</Color>
+            <Color x:Key="BubbleIncomingText">#000000</Color>
+            <Color x:Key="BubbleOutgoingText">#FFFFFF</Color>
+
+            <!-- Единый шаблон элемента (БЕЗ изменений компоновки/отступов, но с фиксом измерения/цветов) -->
+            <DataTemplate x:Key="BubbleTemplate" x:DataType="viewtypes:ChatMessage">
+                <Grid HorizontalOptions="FillAndExpand"
+              ColumnSpacing="0"
+              Padding="8"
+              RowDefinitions="Auto">
+
+                    <!-- ВХОДЯЩЕЕ: левая колонка = максимум 75% ширины -->
+                    <Grid IsVisible="{Binding IsIncoming}"
+                HorizontalOptions="FillAndExpand"
+                ColumnDefinitions="0.75*,0.25*"
+                ColumnSpacing="0"
+                RowDefinitions="Auto">
+                        <Frame Grid.Column="0"
+                   Padding="10"
+                   CornerRadius="8"
+                   HasShadow="False"
+                   HorizontalOptions="Start"
+                   BackgroundColor="{StaticResource BubbleIncomingBg}">
+                            <Label Text="{Binding Text}"
+                     LineBreakMode="WordWrap"
+                     VerticalOptions="Start"
+                     TextColor="{StaticResource BubbleIncomingText}" />
+                        </Frame>
+                    </Grid>
+
+                    <!-- ИСХОДЯЩЕЕ: правая колонка = максимум 75% ширины -->
+                    <Grid IsVisible="{Binding IsIncoming, Converter={StaticResource InverseBoolConverter}}"
+                HorizontalOptions="FillAndExpand"
+                ColumnDefinitions="0.25*,0.75*"
+                ColumnSpacing="0"
+                RowDefinitions="Auto">
+                        <Frame Grid.Column="1"
+                   Padding="10"
+                   CornerRadius="8"
+                   HasShadow="False"
+                   HorizontalOptions="End"
+                   BackgroundColor="{StaticResource BubbleOutgoingBg}">
+                            <Label Text="{Binding Text}"
+                     LineBreakMode="WordWrap"
+                     VerticalOptions="Start"
+                     TextColor="{StaticResource BubbleOutgoingText}" />
+                        </Frame>
+                    </Grid>
+
+                    <!-- ДОКУМЕНТ -->
+                    <Frame Padding="10"
+                 CornerRadius="8"
+                 HasShadow="False"
+                 IsVisible="{Binding Kind, Converter={StaticResource EqualConverter}, ConverterParameter=Document}"
+                 HorizontalOptions="{Binding IsIncoming, Converter={StaticResource BoolToHorzOptionsConverter}}"
+                 BackgroundColor="{StaticResource BubbleIncomingBg}">
+                        <Frame.Triggers>
+                            <!-- Для исходящего документа — синий фон -->
+                            <DataTrigger TargetType="Frame" Binding="{Binding IsIncoming}" Value="False">
+                                <Setter Property="BackgroundColor" Value="{StaticResource BubbleOutgoingBg}" />
+                            </DataTrigger>
+                        </Frame.Triggers>
+
+                        <Grid ColumnDefinitions="Auto,* ,Auto"
+                  RowDefinitions="Auto,Auto"
+                  ColumnSpacing="8">
+                            <!-- иконка файла -->
+                            <Image Grid.RowSpan="2" Grid.Column="0"
+                     Source="attachment.png" WidthRequest="24" HeightRequest="24" />
+
+                            <!-- название -->
+                            <Label Grid.Column="1" Grid.Row="0"
+                     Text="{Binding Document.FileName}"
+                     FontAttributes="Bold"
+                     LineBreakMode="TailTruncation"
+                     TextColor="{StaticResource BubbleIncomingText}">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsIncoming}" Value="False">
+                                        <Setter Property="TextColor" Value="{StaticResource BubbleOutgoingText}" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+
+                            <!-- размер -->
+                            <Label Grid.Column="1" Grid.Row="1"
+                     Text="{Binding Document.FileSize, Converter={StaticResource FileSizeConverter}}"
+                     FontSize="Small"
+                     TextColor="Gray">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsIncoming}" Value="False">
+                                        <Setter Property="TextColor" Value="{StaticResource BubbleOutgoingText}" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+
+                            <!-- кнопка -->
+                            <Button Grid.Column="2" Grid.RowSpan="2"
+                      Text="{Binding Document.IsDownloaded, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Открыть|Скачать'}"
+                      Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.OpenDocumentCommand}"
+                      CommandParameter="{Binding}" />
+
+                            <!-- прогресс -->
+                            <ProgressBar Grid.ColumnSpan="3" Grid.Row="2" Margin="0,8,0,0"
+                           IsVisible="{Binding Document.IsDownloading}"
+                           Progress="{Binding Document.Progress}" />
+                        </Grid>
+                    </Frame>
+                </Grid>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
     <Grid>
+        <!-- Режим «мало сообщений»: стек прижат к низу -->
+        <Grid x:Name="FewContainer" IsVisible="False" RowDefinitions="*,Auto">
+            <BoxView Grid.Row="0" />
+            <StackLayout x:Name="FewStack"
+                   Grid.Row="1"
+                   Spacing="6"
+                   BindableLayout.ItemTemplate="{StaticResource BubbleTemplate}" />
+        </Grid>
+
+        <!-- Режим «много сообщений»: виртуализированный список -->
         <CollectionView
-            x:Name="List"
-            ItemsSource="{Binding Messages}"
-            SelectionMode="None"
-            Scrolled="OnScrolled">
+        x:Name="List"
+        ItemsSource="{Binding Messages}"
+        SelectionMode="None"
+        Scrolled="OnScrolled"
+        ItemSizingStrategy="MeasureAllItems"
+        VerticalOptions="FillAndExpand"
+        IsVisible="True">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Vertical" ItemSpacing="6" />
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="viewtypes:ChatMessage">
-                    <Grid HorizontalOptions="FillAndExpand" ColumnSpacing="0" Padding="8">
-                        <!-- ВХОДЯЩЕЕ: левая колонка = максимум 75% ширины -->
-                        <Grid IsVisible="{Binding IsIncoming}"
-      HorizontalOptions="FillAndExpand"
-      ColumnDefinitions="0.75*,0.25*"
-      ColumnSpacing="0">
-                            <Frame Grid.Column="0"
-         Padding="10"
-         CornerRadius="8"
-         HasShadow="False"
-         HorizontalOptions="Start"
-         BackgroundColor="{Binding IsIncoming, Converter={StaticResource IncomingBgConverter}}">
-                                <Label Text="{Binding Text}"
-           TextColor="{Binding IsIncoming, Converter={StaticResource IncomingTextColorConverter}}"
-           LineBreakMode="WordWrap"/>
-                            </Frame>
-                        </Grid>
-
-                        <!-- ИСХОДЯЩЕЕ: правая колонка = максимум 75% ширины -->
-                        <Grid IsVisible="{Binding IsIncoming, Converter={StaticResource InverseBoolConverter}}"
-      HorizontalOptions="FillAndExpand"
-      ColumnDefinitions="0.25*,0.75*"
-      ColumnSpacing="0">
-                            <Frame Grid.Column="1"
-         Padding="10"
-         CornerRadius="8"
-         HasShadow="False"
-         HorizontalOptions="End"
-         BackgroundColor="{Binding IsIncoming, Converter={StaticResource IncomingBgConverter}}">
-                                <Label Text="{Binding Text}"
-           TextColor="{Binding IsIncoming, Converter={StaticResource IncomingTextColorConverter}}"
-           LineBreakMode="WordWrap"/>
-                            </Frame>
-                        </Grid>
-
-                        <!-- Документ -->
-                        <Frame Padding="10" CornerRadius="8" HasShadow="False"
-                               IsVisible="{Binding Kind, Converter={StaticResource EqualConverter}, ConverterParameter=Document}"
-                               HorizontalOptions="{Binding IsIncoming, Converter={StaticResource BoolToHorzOptionsConverter}}"
-                               BackgroundColor="{Binding IsIncoming, Converter={StaticResource IncomingBgConverter}}">
-                            <Grid ColumnDefinitions="Auto,* ,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8">
-                                <!-- иконка файла -->
-                                <Image Grid.RowSpan="2" Grid.Column="0" Source="attachment.png" WidthRequest="24" HeightRequest="24" />
-
-                                <!-- название -->
-                                <Label Grid.Column="1" Grid.Row="0" Text="{Binding Document.FileName}" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
-                                <!-- размер -->
-                                <Label Grid.Column="1" Grid.Row="1" Text="{Binding Document.FileSize, Converter={StaticResource FileSizeConverter}}" FontSize="Small" TextColor="Gray"/>
-
-                                <!-- кнопка -->
-                                <Button Grid.Column="2" Grid.RowSpan="2"
-                  Text="{Binding Document.IsDownloaded, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Открыть|Скачать'}"
-                   Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.OpenDocumentCommand}"
-                  CommandParameter="{Binding}" />
-
-                                <!-- прогресс -->
-                                <ProgressBar Grid.ColumnSpan="3" Grid.Row="2" Margin="0,8,0,0"
-                       IsVisible="{Binding Document.IsDownloading}"
-                       Progress="{Binding Document.Progress}" />
-                            </Grid>
-                        </Frame>
-                    </Grid>
-                </DataTemplate>
+                <StaticResource Key="BubbleTemplate" />
             </CollectionView.ItemTemplate>
         </CollectionView>
     </Grid>

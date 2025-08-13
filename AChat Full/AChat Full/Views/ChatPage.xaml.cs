@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Linq;
 using Xamarin.Forms;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using AChatFull.ViewModels;
-using AChatFull.Views;
 
 namespace AChatFull.Views
 {
@@ -22,6 +20,8 @@ namespace AChatFull.Views
 
         private const int MaxVisibleLines = 6;
 
+        private bool _closedNotified;
+
         public ChatPage(string chatId, string userToken, ChatRepository repo, string peerName)
         {
             InitializeComponent();
@@ -29,8 +29,8 @@ namespace AChatFull.Views
             _chatId = chatId;
             _vm = new ChatViewModel(repo, chatId, userToken, peerName);
             BindingContext = _vm;
-            // initial load moved to OnAppearing for faster first paint
-MessagingCenter.Subscribe<ChatViewModel>(this, "ScrollToEnd", async sender =>
+
+            MessagingCenter.Subscribe<ChatViewModel>(this, "ScrollToEnd", async sender =>
             {
                 await ScrollToTop(true);
             });
@@ -43,51 +43,12 @@ MessagingCenter.Subscribe<ChatViewModel>(this, "ScrollToEnd", async sender =>
             MessageEditor.SizeChanged += (s, e) =>
             {
                 if (_vm.Messages.Count > 0)
-            {
-                var host = this.FindByName<ContentView>("MessagesHost");
-                if (host?.Content is MessagesListView mlv)
-                    mlv.ScrollToBottom(true);
-            }
-
-                // когда фактическая высота больше максимума —
-                // жёстко фиксим максимальную
-                /*if (MessageEditor.Height > _maxHeight)
                 {
-                    MessageEditor.HeightRequest = _maxHeight;
+                    var host = this.FindByName<ContentView>("MessagesHost");
+                    if (host?.Content is MessagesListView mlv)
+                        mlv.ScrollToBottom(true);
                 }
-                else
-                {
-                    // иначе даём редактору подгоняться сам
-                    MessageEditor.HeightRequest = -1;
-                }*/
             };
-
-            /*_chatClient = new SignalRChatClient("https://yourserver.com/chathub");
-            _chatClient.Connected += () => Device.BeginInvokeOnMainThread(() =>
-                System.Diagnostics.Debug.WriteLine("SignalR Connected"));
-            _chatClient.Disconnected += () => Device.BeginInvokeOnMainThread(() =>
-                System.Diagnostics.Debug.WriteLine("SignalR Disconnected"));
-            _chatClient.Error += ex => Device.BeginInvokeOnMainThread(async () =>
-                await DisplayAlert("Error", ex.Message, "OK"));
-            _chatClient.MessageReceived += (chatIdReceived, userId, text, timestamp) =>
-            {
-                if (chatIdReceived != _chatId) return;
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    Messages.Add(new ChatMessage
-                    {
-                        Text = text,
-                        IsIncoming = userId != "78977",
-                        Timestamp = timestamp
-                    });
-                    var host2 = this.FindByName<ContentView>("MessagesHost");
-                    if (host2?.Content is MessagesListView mlv2)
-                        mlv2.ScrollToBottom(true);
-                });
-            };
-
-            // Запуск подключения с токеном авторизации
-            _ = _chatClient.ConnectAsync(userToken);*/
         }
 
         private async void OnAudioCallClicked(object sender, EventArgs e)
@@ -133,7 +94,6 @@ MessagingCenter.Subscribe<ChatViewModel>(this, "ScrollToEnd", async sender =>
 
             if (!_messagesViewCreated)
             {
-                // Yield to let header & input render
                 await Task.Yield();
 
                 var view = new MessagesListView { BindingContext = _vm };
@@ -150,9 +110,51 @@ MessagingCenter.Subscribe<ChatViewModel>(this, "ScrollToEnd", async sender =>
             }
         }
 
+        private async Task CloseModalAsync(bool animated = false)
+        {
+            try
+            {
+                // 1) спрятать клавиатуру
+                MessageEditor?.Unfocus();
+
+                // 2) «облегчить» визуальное дерево
+                var host = this.FindByName<ContentView>("MessagesHost");
+                if (host?.Content is MessagesListView mlv)
+                {
+                    mlv.Detach();       // см. метод ниже
+                    host.Content = null;
+                }
+
+                // (опционально) разорвать биндинги для быстрого GC
+                BindingContext = null;
+
+                // 3) закрыть модалку
+                await Application.Current.MainPage.Navigation.PopModalAsync(animated: animated);
+            }
+            finally
+            {
+                NotifyClosedOnce();
+            }
+        }
+
+        private void NotifyClosedOnce()
+        {
+            if (_closedNotified) return;
+            _closedNotified = true;
+
+            Device.BeginInvokeOnMainThread(() =>
+                MessagingCenter.Send(this, "ChatClosed", _chatId));
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            Device.BeginInvokeOnMainThread(async () => await CloseModalAsync(animated: false));
+            return true; 
+        }
+
         private async void OnBackButtonClicked(object sender, EventArgs e)
         {
-            await Navigation.PopAsync();
+            await CloseModalAsync(animated: false); 
         }
 
         private async void OnSendClicked(object sender, EventArgs e)
@@ -196,8 +198,7 @@ MessagingCenter.Subscribe<ChatViewModel>(this, "ScrollToEnd", async sender =>
             finally
             {
                 // Сообщаем о закрытии уже ПОСЛЕ выхода со страницы
-                Device.BeginInvokeOnMainThread(() =>
-                    Xamarin.Forms.MessagingCenter.Send(this, "ChatClosed", _chatId));
+                Device.BeginInvokeOnMainThread(() => MessagingCenter.Send(this, "ChatClosed", _chatId));
             }
         }
 
@@ -209,7 +210,7 @@ MessagingCenter.Subscribe<ChatViewModel>(this, "ScrollToEnd", async sender =>
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            MessagingCenter.Unsubscribe<ChatViewModel>(this, "ScrollToEnd");
+            NotifyClosedOnce();
 
             //_chatClient.Dispose();
         }

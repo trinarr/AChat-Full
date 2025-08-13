@@ -203,6 +203,11 @@ namespace AChatFull.ViewModels
                 Timestamp = now
             });
 
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                MessagingCenter.Send(this, "ScrollToEnd");
+            });
+
             MessageText = string.Empty;
         }
 
@@ -215,7 +220,7 @@ namespace AChatFull.ViewModels
 
                 var fileName = string.IsNullOrWhiteSpace(picked.FileName) ? "Документ" : picked.FileName;
 
-                var now = DateTime.UtcNow;
+                /*var now = DateTime.UtcNow;
                 var msg = new Message
                 {
                     ChatId = _chatId,
@@ -243,6 +248,11 @@ namespace AChatFull.ViewModels
                         RemoteUrl = null,
                         LocalPath = null
                     }
+                });*/
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    MessagingCenter.Send(this, "ScrollToEnd");
                 });
             }
             catch (Exception ex)

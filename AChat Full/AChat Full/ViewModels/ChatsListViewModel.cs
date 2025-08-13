@@ -1,9 +1,9 @@
-﻿﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using AChatFull.Views;
+using Xamarin.Forms;
+using AChatFull.Views; 
 
 namespace AChatFull.ViewModels
 {
@@ -28,7 +28,16 @@ namespace AChatFull.ViewModels
             _repo = repo;
             _currentUserId = currentUserId;
 
-            Xamarin.Forms.MessagingCenter.Subscribe<ChatPage, string>(this, "ChatClosed", async (_, chatId) => await LoadChatsAsync());
+            // ПОДПИСКА: когда ChatPage закрывается — подождём чуть-чуть и обновим список
+            Xamarin.Forms.MessagingCenter.Subscribe<ChatPage, string>(this, "ChatClosed", (_, __) =>
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    // небольшая пауза, чтобы закрытие завершилось и UI «успокоился»
+                    await Task.Delay(150);
+                    await LoadChatsAsync();
+                });
+            });
 
             /*LoadMessagesCommand = new Command(async () => await LoadMessagesAsync());
             SendCommand = new Command(async () => await SendMessageAsync(),
