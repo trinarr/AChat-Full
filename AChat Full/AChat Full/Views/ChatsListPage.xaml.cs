@@ -8,6 +8,7 @@ namespace AChatFull.Views
     public partial class ChatsListPage : ContentPage
     {
         private ChatRepository _repo;
+        public ChatsListViewModel VM => BindingContext as ChatsListViewModel;
 
         public ChatsListPage(string userToken, ChatRepository repo)
         {
@@ -18,9 +19,19 @@ namespace AChatFull.Views
 
             _repo = repo;
             _ = vm.LoadChatsAsync();
+        }
 
-            // Инициализируем SignalR и загружаем чаты
-            //_ = Vm.InitializeAsync(userToken);
+        private void OnSearchIconClicked(object sender, EventArgs e)
+        {
+            VM.IsSearchMode = true;
+            Device.BeginInvokeOnMainThread(() => SearchEntry?.Focus());
+        }
+
+        private void OnSearchBackClicked(object sender, EventArgs e)
+        {
+            SearchEntry?.Unfocus();
+            VM.SearchText = string.Empty; // очистить фильтр
+            VM.IsSearchMode = false;
         }
 
         private async void OnChatSelected(object sender, SelectionChangedEventArgs e)

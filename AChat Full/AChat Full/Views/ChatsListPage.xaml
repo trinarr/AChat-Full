@@ -7,6 +7,47 @@
   Title="Чаты"
   BackgroundColor="White">
 
+    <NavigationPage.TitleView>
+        <Grid Padding="8" ColumnDefinitions="Auto,*,Auto
+              " RowDefinitions="Auto">
+            <!-- Назад (только в режиме поиска) -->
+            <ImageButton Grid.Column="0" Source="arrow_back.png"  BackgroundColor="Transparent"
+                         HeightRequest="24" WidthRequest="24" Clicked="OnSearchBackClicked" 
+                         Margin="0,0,8,0"
+            HorizontalOptions="Start"
+            VerticalOptions="Center"
+            IsVisible="{Binding IsSearchMode}"/>
+
+            <!-- Заголовок (когда НЕ поиск) -->
+            <Label Grid.Column="1"
+             Text="Чаты"
+             TextColor="#fff"
+             FontAttributes="Bold"
+             FontSize="18"
+             VerticalTextAlignment="Center"
+             IsVisible="{Binding IsSearchMode, Converter={StaticResource InverseBoolConverter}}"/>
+
+            <!-- Поле поиска (когда поиск) -->
+            <Entry x:Name="SearchEntry"
+             Grid.Column="1"
+                   TextColor="#fff"
+             Placeholder="Поиск по чатам"
+             Text="{Binding SearchText}"
+             ClearButtonVisibility="WhileEditing"
+             IsVisible="{Binding IsSearchMode}"
+             VerticalOptions="Center"/>
+
+            <!-- Иконка поиска (когда НЕ поиск) -->
+            <ImageButton Grid.Column="2"
+                   Source="search.png"
+                   WidthRequest="24" HeightRequest="24"
+                   BackgroundColor="Transparent"
+                   VerticalOptions="Center"
+                   IsVisible="{Binding IsSearchMode, Converter={StaticResource InverseBoolConverter}}"
+                   Clicked="OnSearchIconClicked"/>
+        </Grid>
+    </NavigationPage.TitleView>
+
     <!-- Loader -->
     <StackLayout>
         <ActivityIndicator
