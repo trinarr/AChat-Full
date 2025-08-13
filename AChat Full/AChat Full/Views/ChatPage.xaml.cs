@@ -22,12 +22,13 @@ namespace AChatFull.Views
 
         private bool _closedNotified;
 
-        public ChatPage(string chatId, string userToken, ChatRepository repo, string peerName)
+        public ChatPage(string chatId, string userToken, ChatRepository repo)
         {
             InitializeComponent();
 
+            _repo = repo;
             _chatId = chatId;
-            _vm = new ChatViewModel(repo, chatId, userToken, peerName);
+            _vm = new ChatViewModel(repo, chatId, userToken);
             BindingContext = _vm;
 
             MessagingCenter.Subscribe<ChatViewModel>(this, "ScrollToEnd", async sender =>
@@ -108,6 +109,8 @@ namespace AChatFull.Views
                 await _vm.LoadMessagesAsync();
                 await ScrollToTop(false);
             }
+
+            await _vm.SetHeaderAsync();
         }
 
         private async Task CloseModalAsync(bool animated = false)

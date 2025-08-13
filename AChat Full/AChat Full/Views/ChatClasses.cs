@@ -60,8 +60,9 @@ namespace AChatFull.Views
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string BirthDate { get; set; } 
-        public string About { get; set; }    // «О себе»
-        public string Status { get; set; }    // «Статус как в WhatsApp»
+        public string About { get; set; }   
+        public string Status { get; set; }
+        public string AvatarUrl { get; set; }
 
         [Ignore]
         public DateTime BirthDateDate
@@ -69,6 +70,33 @@ namespace AChatFull.Views
                  BirthDate,
                  "yyyy-MM-dd HH:mm:ss",
                  CultureInfo.InvariantCulture);
+
+        public string DisplayName =>
+           string.IsNullOrWhiteSpace(FirstName)
+               ? (string.IsNullOrWhiteSpace(LastName) ? UserId : LastName)
+               : (string.IsNullOrWhiteSpace(LastName) ? FirstName : $"{FirstName} {LastName}");
+
+        public string DisplayStatus => Status;
+        public bool HasStatus => !string.IsNullOrWhiteSpace(Status);
+
+        public bool HasAvatar => !string.IsNullOrWhiteSpace(AvatarUrl);
+        public bool NoAvatar => string.IsNullOrWhiteSpace(AvatarUrl);
+
+        public string Initials
+        {
+            get
+            {
+                var f = (FirstName ?? "").Trim();
+                var l = (LastName ?? "").Trim();
+                var fi = string.IsNullOrEmpty(f) ? "" : f.Substring(0, 1).ToUpperInvariant();
+                var li = string.IsNullOrEmpty(l) ? "" : l.Substring(0, 1).ToUpperInvariant();
+                var res = fi + li;
+                if (!string.IsNullOrEmpty(res)) return res;
+
+                var dn = (DisplayName ?? "").Trim();
+                return string.IsNullOrEmpty(dn) ? "#" : dn.Substring(0, Math.Min(2, dn.Length)).ToUpperInvariant();
+            }
+        }
     }
 
     // Модель таблицы ChatParticipants
@@ -136,27 +164,75 @@ namespace AChatFull.Views
             await _db.InsertOrReplaceAsync(profile);
         }
 
-        public Task<List<User>> GetContactsAsync(string search = null, string sort = "name")
+        public Task<List<User>> SearchUsersAsync(string query, int limit = 50)
         {
-            var q = _db.Table<User>().Where(u => u.UserId != _currentUserId && u.IsContact == 1);
+            if (string.IsNullOrWhiteSpace(query))
+                return _db.Table<User>()
+                          .OrderBy(u => u.FirstName)
+                          .Take(limit)
+                          .ToListAsync();
 
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                var s = search.Trim().ToLowerInvariant();
-                q = q.Where(u => (u.FirstName ?? "").ToLower().Contains(s));
-            }
+            // Упрощённая экранизация для LIKE
+            string safe = query.Replace("%", "").Replace("_", "");
+            string like = "%" + safe + "%";
 
-            if (string.Equals(sort, "name", StringComparison.OrdinalIgnoreCase))
-                q = q.OrderBy(u => u.FirstName);
+            const string sql = @"
+        SELECT * FROM Users
+        WHERE FirstName LIKE ?
+           OR LastName  LIKE ?
+           OR UserId    LIKE ?
+        ORDER BY IsContact DESC, FirstName
+        LIMIT ?";
 
-            //Debug.WriteLine("TESTLOG GetContactsAsync "+q.ToListAsync().);
+            return _db.QueryAsync<User>(sql, like, like, like, limit);
+        }
 
-            return q.ToListAsync();
+        public Task<User> GetUserAsync(string userId)
+        {
+            return _db.Table<User>()
+                      .Where(u => u.UserId == userId)
+                      .FirstOrDefaultAsync();
+        }
+
+        public Task<Chat> GetChatAsync(string chatId)
+        {
+            return _db.Table<Chat>()
+                      .Where(c => c.ChatId == chatId)
+                      .FirstOrDefaultAsync();
+        }
+
+        public Task<List<User>> GetContactsAsync(int limit = 500)
+        {
+            return _db.Table<User>()
+                      .Where(u => u.IsContact == 1)
+                      .OrderBy(u => u.FirstName)
+                      .Take(limit)
+                      .ToListAsync();
         }
 
         public Task MarkUserAsContactAsync(string otherUserId)
         {
             return _db.ExecuteAsync("UPDATE Users SET IsContact = 1 WHERE UserId = ?", otherUserId);
+        }
+
+        /// <summary>
+        /// Возвращает UserId собеседника для заданного чата из таблицы ChatParticipants:
+        /// выбираем любую строку с таким ChatId, где UserId <> мой.
+        /// </summary>
+        public async Task<string> GetPeerUserIdFromParticipantsAsync(string chatId)
+        {
+            if (string.IsNullOrWhiteSpace(chatId) || string.IsNullOrWhiteSpace(App.USER_TOKEN_TEST))
+                return null;
+
+            const string sql = "SELECT UserId FROM ChatParticipants WHERE ChatId = ? AND UserId <> ? LIMIT 1";
+            try
+            {
+                return await _db.ExecuteScalarAsync<string>(sql, chatId, App.USER_TOKEN_TEST);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<string> GetOrCreateDirectChatIdAsync(string otherUserId)
@@ -278,7 +354,7 @@ namespace AChatFull.Views
                 return _db.QueryAsync<Message>(sql, chatId, beforeExclusiveCreatedAt, take);
             }
         }
-public Task<int> InsertMessageAsync(Message message)
+        public Task<int> InsertMessageAsync(Message message)
         {
             // Если вам нужно заменять существующее при совпадении PK:
             // return _db.InsertOrReplaceAsync(message);

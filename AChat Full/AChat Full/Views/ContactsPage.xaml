@@ -1,111 +1,208 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:ffsvg="clr-namespace:FFImageLoading.Svg.Forms;assembly=FFImageLoading.Svg.Forms"
              x:Class="AChatFull.Views.ContactsPage"
-             Title="Контакты"
-             x:Name="ThisPage">
+             x:Name="ThisPage"
+             Padding="0"
+             Title="Контакты">
 
     <NavigationPage.TitleView>
-        <Grid Padding="8" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">
-            <!-- Кнопка Назад (видна только в режиме поиска) -->
-            <Grid Grid.Column="0"
-      WidthRequest="24" HeightRequest="24"
-      BackgroundColor="Transparent"
-      Margin="0,0,8,0"
-      HorizontalOptions="Start"
-      IsVisible="{Binding IsSearchMode}"
-      VerticalOptions="Center">
-                <ffsvg:SvgCachedImage
-                    Aspect="AspectFit"
-                    WidthRequest="24"
-                    HeightRequest="24"
-                    Source="resource://AChatFull.Resources.Icons.arrow_back.png?assembly=AChatFull" />
-                <Grid.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnSearchBackClicked" />
-                </Grid.GestureRecognizers>
-            </Grid>
+        <ContentView Padding="0">
+            <Grid Padding="8" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">
+                <ImageButton Grid.Column="0"
+                     Source="arrow_back.png"
+                     BackgroundColor="Transparent"
+                     HeightRequest="24" WidthRequest="24"
+                     Margin="0,0,8,0"
+                     IsVisible="{Binding IsSearchMode}"
+                     Clicked="OnSearchBackClicked" />
 
-            <!-- Заголовок (виден, когда НЕ в режиме поиска) -->
-            <Label Grid.Column="1"
-             Text="Контакты"
+                <Label Grid.Column="1"
+             Text="Чаты"
              TextColor="#fff"
              FontAttributes="Bold"
              FontSize="18"
              VerticalTextAlignment="Center"
-             IsVisible="{Binding IsSearchMode, Converter={StaticResource InverseBoolConverter}}" />
+             IsVisible="{Binding IsSearchMode, Converter={StaticResource InverseBoolConverter}}"/>
 
-            <!-- Поле поиска (видимо только в режиме поиска) -->
-            <Entry x:Name="SearchEntry"
-                   Grid.Column="1"
-                   Placeholder="Поиск по пользователям"
-                   Text="{Binding SearchText}"
-                   ClearButtonVisibility="WhileEditing"
-                   IsVisible="{Binding IsSearchMode}"
-                   VerticalOptions="Center" />
+                <Entry x:Name="SearchEntry"
+               Grid.Column="1"
+               Placeholder="Поиск по пользователям"
+               Text="{Binding SearchText}"
+               ClearButtonVisibility="WhileEditing"
+               ReturnType="Search"
+               VerticalOptions="Center"
+               IsVisible="{Binding IsSearchMode}" />
 
-            <!-- Иконка поиска (видима, когда НЕ в режиме поиска) -->
-            <ImageButton Grid.Column="2"
-                   Source="search.png"
-                   WidthRequest="24" HeightRequest="24"
-                   BackgroundColor="Transparent"
-                   VerticalOptions="Center"
-                   IsVisible="{Binding IsSearchMode, Converter={StaticResource InverseBoolConverter}}"
-                   Clicked="OnSearchIconClicked" />
-        </Grid>
+                <ImageButton Grid.Column="2"
+                     Source="search.png"
+                     HeightRequest="24" WidthRequest="24"
+                     BackgroundColor="Transparent"
+                     VerticalOptions="Center"
+                     Clicked="OnSearchIconClicked">
+                    <ImageButton.Triggers>
+                        <DataTrigger TargetType="ImageButton" Binding="{Binding IsSearchMode}" Value="True">
+                            <Setter Property="IsVisible" Value="False"/>
+                        </DataTrigger>
+                    </ImageButton.Triggers>
+                </ImageButton>
+            </Grid>
+        </ContentView>
     </NavigationPage.TitleView>
 
     <ContentPage.Content>
-        <StackLayout>
-            <!-- Переключатели сортировки -->
-            <Grid Padding="12" ColumnDefinitions="*,*" >
-                <Button Text="По имени" Command="{Binding SortByNameCommand}" />
-                <Button Grid.Column="1" Text="По заходу" Command="{Binding SortByLastSeenCommand}" />
-            </Grid>
-
-            <CollectionView ItemsSource="{Binding Items}"
+        <Grid RowDefinitions="*"
+          Padding="0"
+          Margin="0">
+            <CollectionView x:Name="ContactsList"
+                      Grid.Row="0"
+                      ItemsSource="{Binding Contacts}"
+                      VerticalOptions="FillAndExpand"
                       SelectionMode="None">
+                <CollectionView.Triggers>
+                    <DataTrigger TargetType="CollectionView" Binding="{Binding IsSearchMode}" Value="True">
+                        <Setter Property="IsVisible" Value="False"/>
+                    </DataTrigger>
+                    <DataTrigger TargetType="CollectionView" Binding="{Binding IsSearchMode}" Value="False">
+                        <Setter Property="IsVisible" Value="True"/>
+                    </DataTrigger>
+                </CollectionView.Triggers>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid Padding="15,4,15,4" ColumnDefinitions="60,*,Auto">
-                            <Frame WidthRequest="40" HeightRequest="40" HasShadow="False" VerticalOptions="Start">
-                                <Label Text="{Binding FirstName, Converter={StaticResource FirstLetterConverter}}" TextColor="#333" FontSize="Medium"/>
+                        <Grid Padding="12,8" ColumnDefinitions="56,*,Auto">
+                            <Frame Grid.Column="0"
+                     WidthRequest="48" HeightRequest="48"
+                     CornerRadius="24"
+                     Padding="0"
+                     HasShadow="False"
+                     IsClippedToBounds="True"
+                     BackgroundColor="#E6E6E6"
+                     HorizontalOptions="Start"
+                     VerticalOptions="Center">
+                                <Grid>
+                                    <Image Source="{Binding AvatarUrl}"
+                         Aspect="AspectFill"
+                         IsVisible="{Binding HasAvatar}" />
+                                    <Label Text="{Binding Initials}"
+                         IsVisible="{Binding NoAvatar}"
+                         HorizontalOptions="Center"
+                         VerticalOptions="Center"
+                         FontAttributes="Bold"
+                         FontSize="Medium"
+                         TextColor="#333"/>
+                                </Grid>
                             </Frame>
-                            <Grid ColumnSpacing="10" Grid.Column="1">
+                            <Grid Grid.Column="1"
+                    RowDefinitions="Auto,Auto"
+                    MinimumHeightRequest="48"
+                    VerticalOptions="Center">
+                                <Label Grid.Row="0"
+                       Text="{Binding DisplayName}"
+                       FontAttributes="Bold"
+                       FontSize="Medium"
+                       TextColor="#000"
+                       VerticalOptions="Center">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding HasStatus}" Value="True">
+                                            <Setter Property="VerticalOptions" Value="Start"/>
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                                <Label Grid.Row="1"
+                       Text="{Binding DisplayStatus}"
+                       FontSize="Small"
+                       TextColor="#777"
+                       IsVisible="{Binding HasStatus}" />
+                            </Grid>
+                            <Grid Grid.ColumnSpan="2">
                                 <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer
-                                        Command="{Binding BindingContext.OpenChatCommand, Source={x:Reference ThisPage}}"
-                                        CommandParameter="{Binding .}" />
+                                    <TapGestureRecognizer Command="{Binding BindingContext.OpenChatCommand, Source={x:Reference ThisPage}}"
+                                        CommandParameter="{Binding .}"/>
                                 </Grid.GestureRecognizers>
-
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <!-- Аватар -->
-                                <Frame
-                                Grid.Column="0"
-                                BackgroundColor="#CCCCCC"
-                                HasShadow="False"
-                                WidthRequest="48" 
-                                HeightRequest="48"
-                                CornerRadius="24"
-                                Padding="0"
-                                IsClippedToBounds="True"
-                                VerticalOptions="Center">
-                                    <Image
-                                    Source=""
-                                    Aspect="AspectFill" />
-                                </Frame>
-                                <StackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                                    <Label x:Name="NameFirstLetter" Text="{Binding FirstName}" FontAttributes="Bold" TextColor="#000" FontSize="Medium" />
-                                    <Label Text="был(а) в 14:05" TextColor="#666" FontSize="Small" />
-                                </StackLayout>
                             </Grid>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-        </StackLayout>
+            <CollectionView x:Name="ResultsList"
+                      Grid.Row="0"
+                      ItemsSource="{Binding SearchGroups}"
+                      IsGrouped="True"
+                      SelectionMode="None"
+                      VerticalOptions="FillAndExpand">
+                <CollectionView.Triggers>
+                    <DataTrigger TargetType="CollectionView" Binding="{Binding IsSearchMode}" Value="True">
+                        <Setter Property="IsVisible" Value="True"/>
+                    </DataTrigger>
+                    <DataTrigger TargetType="CollectionView" Binding="{Binding IsSearchMode}" Value="False">
+                        <Setter Property="IsVisible" Value="False"/>
+                    </DataTrigger>
+                </CollectionView.Triggers>
+                <CollectionView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <Grid Padding="15,8">
+                            <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="Small" TextColor="#666"/>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.GroupHeaderTemplate>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="12,8" ColumnDefinitions="56,*,Auto">
+                            <Frame Grid.Column="0"
+                     WidthRequest="48" HeightRequest="48"
+                     CornerRadius="24"
+                     Padding="0"
+                     HasShadow="False"
+                     IsClippedToBounds="True"
+                     BackgroundColor="#E6E6E6"
+                     HorizontalOptions="Start"
+                     VerticalOptions="Center">
+                                <Grid>
+                                    <Image Source="{Binding AvatarUrl}"
+                         Aspect="AspectFill"
+                         IsVisible="{Binding HasAvatar}" />
+                                    <Label Text="{Binding Initials}"
+                         IsVisible="{Binding NoAvatar}"
+                         HorizontalOptions="Center"
+                         VerticalOptions="Center"
+                         FontAttributes="Bold"
+                         FontSize="Medium"
+                         TextColor="#333"/>
+                                </Grid>
+                            </Frame>
+
+                            <Grid Grid.Column="1"
+                    RowDefinitions="Auto,Auto"
+                    MinimumHeightRequest="48"
+                    VerticalOptions="Center">
+                                <Label Grid.Row="0"
+                       Text="{Binding DisplayName}"
+                       FontAttributes="Bold"
+                       FontSize="Medium"
+                       TextColor="#000"
+                       VerticalOptions="Center">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding HasStatus}" Value="True">
+                                            <Setter Property="VerticalOptions" Value="Start"/>
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+
+                                <Label Grid.Row="1"
+                       Text="{Binding DisplayStatus}"
+                       FontSize="Small"
+                       TextColor="#777"
+                       IsVisible="{Binding HasStatus}" />
+                            </Grid>
+                            <Grid Grid.ColumnSpan="2">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding BindingContext.OpenChatCommand, Source={x:Reference ThisPage}}"
+                                        CommandParameter="{Binding .}"/>
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

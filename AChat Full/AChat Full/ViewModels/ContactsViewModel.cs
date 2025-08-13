@@ -1,33 +1,57 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
-using System.Diagnostics;
+using System.Linq;
 using AChatFull.Views;
-using System;
+using System.Collections.Generic;
 
 namespace AChatFull.ViewModels
 {
+    public class AlphaGroup<T> : ObservableCollection<T>
+    {
+        public string Key { get; }
+        public AlphaGroup(string key) => Key = key;
+        public AlphaGroup(string key, IEnumerable<T> items) : base(items) => Key = key;
+    }
+
     public class ContactsViewModel : INotifyPropertyChanged
     {
         private readonly ChatRepository _repo;
-        private string _searchText;
-        private bool _isSearching;
-        private string _sortMode = "name"; // name | lastseen
-        private bool _isSearchMode;
+        private CancellationTokenSource _cts;
         private bool _isBusy;
-        private bool _busyNav;
+        private bool _isSearchMode;
+        private string _searchText;
 
-        private readonly INavigation _nav;           // если не Shell
-        private bool _isNavigating;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        public ObservableCollection<User> Items { get; } = new ObservableCollection<User>();
+        public ContactsViewModel(ChatRepository repo)
+        {
+            _repo = repo;
+            Contacts = new ObservableCollection<User>();
+            SearchGroups = new ObservableCollection<UserGroup>();
+
+            SearchCommand = new Command<string>(async (text) => await SearchAsync(text));
+            ClearSearchCommand = new Command(async () => await SearchAsync(string.Empty));
+            OpenChatCommand = new Command<User>(async (u) => await OpenChatAsync(u));
+
+            // Первичная загрузка контактов
+            _ = LoadContactsAsync();
+        }
+
+        public ObservableCollection<User> Contacts { get; }
+
+        // Группированные результаты поиска: [Контакты], [Пользователи]
+        public ObservableCollection<UserGroup> SearchGroups { get; }
+
         public bool IsBusy
         {
             get => _isBusy;
-            set { _isBusy = value; OnPropertyChanged(nameof(IsBusy)); }
+            set { if (_isBusy != value) { _isBusy = value; OnPropertyChanged(); } }
         }
 
         public bool IsSearchMode
@@ -45,106 +69,127 @@ namespace AChatFull.ViewModels
                 {
                     _searchText = value;
                     OnPropertyChanged();
-                    _ = LoadAsync(); // обновляем список по мере ввода
+                    // дебаунс по набору
+                    _ = DebouncedSearchAsync(_searchText);
                 }
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        void OnPropertyChanged([CallerMemberName] string name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-
-        public bool IsSearching
-        {
-            get => _isSearching;
-            set { if (_isSearching != value) { _isSearching = value; OnPropertyChanged(); } }
-        }
-
-        public string SortMode
-        {
-            get => _sortMode;
-            set { if (_sortMode != value) { _sortMode = value; OnPropertyChanged(); _ = LoadAsync(); } }
-        }
-
-        public ICommand RefreshCommand { get; }
-        public ICommand ToggleSearchCommand { get; }
-        public ICommand SortByNameCommand { get; }
-        public ICommand SortByLastSeenCommand { get; }
+        public ICommand SearchCommand { get; }
+        public ICommand ClearSearchCommand { get; }
         public ICommand OpenChatCommand { get; }
 
-        public ContactsViewModel(ChatRepository repo)
-        {
-            _repo = repo;
-            ToggleSearchCommand = new Command(() => IsSearching = !IsSearching);
-            SortByNameCommand = new Command(() => SortMode = "name");
-            SortByLastSeenCommand = new Command(() => SortMode = "lastseen");
+        public ObservableCollection<AlphaGroup<User>> ContactsGrouped { get; } = new ObservableCollection<AlphaGroup<User>>();
+        public ObservableCollection<User> SearchResults { get; } = new ObservableCollection<User>();
 
-            RefreshCommand = new Command(async () => await LoadAsync(force: true));
-            OpenChatCommand = new Command<User>(async u => await OpenChatAsync(u), u => !_isNavigating);
-        }
-
-        private async Task OpenChatAsync(User u)
+        private void BuildContactGroups(IEnumerable<User> users)
         {
-            if (u == null || _busyNav) return;
-            _busyNav = true; (OpenChatCommand as Command)?.ChangeCanExecute();
-            try
+            string KeyOf(User u)
             {
-                var chatId = await _repo.GetOrCreateDirectChatIdAsync(u.UserId);
-                await _repo.MarkUserAsContactAsync(u.UserId);
-
-                var chatPage = new ChatPage(chatId, App.USER_TOKEN_TEST, _repo, u.FirstName);
-                await Application.Current.MainPage.Navigation.PushModalAsync(chatPage, animated: false);
-
-
-                Debug.WriteLine("TESTLOG OnChatSelected");
+                var n = (u?.FirstName ?? u?.DisplayName ?? "").Trim();
+                if (string.IsNullOrEmpty(n)) return "#";
+                var ch = char.ToUpperInvariant(n[0]);
+                return char.IsLetter(ch) ? ch.ToString() : "#";
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("TESTLOG OpenChatAsync Exception " + ex.Message + " " + ex.StackTrace);
-            }
-            finally 
-            { 
-                _busyNav = false; (OpenChatCommand as Command)?.ChangeCanExecute(); 
-            }
+
+            var grouped = users
+                .OrderBy(u => u.FirstName)
+                .GroupBy(KeyOf)
+                .OrderBy(g => g.Key);
+
+            ContactsGrouped.Clear();
+            foreach (var g in grouped)
+                ContactsGrouped.Add(new AlphaGroup<User>(g.Key, g));
         }
 
-        public async Task LoadAsync()
+        public async Task LoadContactsAsync()
         {
-            var data = await _repo.GetContactsAsync(SearchText, SortMode);
-            Items.Clear();
-            foreach (var u in data)
-                Items.Add(u);
-        }
-
-        private bool _loadedOnce;
-
-        public async Task LoadAsync(bool force = false)
-        {
-            if (IsBusy) return;
-            if (!force && _loadedOnce) return; // чтобы не дёргать БД каждый раз, если не нужно
-
             try
             {
                 IsBusy = true;
 
-                var list = await _repo.GetContactsAsync(
-                    search: string.IsNullOrWhiteSpace(SearchText) ? null : SearchText,
-                    sort: "name" // или по-другому, если нужно
-                );
+                var contacts = await _repo.GetContactsAsync();
 
-                Items.Clear();
-                foreach (var u in list)
-                    Items.Add(u);
+                // алфавитная сортировка по отображаемому имени (без учёта регистра)
+                var sorted = contacts
+                    .OrderBy(u => u.DisplayName, StringComparer.CurrentCultureIgnoreCase)
+                    .ToList();
 
-                _loadedOnce = true;
+                Contacts.Clear();
+                foreach (var c in sorted)
+                    Contacts.Add(c);
+
+                // Можно оставить старую группировку в коде, но НЕ использовать её в XAML
+                // BuildContactGroups(Contacts);
             }
             finally { IsBusy = false; }
         }
 
+        private async Task DebouncedSearchAsync(string text)
+        {
+            _cts?.Cancel();
+            _cts = new CancellationTokenSource();
+            try
+            {
+                await Task.Delay(250, _cts.Token);
+                await SearchAsync(text);
+            }
+            catch (TaskCanceledException) { }
+        }
+
         public async Task SearchAsync(string text)
         {
-            SearchText = text;
-            _loadedOnce = false; // чтобы перезагрузить с фильтром
-            await LoadAsync(force: true);
+            try
+            {
+                IsBusy = true;
+                SearchGroups.Clear();
+
+                if (string.IsNullOrWhiteSpace(text))
+                {
+                    IsSearchMode = false;
+                    return;
+                }
+
+                var all = await _repo.SearchUsersAsync(text, limit: 200);
+
+                if (!string.IsNullOrWhiteSpace(App.USER_TOKEN_TEST))
+                    all = all.Where(u => !string.Equals(u.UserId, App.USER_TOKEN_TEST, StringComparison.OrdinalIgnoreCase))
+                             .ToList();
+
+                var contacts = all.Where(u => u.IsContact == 1)
+                                  .OrderBy(u => u.DisplayName, StringComparer.CurrentCultureIgnoreCase)
+                                  .ToList();
+
+                var others = all.Where(u => u.IsContact == 0)
+                                .OrderBy(u => u.DisplayName, StringComparer.CurrentCultureIgnoreCase)
+                                .ToList();
+
+                if (contacts.Count > 0)
+                    SearchGroups.Add(new UserGroup("Контакты", contacts));
+
+                if (others.Count > 0)
+                    SearchGroups.Add(new UserGroup("Глобальный поиск", others));
+            }
+            finally { IsBusy = false; }
         }
+
+        private async Task OpenChatAsync(User user)
+        {
+            if (user == null) return;
+            // Открыть/создать диалог
+            var chatId = await _repo.GetOrCreateDirectChatIdAsync(user.UserId);
+            MessagingCenter.Send(this, "OpenChat", chatId);
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    }
+
+    // Вспомогательная группа для CollectionView IsGrouped=True
+    public class UserGroup : ObservableCollection<User>
+    {
+        public string Title { get; }
+        public UserGroup(string title) { Title = title; }
+        public UserGroup(string title, IEnumerable<User> items) : base(items) { Title = title; }
     }
 }

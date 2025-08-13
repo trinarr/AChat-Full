@@ -8,8 +8,7 @@
   BackgroundColor="White">
 
     <NavigationPage.TitleView>
-        <Grid Padding="8" ColumnDefinitions="Auto,*,Auto
-              " RowDefinitions="Auto">
+        <Grid Padding="8" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">
             <!-- Назад (только в режиме поиска) -->
             <ImageButton Grid.Column="0" Source="arrow_back.png"  BackgroundColor="Transparent"
                          HeightRequest="24" WidthRequest="24" Clicked="OnSearchBackClicked" 

@@ -23,8 +23,19 @@ namespace AChatFull.ViewModels
 
         public ObservableRangeCollection<ChatMessage> Messages { get; } = new ObservableRangeCollection<ChatMessage>();
 
-        public string PeerName { get; private set; }
-        public string PeerStatus { get; private set; }
+        private string _peerStatus;
+        public string PeerStatus
+        {
+            get => _peerStatus;
+            set { if (_peerStatus != value) { _peerStatus = value; OnPropertyChanged(); } }
+        }
+
+        private string _peerName;
+        public string PeerName
+        {
+            get => _peerName;
+            set { if (_peerName != value) { _peerName = value; OnPropertyChanged(); } }
+        }
 
         private string _messageText;
         public string MessageText
@@ -60,14 +71,11 @@ namespace AChatFull.ViewModels
 
         public ChatViewModel() { }
 
-        public ChatViewModel(ChatRepository repo, string chatId, string currentUserId, string peerName)
+        public ChatViewModel(ChatRepository repo, string chatId, string currentUserId)
         {
             _repo = repo;
             _chatId = chatId;
             _currentUserId = currentUserId;
-
-            PeerName = peerName;
-            PeerStatus = "Не в сети";
 
             SendCommand = new Command(async () => await SendMessageAsync(), () => !string.IsNullOrWhiteSpace(MessageText));
             LoadMessagesCommand = new Command(async () => await LoadMessagesAsync());
@@ -83,6 +91,53 @@ namespace AChatFull.ViewModels
             };
         }
 
+        private async Task<string> ResolvePeerDisplayNameAsync()
+        {
+            if (string.IsNullOrWhiteSpace(_chatId))
+                return null;
+
+            var userId = await _repo.GetPeerUserIdFromParticipantsAsync(_chatId);
+
+            var u = await _repo.GetUserAsync(userId.ToString());
+            if (u != null)
+            {
+                var name = u.DisplayName;
+                if (!string.IsNullOrWhiteSpace(name)) return name;
+
+                name = $"{u.FirstName} {u.LastName}".Trim();
+                return string.IsNullOrWhiteSpace(name) ? u.UserId : name;
+            }
+            return null;
+        }
+
+        private async Task<string> ResolvePeerStatusAsync()
+        {
+            if (string.IsNullOrWhiteSpace(_chatId))
+                return null;
+
+            var userId = await _repo.GetPeerUserIdFromParticipantsAsync(_chatId);
+
+            var u = await _repo.GetUserAsync(userId.ToString());
+            if (u != null && u.HasStatus)
+            {
+                return u.Status;
+            }
+            else
+            {
+                return "Онлайн";
+            }
+            return null;
+        }
+
+        public async Task SetHeaderAsync()
+        {
+            var title = await ResolvePeerDisplayNameAsync();
+            var status = await ResolvePeerStatusAsync();
+
+            if (!string.IsNullOrWhiteSpace(title)) Device.BeginInvokeOnMainThread(() => PeerName = title);
+            if (!string.IsNullOrWhiteSpace(title)) Device.BeginInvokeOnMainThread(() => PeerStatus = status);
+        }
+
         public async Task LoadMessagesAsync()
         {
             IsMessagesLoading = true;
@@ -92,7 +147,6 @@ namespace AChatFull.ViewModels
                 _beforeCursor = null;
                 CanLoadMore = true;
 
-                // Берём последние PageSize сообщений (DESC), потом показываем по возрастанию
                 var raw = await _repo.GetMessagesForChatAsync(_chatId, PageSize, null);
 
                 var list = new System.Collections.Generic.List<ChatMessage>();
