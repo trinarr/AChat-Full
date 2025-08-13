@@ -59,16 +59,10 @@
     <EmbeddedResource Update="Views\MessagesListView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\PhonePage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
     <EmbeddedResource Update="Views\PinPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\SettingsPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Views\SmsCodePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
@@ -76,7 +70,6 @@
   <ItemGroup>
 	<EmbeddedResource Include="Resources\ChatDB.db" />
 	<EmbeddedResource Include="Resources\Icons\attach_file.png" />
-	<EmbeddedResource Include="Resources\Icons\arrow_back.svg" />
 	<EmbeddedResource Include="Resources\Icons\arrow_back.png" />
 	<EmbeddedResource Include="Resources\Icons\header_call.png" />
 	<EmbeddedResource Include="Resources\Icons\header_more.png" />
