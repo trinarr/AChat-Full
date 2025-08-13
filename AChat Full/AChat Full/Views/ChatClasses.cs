@@ -258,19 +258,27 @@ namespace AChatFull.Views
         }
 
         // Новый метод:
-        public Task<List<Message>> GetMessagesForChatAsync(string chatId)
-        {
-            return _db.Table<Message>()
-                      .Where(m => m.ChatId == chatId)
-                      .OrderBy(m => m.CreatedAt)      // по возрастанию (старые вверху)
-                      .ToListAsync();
-        }
 
-        /// <summary>
-        /// Вставляет новое сообщение в таблицу Messages.
-        /// Возвращает число затронутых строк (1 при успехе).
-        /// </summary>
-        public Task<int> InsertMessageAsync(Message message)
+        // New overload: get last {take} messages, optionally older than 'beforeExclusiveCreatedAt' (format "yyyy-MM-dd HH:mm:ss")
+        public Task<List<Message>> GetMessagesForChatAsync(string chatId, int take, string beforeExclusiveCreatedAt)
+        {
+            if (string.IsNullOrEmpty(beforeExclusiveCreatedAt))
+            {
+                // Latest first
+                return _db.Table<Message>()
+                          .Where(m => m.ChatId == chatId)
+                          .OrderByDescending(m => m.CreatedAt)
+                          .Take(take)
+                          .ToListAsync();
+            }
+            else
+            {
+                // Use raw SQL for robust string comparison in SQLite
+                const string sql = "SELECT * FROM Message WHERE ChatId = ? AND CreatedAt < ? ORDER BY CreatedAt DESC LIMIT ?";
+                return _db.QueryAsync<Message>(sql, chatId, beforeExclusiveCreatedAt, take);
+            }
+        }
+public Task<int> InsertMessageAsync(Message message)
         {
             // Если вам нужно заменять существующее при совпадении PK:
             // return _db.InsertOrReplaceAsync(message);

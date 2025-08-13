@@ -4,6 +4,7 @@ using Xamarin.Forms;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using AChatFull.ViewModels;
+using AChatFull.Views;
 
 namespace AChatFull.Views
 {
@@ -14,6 +15,7 @@ namespace AChatFull.Views
 
         private readonly string _chatId;
         private readonly ChatRepository _repo;
+        private bool _messagesViewCreated;
 
         private double _singleLineHeight;
         private double _maxHeight;
@@ -27,10 +29,8 @@ namespace AChatFull.Views
             _chatId = chatId;
             _vm = new ChatViewModel(repo, chatId, userToken, peerName);
             BindingContext = _vm;
-
-            _ = _vm.LoadMessagesAsync();
-
-            MessagingCenter.Subscribe<ChatViewModel>(this, "ScrollToEnd", async sender =>
+            // initial load moved to OnAppearing for faster first paint
+MessagingCenter.Subscribe<ChatViewModel>(this, "ScrollToEnd", async sender =>
             {
                 await ScrollToTop(true);
             });
@@ -42,13 +42,12 @@ namespace AChatFull.Views
             // Подписываемся на изменение размера
             MessageEditor.SizeChanged += (s, e) =>
             {
-                if (MessagesView.ItemsSource.Cast<ChatMessage>().Count() > 0)
-                {
-                    MessagesView.ScrollTo(
-                        MessagesView.ItemsSource.Cast<ChatMessage>().Last(),
-                        position: ScrollToPosition.End,
-                        animate: false);
-                }
+                if (_vm.Messages.Count > 0)
+            {
+                var host = this.FindByName<ContentView>("MessagesHost");
+                if (host?.Content is MessagesListView mlv)
+                    mlv.ScrollToBottom(true);
+            }
 
                 // когда фактическая высота больше максимума —
                 // жёстко фиксим максимальную
@@ -81,10 +80,9 @@ namespace AChatFull.Views
                         IsIncoming = userId != "78977",
                         Timestamp = timestamp
                     });
-                    MessagesView.ScrollTo(
-                        item: Messages.Last(),
-                        position: ScrollToPosition.End,
-                        animate: true);
+                    var host2 = this.FindByName<ContentView>("MessagesHost");
+                    if (host2?.Content is MessagesListView mlv2)
+                        mlv2.ScrollToBottom(true);
                 });
             };
 
@@ -132,7 +130,24 @@ namespace AChatFull.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            await ScrollToTop(false);
+
+            if (!_messagesViewCreated)
+            {
+                // Yield to let header & input render
+                await Task.Yield();
+
+                var view = new MessagesListView { BindingContext = _vm };
+                var host = this.FindByName<ContentView>("MessagesHost");
+                if (host != null) host.Content = view;
+                _messagesViewCreated = true;
+            }
+
+            // Initial load
+            if (_vm.Messages.Count == 0)
+            {
+                await _vm.LoadMessagesAsync();
+                await ScrollToTop(false);
+            }
         }
 
         private async void OnBackButtonClicked(object sender, EventArgs e)
@@ -150,12 +165,11 @@ namespace AChatFull.Views
         private async Task ScrollToTop(bool animate)
         {
             await Task.Delay(50);
-
-            // Прокрутить к последнему элементу
-            MessagesView.ScrollTo(
-                MessagesView.ItemsSource.Cast<ChatMessage>().Last(),
-                position: ScrollToPosition.End,
-                animate: animate);
+            var host = this.FindByName<ContentView>("MessagesHost");
+            if (host?.Content is MessagesListView mlv)
+            {
+                mlv.ScrollToBottom(animate);
+            }
         }
 
         private async void OnBackClicked(object sender, EventArgs e)

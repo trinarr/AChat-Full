@@ -119,79 +119,11 @@
     <Grid RowDefinitions="*,Auto" RowSpacing="0">
 
         <!-- 1) Секция сообщений -->    
-        <CollectionView
-      x:Name="MessagesView"
-      ItemsSource="{Binding Messages}"
-      Grid.Row="0"
-      BackgroundColor="White"
-      Margin="0,0,0,0">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="vm:ChatMessage">
-                    <Grid HorizontalOptions="FillAndExpand" ColumnSpacing="0" Padding="8">
-                        <!-- ВХОДЯЩЕЕ: левая колонка = максимум 75% ширины -->
-                        <Grid IsVisible="{Binding IsIncoming}"
-      HorizontalOptions="FillAndExpand"
-      ColumnDefinitions="0.75*,0.25*"
-      ColumnSpacing="0">
-                            <Frame Grid.Column="0"
-         Padding="10"
-         CornerRadius="8"
-         HasShadow="False"
-         HorizontalOptions="Start"
-         BackgroundColor="{Binding IsIncoming, Converter={StaticResource IncomingBgConverter}}">
-                                <Label Text="{Binding Text}"
-           TextColor="{Binding IsIncoming, Converter={StaticResource IncomingTextColorConverter}}"
-           LineBreakMode="WordWrap"/>
-                            </Frame>
-                        </Grid>
-
-                        <!-- ИСХОДЯЩЕЕ: правая колонка = максимум 75% ширины -->
-                        <Grid IsVisible="{Binding IsIncoming, Converter={StaticResource InverseBoolConverter}}"
-      HorizontalOptions="FillAndExpand"
-      ColumnDefinitions="0.25*,0.75*"
-      ColumnSpacing="0">
-                            <Frame Grid.Column="1"
-         Padding="10"
-         CornerRadius="8"
-         HasShadow="False"
-         HorizontalOptions="End"
-         BackgroundColor="{Binding IsIncoming, Converter={StaticResource IncomingBgConverter}}">
-                                <Label Text="{Binding Text}"
-           TextColor="{Binding IsIncoming, Converter={StaticResource IncomingTextColorConverter}}"
-           LineBreakMode="WordWrap"/>
-                            </Frame>
-                        </Grid>
-
-                        <!-- Документ -->
-                        <Frame Padding="10" CornerRadius="8" HasShadow="False"
-                               IsVisible="{Binding Kind, Converter={StaticResource EqualConverter}, ConverterParameter=Document}"
-                               HorizontalOptions="{Binding IsIncoming, Converter={StaticResource BoolToHorzOptionsConverter}}"
-                               BackgroundColor="{Binding IsIncoming, Converter={StaticResource IncomingBgConverter}}">
-                            <Grid ColumnDefinitions="Auto,* ,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8">
-                                <!-- иконка файла -->
-                                <Image Grid.RowSpan="2" Grid.Column="0" Source="attachment.png" WidthRequest="24" HeightRequest="24" />
-
-                                <!-- название -->
-                                <Label Grid.Column="1" Grid.Row="0" Text="{Binding Document.FileName}" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
-                                <!-- размер -->
-                                <Label Grid.Column="1" Grid.Row="1" Text="{Binding Document.FileSize, Converter={StaticResource FileSizeConverter}}" FontSize="Small" TextColor="Gray"/>
-
-                                <!-- кнопка -->
-                                <Button Grid.Column="2" Grid.RowSpan="2"
-                  Text="{Binding Document.IsDownloaded, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Открыть|Скачать'}"
-                   Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.OpenDocumentCommand}"
-                  CommandParameter="{Binding}" />
-
-                                <!-- прогресс -->
-                                <ProgressBar Grid.ColumnSpan="3" Grid.Row="2" Margin="0,8,0,0"
-                       IsVisible="{Binding Document.IsDownloading}"
-                       Progress="{Binding Document.Progress}" />
-                            </Grid>
-                        </Frame>
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+        <ContentView x:Name="MessagesHost" Grid.Row="0" />
+        <!-- Loading overlay -->
+        <Grid Grid.Row="0" IsVisible="{Binding IsMessagesLoading}" BackgroundColor="#40FFFFFF">
+            <ActivityIndicator IsRunning="True" VerticalOptions="Center" HorizontalOptions="Center"/>
+        </Grid>
 
         <!-- 2) Фиксированная панель ввода внизу -->
         <Grid

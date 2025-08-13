@@ -34,7 +34,7 @@ namespace AChatFull.Views
             try
             {
                 var chatPage = new ChatPage(chat.ChatId, App.USER_TOKEN_TEST, _repo, chat.Title);
-                await Application.Current.MainPage.Navigation.PushModalAsync(new NavigationPage(chatPage));
+                await Application.Current.MainPage.Navigation.PushModalAsync(chatPage, animated: false);
             }
             catch (Exception ex)
             {
