@@ -90,22 +90,22 @@
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
-  <AndroidResource Include="..\AChat Full\Resources\Icons\backspace.png">
+    <AndroidResource Include="..\AChat Full\Resources\Icons\backspace.png">
       <Link>Resources\drawable\backspace.png</Link>
     </AndroidResource>
-  <AndroidResource Include="..\AChat Full\Resources\Icons\header_call.png">
+    <AndroidResource Include="..\AChat Full\Resources\Icons\header_call.png">
       <Link>Resources\drawable\header_call.png</Link>
     </AndroidResource>
-  <AndroidResource Include="..\AChat Full\Resources\Icons\header_video.png">
+    <AndroidResource Include="..\AChat Full\Resources\Icons\header_video.png">
       <Link>Resources\drawable\header_video.png</Link>
     </AndroidResource>
-  <AndroidResource Include="..\AChat Full\Resources\Icons\header_more.png">
+    <AndroidResource Include="..\AChat Full\Resources\Icons\header_more.png">
       <Link>Resources\drawable\header_more.png</Link>
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\attach_file.png">
       <Link>Resources\drawable\attach_file.png</Link>
     </AndroidResource>
-	<AndroidResource Include="..\AChat Full\Resources\Icons\fingerprint.png">
+    <AndroidResource Include="..\AChat Full\Resources\Icons\fingerprint.png">
       <Link>Resources\drawable\fingerprint.png</Link>
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\arrow_back.png">
