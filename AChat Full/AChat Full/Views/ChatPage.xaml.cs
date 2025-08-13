@@ -12,7 +12,6 @@ namespace AChatFull.Views
         private readonly ChatViewModel _vm;
 
         private readonly string _chatId;
-        private readonly ChatRepository _repo;
         private bool _messagesViewCreated;
 
         private double _singleLineHeight;
@@ -26,7 +25,6 @@ namespace AChatFull.Views
         {
             InitializeComponent();
 
-            _repo = repo;
             _chatId = chatId;
             _vm = new ChatViewModel(repo, chatId, userToken);
             BindingContext = _vm;

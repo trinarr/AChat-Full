@@ -20,11 +20,27 @@
             <ImageButton Grid.Column="0" Source="arrow_back.png"  BackgroundColor="Transparent"
                          HeightRequest="24" WidthRequest="24" Clicked="OnBackClicked" />
 
-            <Frame Grid.Column="1" WidthRequest="36" HeightRequest="36"
-                   CornerRadius="18" HasShadow="False" BackgroundColor="#E6E6E6"
-                   Padding="0" VerticalOptions="Center">
-                <!--    <Label Text="{Binding PeerName}" FontSize="16"
-                       VerticalOptions="Center" HorizontalOptions="Center" /> -->
+            <Frame Grid.Column="1"
+                     WidthRequest="36" HeightRequest="36"
+                     CornerRadius="18"
+                     Padding="0"
+                     HasShadow="False"
+                     IsClippedToBounds="True"
+                     BackgroundColor="#E6E6E6"
+                     HorizontalOptions="Start"
+                     VerticalOptions="Center">
+                <Grid>
+                    <Image Source="{Binding PeerAvatarUrl}"
+                         Aspect="AspectFill"
+                         IsVisible="{Binding PeerHasAvatar}" />
+                    <Label Text="{Binding PeerInitials}"
+                         IsVisible="{Binding PeerNoAvatar}"
+                         HorizontalOptions="Center"
+                         VerticalOptions="Center"
+                         FontAttributes="Bold"
+                         FontSize="Medium"
+                         TextColor="#333"/>
+                </Grid>
             </Frame>
 
             <StackLayout Grid.Column="2" Spacing="0" VerticalOptions="Center">

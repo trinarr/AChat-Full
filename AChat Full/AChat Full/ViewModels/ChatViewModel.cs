@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -7,8 +6,6 @@ using System.Windows.Input;
 using Xamarin.Forms;
 using System.Globalization;
 using System.Diagnostics;
-using System.Threading;
-using System.IO;
 using Xamarin.Essentials;
 using AChatFull.Views;
 using AChatFull.Utils;
@@ -20,6 +17,30 @@ namespace AChatFull.ViewModels
         private readonly ChatRepository _repo;
         private readonly string _chatId;
         private readonly string _currentUserId;
+
+        private User _peer;
+        public User Peer
+        {
+            get => _peer;
+            set
+            {
+                if (SetProperty(ref _peer, value))
+                {
+                    OnPropertyChanged(nameof(PeerDisplayName));
+                    OnPropertyChanged(nameof(PeerAvatarUrl));
+                    OnPropertyChanged(nameof(PeerHasAvatar));
+                    OnPropertyChanged(nameof(PeerNoAvatar));
+                    OnPropertyChanged(nameof(PeerInitials));
+                }
+            }
+        }
+
+        // Прокси под биндинг
+        public string PeerDisplayName => Peer?.DisplayName;
+        public string PeerAvatarUrl => Peer?.AvatarUrl;
+        public bool PeerHasAvatar => Peer?.HasAvatar ?? false;
+        public bool PeerNoAvatar => !PeerHasAvatar;
+        public string PeerInitials => Peer?.Initials;
 
         public ObservableRangeCollection<ChatMessage> Messages { get; } = new ObservableRangeCollection<ChatMessage>();
 
@@ -36,6 +57,7 @@ namespace AChatFull.ViewModels
             get => _peerName;
             set { if (_peerName != value) { _peerName = value; OnPropertyChanged(); } }
         }
+
 
         private string _messageText;
         public string MessageText
@@ -91,48 +113,25 @@ namespace AChatFull.ViewModels
             };
         }
 
-        private async Task<string> ResolvePeerDisplayNameAsync()
+        private async Task<User> ResolvePeerAsync()
         {
-            if (string.IsNullOrWhiteSpace(_chatId))
-                return null;
+            if (string.IsNullOrWhiteSpace(_chatId)) return null;
 
             var userId = await _repo.GetPeerUserIdFromParticipantsAsync(_chatId);
 
             var u = await _repo.GetUserAsync(userId.ToString());
-            if (u != null)
-            {
-                var name = u.DisplayName;
-                if (!string.IsNullOrWhiteSpace(name)) return name;
-
-                name = $"{u.FirstName} {u.LastName}".Trim();
-                return string.IsNullOrWhiteSpace(name) ? u.UserId : name;
-            }
-            return null;
-        }
-
-        private async Task<string> ResolvePeerStatusAsync()
-        {
-            if (string.IsNullOrWhiteSpace(_chatId))
-                return null;
-
-            var userId = await _repo.GetPeerUserIdFromParticipantsAsync(_chatId);
-
-            var u = await _repo.GetUserAsync(userId.ToString());
-            if (u != null && u.HasStatus)
-            {
-                return u.Status;
-            }
-            else
-            {
-                return "Онлайн";
-            }
-            return null;
+            return u;
         }
 
         public async Task SetHeaderAsync()
         {
-            var title = await ResolvePeerDisplayNameAsync();
-            var status = await ResolvePeerStatusAsync();
+            var user = await ResolvePeerAsync();
+            if (user == null) return;
+
+            Device.BeginInvokeOnMainThread(() => Peer = user);
+
+            string title = user.DisplayName;
+            string status = user.HasStatus ? user.DisplayStatus : "Онлайн";
 
             if (!string.IsNullOrWhiteSpace(title)) Device.BeginInvokeOnMainThread(() => PeerName = title);
             if (!string.IsNullOrWhiteSpace(title)) Device.BeginInvokeOnMainThread(() => PeerStatus = status);
