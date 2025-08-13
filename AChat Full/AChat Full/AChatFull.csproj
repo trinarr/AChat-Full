@@ -74,5 +74,7 @@
 	<EmbeddedResource Include="Resources\Icons\header_call.png" />
 	<EmbeddedResource Include="Resources\Icons\header_more.png" />
 	<EmbeddedResource Include="Resources\Icons\header_video.png" />
+	<EmbeddedResource Include="Resources\Icons\fingerprint.png" />
+	<EmbeddedResource Include="Resources\Icons\backspace.png" />
   </ItemGroup>
 </Project>

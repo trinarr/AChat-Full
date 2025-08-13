@@ -38,7 +38,7 @@
             <!-- Поле поиска (видимо только в режиме поиска) -->
             <Entry x:Name="SearchEntry"
                    Grid.Column="1"
-                   Placeholder="Поиск"
+                   Placeholder="Поиск по пользователям"
                    Text="{Binding SearchText}"
                    ClearButtonVisibility="WhileEditing"
                    IsVisible="{Binding IsSearchMode}"

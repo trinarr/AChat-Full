@@ -12,5 +12,8 @@ namespace AChatFull.Views
             InitializeComponent();
             BindingContext = new PinViewModel(isFirstRun, biometricsEnabled, onSuccess);
         }
+
+        // Запретить закрытие модалки кнопкой "Назад"
+        protected override bool OnBackButtonPressed() => true;
     }
 }
