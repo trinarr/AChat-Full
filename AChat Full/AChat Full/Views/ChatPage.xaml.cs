@@ -166,7 +166,7 @@ namespace AChatFull.Views
 
         private async Task ScrollToTop(bool animate)
         {
-            await Task.Delay(50);
+            await Task.Yield();
             var host = this.FindByName<ContentView>("MessagesHost");
             if (host?.Content is MessagesListView mlv)
             {

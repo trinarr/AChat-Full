@@ -134,13 +134,13 @@
 
         <!-- Режим «много сообщений»: виртуализированный список -->
         <CollectionView
-        x:Name="List"
-        ItemsSource="{Binding Messages}"
-        SelectionMode="None"
-        Scrolled="OnScrolled"
-        ItemSizingStrategy="MeasureAllItems"
-        VerticalOptions="FillAndExpand"
-        IsVisible="True">
+    x:Name="List"
+    ItemsSource="{Binding Messages}"
+    SelectionMode="None"
+    Scrolled="OnScrolled"
+    ItemSizingStrategy="MeasureFirstItem"   
+            VerticalOptions="FillAndExpand"
+    IsVisible="True">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Vertical" ItemSpacing="6" />
             </CollectionView.ItemsLayout>
