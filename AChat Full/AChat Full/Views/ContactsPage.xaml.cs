@@ -40,7 +40,6 @@ namespace AChatFull.Views
             VM.IsSearchMode = false;
         }
 
-        // === ВАЖНО: эти сигнатуры должны совпадать с XAML ===
         private void OnSearchIconClicked(object sender, EventArgs e)
         {
             VM.IsSearchMode = true;

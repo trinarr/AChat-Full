@@ -26,6 +26,7 @@
 
                 <Entry x:Name="SearchEntry"
                Grid.Column="1"
+              TextColor="#fff"
                Placeholder="Поиск по пользователям"
                Text="{Binding SearchText}"
                ClearButtonVisibility="WhileEditing"
@@ -68,7 +69,7 @@
                 </CollectionView.Triggers>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid Padding="12,8" ColumnDefinitions="56,*,Auto">
+                        <Grid Padding="15,12" ColumnDefinitions="60,*,Auto">
                             <Frame Grid.Column="0"
                      WidthRequest="48" HeightRequest="48"
                      CornerRadius="24"
@@ -140,15 +141,15 @@
                 </CollectionView.Triggers>
                 <CollectionView.GroupHeaderTemplate>
                     <DataTemplate>
-                        <Grid Padding="15,8">
+                        <Grid Padding="15,8" >
                             <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="Small" TextColor="#666"/>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.GroupHeaderTemplate>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid Padding="12,8" ColumnDefinitions="56,*,Auto">
-                            <Frame Grid.Column="0"
+                        <Grid Padding="15,12" ColumnDefinitions="60,*,Auto">
+                            <Frame Grid.Column="0" 
                      WidthRequest="48" HeightRequest="48"
                      CornerRadius="24"
                      Padding="0"

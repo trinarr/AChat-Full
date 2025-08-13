@@ -144,7 +144,7 @@ namespace AChatFull.ViewModels
                 IsBusy = true;
                 SearchGroups.Clear();
 
-                if (string.IsNullOrWhiteSpace(text))
+                if (text == null)
                 {
                     IsSearchMode = false;
                     return;

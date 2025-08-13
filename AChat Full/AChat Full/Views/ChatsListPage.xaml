@@ -29,7 +29,7 @@
             <!-- Поле поиска (когда поиск) -->
             <Entry x:Name="SearchEntry"
              Grid.Column="1"
-                   TextColor="#fff"
+             TextColor="#fff"
              Placeholder="Поиск по чатам"
              Text="{Binding SearchText}"
              ClearButtonVisibility="WhileEditing"
@@ -65,7 +65,7 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="vm:ChatSummary">
                     <Frame
-                        Padding="10"
+                        Padding="15,12"
                         Margin="5" 
                         CornerRadius="0">
                         <Grid ColumnSpacing="10">
