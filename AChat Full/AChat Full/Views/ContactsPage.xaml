@@ -17,7 +17,7 @@
                      Clicked="OnSearchBackClicked" />
 
                 <Label Grid.Column="1"
-             Text="Чаты"
+             Text="Контакты"
              TextColor="#fff"
              FontAttributes="Bold"
              FontSize="18"

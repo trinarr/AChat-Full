@@ -59,7 +59,7 @@ namespace AChatFull.Views
         // Профиль
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string BirthDate { get; set; } 
+        public string BirthDate { get; set; }
         public string About { get; set; }   
         public string Status { get; set; }
         public string AvatarUrl { get; set; }
@@ -254,22 +254,19 @@ namespace AChatFull.Views
             }
 
             // 2) Чата нет — создаём новый
-            /*var newChatId = Guid.NewGuid().ToString();
+            var newChatId = Guid.NewGuid().ToString();
 
             var chat = new Chat
             {
                 ChatId = newChatId,
-                IsDirect = 1,
-                CreatedAt = DateTime.UtcNow
+                //CreatedAt = DateTime.UtcNow
             };
             await _db.InsertAsync(chat);
-
             await _db.InsertAsync(new ChatParticipant { ChatId = newChatId, UserId = _currentUserId });
             await _db.InsertAsync(new ChatParticipant { ChatId = newChatId, UserId = otherUserId });
+            await MarkUserAsContactAsync(otherUserId);
 
-            return newChatId;*/
-
-            return null;
+            return newChatId;
         }
 
         /// <summary>
