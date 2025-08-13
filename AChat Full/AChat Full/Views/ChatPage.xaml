@@ -1,163 +1,73 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
+    x:Class="AChatFull.Views.ChatPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:vm="clr-namespace:AChatFull.Views"
-    xmlns:conv="clr-namespace:AChatFull.Utils"
-    xmlns:ffsvg="clr-namespace:FFImageLoading.Svg.Forms;assembly=FFImageLoading.Svg.Forms"
-    x:Class="AChatFull.Views.ChatPage"
-    x:Name="PageRoot"
-    BackgroundColor="White">
+    xmlns:ffsvg="clr-namespace:FFImageLoading.Svg.Forms;assembly=FFImageLoading.Svg.Forms">
 
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <conv:InverseBoolConverter x:Key="InverseBoolConverter" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
+    <Grid RowDefinitions="Auto,*,Auto" RowSpacing="0">
 
-    <NavigationPage.TitleView>
-        <Grid Padding="0" RowSpacing="0">
+        <Grid Grid.Row="0" Padding="8" ColumnSpacing="12" BackgroundColor="#1E88E5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <!-- Стрелка -->
                 <ColumnDefinition Width="Auto"/>
-                <!-- Аватар -->
                 <ColumnDefinition Width="*"/>
-                <!-- Имя + статус -->
                 <ColumnDefinition Width="Auto"/>
-                <!-- Иконки справа -->
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- 2 строки -->
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+            <ImageButton Grid.Column="0" Source="arrow_back.png"  BackgroundColor="Transparent"
+                         HeightRequest="24" WidthRequest="24" Clicked="OnBackClicked" />
 
-            <Grid Grid.Column="0"
-      Grid.RowSpan="2"
-      WidthRequest="24" HeightRequest="24"
-      BackgroundColor="Transparent"
-      Margin="0,0,8,0"
-      HorizontalOptions="Start"
-      VerticalOptions="Center">
-                <ffsvg:SvgCachedImage
-        Aspect="AspectFit"
-        WidthRequest="24"
-        HeightRequest="24"
-        Source="resource://AChatFull.Resources.Icons.arrow_back.png" />
-                <Grid.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnBackClicked" />
-                </Grid.GestureRecognizers>
-            </Grid>
-
-            <!-- Аватар -->
-            <Frame
-        Grid.Column="1"
-        Grid.RowSpan="2"
-        WidthRequest="36" HeightRequest="36"
-        CornerRadius="18"
-        Padding="0"
-        IsClippedToBounds="True"
-        VerticalOptions="Center">
-                <Image
-          Source=""
-          Aspect="AspectFill" />
+            <Frame Grid.Column="1" WidthRequest="36" HeightRequest="36"
+                   CornerRadius="18" HasShadow="False" BackgroundColor="#E6E6E6"
+                   Padding="0" VerticalOptions="Center">
+                <!--    <Label Text="{Binding PeerName}" FontSize="16"
+                       VerticalOptions="Center" HorizontalOptions="Center" /> -->
             </Frame>
 
-            <!-- Имя собеседника -->
-            <Label
-        Grid.Column="2"
-        Grid.Row="0"
-        Text="{Binding PeerName}"
-        TextColor="White"
-        FontAttributes="Bold"
-        FontSize="Medium"
-        VerticalOptions="End" />
-
-            <!-- Статус (в сети, был(а) недавно и т.п.) -->
-            <Label
-        Grid.Column="2"
-        Grid.Row="1"
-        Text="{Binding PeerStatus}"
-        TextColor="White"
-        FontSize="Small"
-        VerticalOptions="Start" />
-
-            <!-- Иконки справа -->
-            <StackLayout Grid.Column="3"
-                     Grid.RowSpan="2"
-                     Orientation="Horizontal"
-                     Spacing="20"
-                     HorizontalOptions="End"
-                     VerticalOptions="Center">
-
-                <!-- Аудио -->
-                <ImageButton Source="header_call.png"
-                         BackgroundColor="Transparent"
-                         HeightRequest="24"
-                         WidthRequest="24"
-                         Clicked="OnAudioCallClicked" />
-
-                <!-- Видео -->
-                <ImageButton Source="header_video.png"
-                         BackgroundColor="Transparent"
-                         HeightRequest="24"
-                         WidthRequest="24"
-                         Clicked="OnVideoCallClicked" />
-
-                <!-- Три точки -->
-                <ImageButton Source="header_more.png"
-                         BackgroundColor="Transparent"
-                         HeightRequest="24"
-                         WidthRequest="24"
-                         Clicked="OnMoreClicked" />
+            <StackLayout Grid.Column="2" Spacing="0" VerticalOptions="Center">
+                <Label Text="{Binding PeerName}" FontAttributes="Bold" FontSize="16" LineBreakMode="TailTruncation" TextColor="#fff"/>
+                <Label Text="{Binding PeerStatus}" FontSize="12" TextColor="#fff"/>
             </StackLayout>
-        </Grid>
-    </NavigationPage.TitleView>
 
-    <Grid RowDefinitions="*,Auto" RowSpacing="0">
-
-        <!-- 1) Секция сообщений -->    
-        <ContentView x:Name="MessagesHost" Grid.Row="0" />
-        <!-- Loading overlay -->
-        <Grid Grid.Row="0" IsVisible="{Binding IsMessagesLoading}" BackgroundColor="#40FFFFFF">
-            <ActivityIndicator IsRunning="True" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <ImageButton Grid.Column="3" Source="header_call.png"  BackgroundColor="Transparent"
+                         HeightRequest="24" WidthRequest="24" Clicked="OnAudioCallClicked" />
+            <ImageButton Grid.Column="4" Source="header_video.png" BackgroundColor="Transparent"
+                         HeightRequest="24" WidthRequest="24" Clicked="OnVideoCallClicked" />
+            <ImageButton Grid.Column="5" Source="header_more.png"  BackgroundColor="Transparent"
+                         HeightRequest="24" WidthRequest="24" Clicked="OnMoreClicked" />
         </Grid>
 
-        <!-- 2) Фиксированная панель ввода внизу -->
-        <Grid
-      Grid.Row="1"
-      Padding="8"
-      BackgroundColor="White"
-      ColumnSpacing="8">
+        <ContentView x:Name="MessagesHost" Grid.Row="1" />
+
+        <Grid Grid.Row="1" IsVisible="{Binding IsMessagesLoading}" BackgroundColor="#40FFFFFF">
+            <ActivityIndicator IsRunning="True" VerticalOptions="Center" HorizontalOptions="Center" />
+        </Grid>
+
+        <Grid Grid.Row="2" Padding="8" BackgroundColor="White" ColumnSpacing="8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- скрепка -->
-            <ImageButton Grid.Column="0"
-               Source="attach_file.png"
-               BackgroundColor="Transparent"
-               Command="{Binding AttachDocumentCommand}"
-               WidthRequest="28" HeightRequest="28" />
+            <ImageButton Grid.Column="0" Source="attach_file.png"
+                         BackgroundColor="Transparent"
+                         Command="{Binding AttachDocumentCommand}"
+                         WidthRequest="28" HeightRequest="28" />
 
-            <Editor
-                Grid.Column="1"
-                IsSpellCheckEnabled="true"
-                x:Name="MessageEditor"
-                Text="{Binding MessageText}"
-                AutoSize="TextChanges"
-                VerticalOptions="Start"
-                Placeholder="Сообщение"
-                Margin="0"/>
+            <Editor Grid.Column="1"
+                    x:Name="MessageEditor"
+                    Text="{Binding MessageText}"
+                    AutoSize="TextChanges"
+                    Placeholder="Сообщение"/>
 
             <Button Grid.Column="2"
-        Text="Отправить"
-        Command="{Binding SendCommand}"
-        VerticalOptions="Center" />
+                    Text="Отправить"
+                    Command="{Binding SendCommand}"
+                    VerticalOptions="Center"/>
         </Grid>
 
     </Grid>

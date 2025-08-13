@@ -21,6 +21,15 @@ namespace AChatFull.Views
             }
         }
 
+        public void Detach()
+        {
+            // Отключаем ItemsSource, чтобы CollectionView мгновенно «облегчился»
+            List.ItemsSource = null;
+
+            // Дополнительно можно сбросить BindingContext — быстрее освобождается
+            this.BindingContext = null;
+        }
+
         async void OnScrolled(object sender, ItemsViewScrolledEventArgs e)
         {
             // When close to top, request older messages

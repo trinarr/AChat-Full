@@ -31,6 +31,8 @@ namespace AChatFull.Views
 
         private void OnSearchBackClicked(object sender, System.EventArgs e)
         {
+            SearchEntry?.Unfocus();
+
             VM.SearchText = string.Empty; // очистим фильтр
             VM.IsSearchMode = false;
         }

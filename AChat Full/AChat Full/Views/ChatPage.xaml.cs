@@ -174,11 +174,31 @@ MessagingCenter.Subscribe<ChatViewModel>(this, "ScrollToEnd", async sender =>
 
         private async void OnBackClicked(object sender, EventArgs e)
         {
-            // Если открывали модально:
-            if (Application.Current.MainPage?.Navigation?.ModalStack?.Count > 0)
-                await Application.Current.MainPage.Navigation.PopModalAsync();
-            else
-                await Navigation.PopAsync();
+            try
+            {
+                // Спрятать клавиатуру, чтобы не было перестроений во время закрытия
+                MessageEditor?.Unfocus();
+
+                // Отцепить тяжёлый список перед навигацией — так GPU/GC не мешают анимации
+                var host = this.FindByName<ContentView>("MessagesHost");
+                if (host?.Content is MessagesListView mlv)
+                {
+                    mlv.Detach();          // см. пункт 2
+                    host.Content = null;   // убираем из визуального дерева
+                }
+
+                // Разорвать биндинги (ускоряет финализацию)
+                BindingContext = null;
+
+                // Закрываем БЕЗ анимации — исчезновение мгновенное и без дропов кадров
+                await Application.Current.MainPage.Navigation.PopModalAsync(animated: false);
+            }
+            finally
+            {
+                // Сообщаем о закрытии уже ПОСЛЕ выхода со страницы
+                Device.BeginInvokeOnMainThread(() =>
+                    Xamarin.Forms.MessagingCenter.Send(this, "ChatClosed", _chatId));
+            }
         }
 
         private async void OnSearchClicked(object sender, EventArgs e)
@@ -189,7 +209,8 @@ MessagingCenter.Subscribe<ChatViewModel>(this, "ScrollToEnd", async sender =>
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            Xamarin.Forms.MessagingCenter.Send(this, "ChatClosed", _chatId);
+            MessagingCenter.Unsubscribe<ChatViewModel>(this, "ScrollToEnd");
+
             //_chatClient.Dispose();
         }
     }
