@@ -11,10 +11,10 @@ namespace AChatFull
         public static string USER_TOKEN_TEST = "user1";
 
         // период (сек), в течение которого не спрашиваем PIN после быстрого свитча
-        const int LockGraceSeconds = 10; 
+        const int LockGraceSeconds = 10;
 
-        static bool _lockShown;       
-        static DateTime _lastSleepUtc; 
+        static bool _lockShown;
+        static DateTime _lastSleepUtc;
 
         public App()
         {
