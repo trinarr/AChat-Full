@@ -88,12 +88,28 @@ namespace AChatFull.ViewModels
             {
                 var data = await _repo.GetChatSummariesAsync();
                 _allChats = data?.ToList() ?? new List<ChatSummary>();
-                ApplyFilter(); // показать с текущим SearchText (или всё, если пусто)
+                ApplyFilter();
             }
             finally
             {
                 IsBusy = false;
             }
+        }
+
+        public class ChatListItem
+        {
+            public string ChatId { get; set; }
+            public User Peer { get; set; }   // сам User собеседника
+            public string LastMessagePreview { get; set; }
+
+            // Удобные прокси под биндинг (используем свойства User)
+            public string PeerDisplayName => Peer?.DisplayName;
+            public string PeerAvatarUrl => Peer?.AvatarUrl;
+            public bool PeerHasAvatar => Peer?.HasAvatar ?? false;
+            public bool PeerNoAvatar => !(Peer?.HasAvatar ?? false);
+            public string PeerInitials => Peer?.Initials;
+
+            public bool HasLastMessage => !string.IsNullOrWhiteSpace(LastMessagePreview);
         }
 
         #region INotifyPropertyChanged

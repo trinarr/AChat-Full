@@ -77,19 +77,27 @@
                             </Grid.ColumnDefinitions>
 
                            <!-- Аватар -->
-                            <Frame
-                                Grid.Column="0"
-                                BackgroundColor="#CCCCCC"
-                                HasShadow="False"
-                                WidthRequest="48" 
-                                HeightRequest="48"
-                                CornerRadius="24"
-                                Padding="0"
-                                IsClippedToBounds="True"
-                                VerticalOptions="Center">
-                                <Image
-                                    Source=""
-                                    Aspect="AspectFill" />
+                            <Frame Grid.Column="0"
+                     WidthRequest="48" HeightRequest="48"
+                     CornerRadius="24"
+                     Padding="0"
+                     HasShadow="False"
+                     IsClippedToBounds="True"
+                     BackgroundColor="#E6E6E6"
+                     HorizontalOptions="Start"
+                     VerticalOptions="Center">
+                                <Grid>
+                                    <Image Source="{Binding PeerAvatarUrl}"
+                         Aspect="AspectFill"
+                         IsVisible="{Binding PeerHasAvatar}" />
+                                    <Label Text="{Binding PeerInitials}"
+                         IsVisible="{Binding PeerNoAvatar}"
+                         HorizontalOptions="Center"
+                         VerticalOptions="Center"
+                         FontAttributes="Bold"
+                         FontSize="Medium"
+                         TextColor="#333"/>
+                                </Grid>
                             </Frame>
 
                             <!-- Левый столбец: имя и последнее сообщение -->

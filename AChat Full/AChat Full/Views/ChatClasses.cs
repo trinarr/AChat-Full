@@ -34,6 +34,13 @@ namespace AChatFull.Views
         public string LastMessage { get; set; }
         public DateTime LastTimestamp { get; set; }
         public bool IsRead { get; set; }
+
+        public User Peer { get; set; }
+
+        public string PeerAvatarUrl => Peer?.AvatarUrl;
+        public bool PeerHasAvatar => Peer?.HasAvatar ?? false;
+        public bool PeerNoAvatar => !PeerHasAvatar;
+        public string PeerInitials => Peer?.Initials;
     }
 
     /// <summary>
@@ -299,9 +306,10 @@ namespace AChatFull.Views
                 .Select(p => p.UserId)
                 .FirstOrDefault(uid => uid != _currentUserId);
                 string title;
+                User user = null;
                 if (other != null)
                 {
-                    var user = await _db.Table<User>()
+                    user = await _db.Table<User>()
                                         .Where(u => u.UserId == other)
                                         .FirstOrDefaultAsync();
                     title = user?.FirstName ?? other;
@@ -318,6 +326,7 @@ namespace AChatFull.Views
                     Title = title,
                     LastMessage = last.Text,
                     LastTimestamp = last.CreatedAtDate,
+                    Peer = user
                     //IsRead = last.IsRead
                 });
             }
