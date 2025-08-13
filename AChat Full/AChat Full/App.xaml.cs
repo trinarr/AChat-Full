@@ -31,7 +31,7 @@ namespace AChatFull
             if (string.IsNullOrEmpty(pin))
                 MainPage = new NavigationPage(new PinPage(isFirstRun: true, biometricsEnabled: false, OnPinSuccess));
             else
-                MainPage = new NavigationPage(new PinPage(isFirstRun: false, biometricsEnabled: true, OnPinSuccess));
+                MainPage = new NavigationPage(new PinPage(isFirstRun: false, biometricsEnabled: bio, OnPinSuccess));
         }
 
         protected override void OnSleep()
