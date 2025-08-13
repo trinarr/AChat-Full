@@ -92,7 +92,10 @@ namespace AChatFull.ViewModels
                 await _repo.MarkUserAsContactAsync(u.UserId);
 
                 var chatPage = new ChatPage(chatId, App.USER_TOKEN_TEST, _repo, u.FirstName);
-                await Application.Current.MainPage.Navigation.PushModalAsync(new NavigationPage(chatPage));
+                await Application.Current.MainPage.Navigation.PushModalAsync(chatPage, animated: false);
+
+
+                Debug.WriteLine("TESTLOG OnChatSelected");
             }
             catch (Exception ex)
             {
