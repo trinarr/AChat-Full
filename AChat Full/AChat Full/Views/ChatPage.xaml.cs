@@ -7,8 +7,7 @@ using AChatFull.ViewModels;
 namespace AChatFull.Views
 {
     public partial class ChatPage : ContentPage
-    {
-        //private readonly SignalRChatClient _chatClient;   
+    {  
         private readonly ChatViewModel _vm;
 
         private readonly string _chatId;
@@ -34,11 +33,9 @@ namespace AChatFull.Views
                 await ScrollToTop(true);
             });
 
-            // Получаем приближённую высоту строки
             _singleLineHeight = MessageEditor.FontSize * 1.2;
             _maxHeight = MaxVisibleLines * _singleLineHeight;
 
-            // Подписываемся на изменение размера
             MessageEditor.SizeChanged += (s, e) =>
             {
                 if (_vm.Messages.Count > 0)
@@ -76,13 +73,10 @@ namespace AChatFull.Views
             switch (action)
             {
                 case "Mute":
-                    // открыть инфо
                     break;
                 case "Block":
-                    // блок
                     break;
                 case "Delete chat":
-                    // удалить
                     break;
             }
         }
@@ -101,7 +95,6 @@ namespace AChatFull.Views
                 _messagesViewCreated = true;
             }
 
-            // Initial load
             if (_vm.Messages.Count == 0)
             {
                 await _vm.LoadMessagesAsync();
@@ -115,21 +108,16 @@ namespace AChatFull.Views
         {
             try
             {
-                // 1) спрятать клавиатуру
                 MessageEditor?.Unfocus();
 
-                // 2) «облегчить» визуальное дерево
                 var host = this.FindByName<ContentView>("MessagesHost");
                 if (host?.Content is MessagesListView mlv)
                 {
-                    mlv.Detach();       // см. метод ниже
+                    mlv.Detach();      
                     host.Content = null;
                 }
 
-                // (опционально) разорвать биндинги для быстрого GC
                 BindingContext = null;
-
-                // 3) закрыть модалку
                 await Application.Current.MainPage.Navigation.PopModalAsync(animated: animated);
             }
             finally
@@ -179,41 +167,29 @@ namespace AChatFull.Views
         {
             try
             {
-                // Спрятать клавиатуру, чтобы не было перестроений во время закрытия
                 MessageEditor?.Unfocus();
 
-                // Отцепить тяжёлый список перед навигацией — так GPU/GC не мешают анимации
                 var host = this.FindByName<ContentView>("MessagesHost");
                 if (host?.Content is MessagesListView mlv)
                 {
-                    mlv.Detach();          // см. пункт 2
-                    host.Content = null;   // убираем из визуального дерева
+                    mlv.Detach();          
+                    host.Content = null;   
                 }
 
-                // Разорвать биндинги (ускоряет финализацию)
                 BindingContext = null;
 
-                // Закрываем БЕЗ анимации — исчезновение мгновенное и без дропов кадров
                 await Application.Current.MainPage.Navigation.PopModalAsync(animated: false);
             }
             finally
             {
-                // Сообщаем о закрытии уже ПОСЛЕ выхода со страницы
                 Device.BeginInvokeOnMainThread(() => MessagingCenter.Send(this, "ChatClosed", _chatId));
             }
-        }
-
-        private async void OnSearchClicked(object sender, EventArgs e)
-        {
-            //
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
             NotifyClosedOnce();
-
-            //_chatClient.Dispose();
         }
     }
 }

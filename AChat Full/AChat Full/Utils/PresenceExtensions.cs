@@ -1,10 +1,9 @@
-﻿using AChatFull.Views; // ваш enum Presence
+﻿using AChatFull.Views; 
 
 namespace AChatFull.Utils
 {
     public static class PresenceExtensions
     {
-        /// <summary>Online | Idle | DoNotDisturb | Offline</summary>
         public static string ToLabel(this Presence p)
         {
             switch (p)
@@ -16,7 +15,6 @@ namespace AChatFull.Utils
             }
         }
 
-        /// <summary>Более «читаемо»: Do not disturb</summary>
         public static string ToReadableLabel(this Presence p)
         {
             switch (p)
