@@ -96,6 +96,18 @@
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
+  <AndroidResource Include="..\AChat Full\Resources\Avatars\annaf_192.png">
+      <Link>Resources\drawable\annaf_192.png</Link>
+    </AndroidResource>
+	<AndroidResource Include="..\AChat Full\Resources\Avatars\ellis_redding_192.png">
+      <Link>Resources\drawable\ellis_redding_192.png</Link>
+    </AndroidResource>
+	<AndroidResource Include="..\AChat Full\Resources\Avatars\nick_fisher_192.png">
+      <Link>Resources\drawable\nick_fisher_192.png</Link>
+    </AndroidResource>
+	<AndroidResource Include="..\AChat Full\Resources\Avatars\boris_the_blade_192.png">
+      <Link>Resources\drawable\boris_the_blade_192.png</Link>
+    </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\backspace.png">
       <Link>Resources\drawable\backspace.png</Link>
     </AndroidResource>

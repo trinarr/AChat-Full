@@ -76,5 +76,10 @@
 	<EmbeddedResource Include="Resources\Icons\header_video.png" />
 	<EmbeddedResource Include="Resources\Icons\fingerprint.png" />
 	<EmbeddedResource Include="Resources\Icons\backspace.png" />
+	
+	<EmbeddedResource Include="Resources\Avatars\annaf_192.png" />
+	<EmbeddedResource Include="Resources\Avatars\ellis_redding_192.png" />
+	<EmbeddedResource Include="Resources\Avatars\nick_fisher_192.png" />
+	<EmbeddedResource Include="Resources\Avatars\boris_the_blade_192.png" />
   </ItemGroup>
 </Project>
