@@ -105,7 +105,7 @@
                                                HorizontalOptions="Center"
                                                VerticalOptions="Center"
                                                FontAttributes="Bold"
-                                               FontSize="Medium"
+                                               FontSize="18"
                                                TextColor="#333"/>
                                     </Grid>
                                 </Frame>

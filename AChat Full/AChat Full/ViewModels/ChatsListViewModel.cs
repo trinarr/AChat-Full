@@ -11,10 +11,8 @@ namespace AChatFull.ViewModels
 {
     public class ChatsListViewModel : INotifyPropertyChanged
     {
-        // Коллекция, к которой биндится UI
         public ObservableCollection<ChatSummary> Chats { get; } = new ObservableCollection<ChatSummary>();
 
-        // Полный набор данных для фильтрации
         private List<ChatSummary> _allChats = new List<ChatSummary>();
 
         private readonly ChatRepository _repo;
@@ -43,7 +41,7 @@ namespace AChatFull.ViewModels
                 {
                     _searchText = value;
                     OnPropertyChanged();
-                    ApplyFilter(); // фильтруем при вводе
+                    ApplyFilter();
                 }
             }
         }
@@ -60,7 +58,6 @@ namespace AChatFull.ViewModels
                     (!string.IsNullOrEmpty(c.LastMessage) && c.LastMessage.ToLowerInvariant().Contains(tl)));
             }
 
-            // Обновляем видимую коллекцию (ObservableCollection сообщит UI об изменениях)
             Chats.Clear();
             foreach (var item in filtered)
                 Chats.Add(item);
@@ -98,10 +95,9 @@ namespace AChatFull.ViewModels
         public class ChatListItem
         {
             public string ChatId { get; set; }
-            public User Peer { get; set; }   // сам User собеседника
+            public User Peer { get; set; }
             public string LastMessagePreview { get; set; }
 
-            // Удобные прокси под биндинг (используем свойства User)
             public string PeerDisplayName => Peer?.DisplayName;
             public string PeerAvatarUrl => Peer?.AvatarUrl;
             public bool PeerHasAvatar => Peer?.HasAvatar ?? false;

@@ -53,8 +53,6 @@
         <Grid RowDefinitions="*"
           Padding="0"
           Margin="0">
-
-            <!-- КОНТАКТЫ (НЕ поиск) — БЕЗ группировки -->
             <CollectionView Grid.Row="0"
                         ItemsSource="{Binding Contacts}"
                         SelectionMode="None"
@@ -83,7 +81,7 @@
                                            HorizontalOptions="Center"
                                            VerticalOptions="Center"
                                            FontAttributes="Bold"
-                                           FontSize="Medium"
+                                           FontSize="16"
                                            TextColor="#333"/>
                                     </Grid>
                                 </Frame>
@@ -132,7 +130,6 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <!-- РЕЗУЛЬТАТЫ ПОИСКА — С группировкой -->
             <CollectionView x:Name="ResultsList"
                         Grid.Row="0"
                         ItemsSource="{Binding SearchGroups}"
@@ -172,7 +169,7 @@
                                            HorizontalOptions="Center"
                                            VerticalOptions="Center"
                                            FontAttributes="Bold"
-                                           FontSize="Medium"
+                                           FontSize="16"
                                            TextColor="#333"/>
                                     </Grid>
                                 </Frame>

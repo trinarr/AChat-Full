@@ -10,9 +10,6 @@ namespace AChatFull.Views
 {
     public enum MessageKind { Text = 0, Document = 1 }
 
-    /// <summary>
-    /// Представление одного сообщения в чате.
-    /// </summary>
     public class ChatMessage
     {
         public MessageKind Kind { get; set; } = MessageKind.Text;
@@ -43,17 +40,12 @@ namespace AChatFull.Views
         public string PeerInitials => Peer?.Initials;
     }
 
-    /// <summary>
-    /// Таблица чатов (Chats)
-    /// </summary>
     [Table("Chats")]
     public class Chat
     {
         [PrimaryKey]
         public string ChatId { get; set; }
     }
-
-
 
     public enum Presence
     {
@@ -70,14 +62,12 @@ namespace AChatFull.Views
         [PrimaryKey]
         public string UserId { get; set; }
 
-        // 1 = ещё нет чата (показывать в списке Контактов), 0 = чат уже был
         public int IsContact { get; set; } = 0;
 
-        // Профиль
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string BirthDate { get; set; }
-        public string About { get; set; }   
+        public string About { get; set; }
         public string StatusCustom { get; set; }
         public string AvatarUrl { get; set; }
 
@@ -101,7 +91,6 @@ namespace AChatFull.Views
 
         public bool HasAvatar => !string.IsNullOrWhiteSpace(AvatarUrl);
         public bool NoAvatar => string.IsNullOrWhiteSpace(AvatarUrl);
-
         public string Initials
         {
             get
@@ -130,9 +119,6 @@ namespace AChatFull.Views
         public string UserId { get; set; }
     }
 
-    /// <summary>
-    /// Таблица сообщений (Messages)
-    /// </summary>
     [Table("Messages")]
     public class Message
     {
@@ -289,10 +275,6 @@ namespace AChatFull.Views
             return newChatId;
         }
 
-        /// <summary>
-        /// Возвращает список ChatSummary, сгруппированный по ChatId,
-        /// с информацией о последнем сообщении и его статусе.
-        /// </summary>
         public async Task<List<ChatSummary>> GetChatSummariesAsync()
         {
             Debug.WriteLine("TESTLOG GetChatSummariesAsync");
@@ -325,11 +307,10 @@ namespace AChatFull.Views
                     user = await _db.Table<User>()
                                         .Where(u => u.UserId == other)
                                         .FirstOrDefaultAsync();
-                    title = user?.FirstName ?? other;
+                    title = user?.DisplayName ?? other;
                 }
                 else
                 {
-                    // однопользовательский чат? fallback на ChatId
                     title = chat.ChatId;
                 }
 
