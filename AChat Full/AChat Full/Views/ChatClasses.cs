@@ -55,10 +55,10 @@ namespace AChatFull.Views
 
     public enum Presence
     {
+        Offline,
         Online,
         Idle,
-        DoNotDisturb,
-        Offline // и Invisible тоже мапим сюда
+        DoNotDisturb
     }
 
     // Модель таблицы Users
@@ -79,6 +79,7 @@ namespace AChatFull.Views
         public string StatusCustom { get; set; }
         public string AvatarUrl { get; set; }
 
+        [Column("StatusDefault")]
         public Presence Presence { get; set; } = Presence.Offline;
 
         [Ignore]

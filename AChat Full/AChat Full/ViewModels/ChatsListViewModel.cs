@@ -47,7 +47,6 @@ namespace AChatFull.ViewModels
                 }
             }
         }
-
         private void ApplyFilter()
         {
             var t = _searchText?.Trim();
