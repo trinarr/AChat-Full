@@ -27,7 +27,7 @@
 
             <!-- Заголовок (когда НЕ поиск) -->
             <Label Grid.Column="1"
-             Text="Chats"
+             Text="ICQ2"
              TextColor="#fff"
              FontAttributes="Bold"
              FontSize="18"
