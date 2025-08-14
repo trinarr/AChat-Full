@@ -13,19 +13,19 @@ namespace AChatFull
 
             var chats = new NavigationPage(new ChatsListPage(userToken, repo))
             {
-                Title = "Чаты",
+                Title = "Chats",
                 IconImageSource = "tab_chat.png"
             };
 
             var contacts = new NavigationPage(new ContactsPage(repo))
             {
-                Title = "Контакты",
+                Title = "Contacts",
                 IconImageSource = "tab_contacts.png"
             };
 
             var settings = new NavigationPage(new SettingsPage())
             {
-                Title = "Настройки",
+                Title = "Settings",
                 IconImageSource = "tab_settings.png"
             };
 

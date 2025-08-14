@@ -108,7 +108,7 @@ namespace AChatFull.ViewModels
             _onSuccess = onSuccess ?? (() => Task.CompletedTask);
 
             Mode = isFirstRun ? PinMode.Create : PinMode.Verify;
-            TitleText = isFirstRun ? "Придумайте PIN‑код" : "Введите PIN‑код";
+            TitleText = isFirstRun ? "Set short code" : "Enter short code";
             BiometricsEnabled = biometricsEnabled;
             ShowBiometricButton = biometricsEnabled; // показывать кнопку только если разрешено
 
@@ -158,7 +158,7 @@ namespace AChatFull.ViewModels
                 case PinMode.Create:
                     _firstPin = _entered;
                     _entered = string.Empty;
-                    TitleText = "Повторите PIN‑код";
+                    TitleText = "Enter code once again";
                     Mode = PinMode.Confirm;
                     RaiseDots();
                     break;
@@ -180,8 +180,8 @@ namespace AChatFull.ViewModels
                     else
                     {
                         await Application.Current.MainPage.DisplayAlert(
-                            "Ошибка",
-                            "PIN‑коды не совпадают. Придумайте новый.", "OK");
+                            "Error",
+                            "This time you entered a different code", "OK");
                         ResetToCreate();
                     }
                     break;
@@ -201,7 +201,7 @@ namespace AChatFull.ViewModels
                     }
                     else
                     {
-                        await Application.Current.MainPage.DisplayAlert("Неверный PIN", "Попробуйте ещё раз.", "OK");
+                        await Application.Current.MainPage.DisplayAlert("Wrong code", "Please try again.", "OK");
                         _entered = string.Empty;
                         RaiseDots();
                     }
@@ -214,7 +214,7 @@ namespace AChatFull.ViewModels
             _firstPin = null;
             _entered = string.Empty;
             Mode = PinMode.Create;
-            TitleText = "Придумайте PIN‑код";
+            TitleText = "Set short code";
             RaiseDots();
         }
 
@@ -237,10 +237,10 @@ namespace AChatFull.ViewModels
 
                 if (!force && !BiometricsEnabled) return;
 
-                var cfg = new AuthenticationRequestConfiguration("Вход", "Подтвердите по отпечатку")
+                var cfg = new AuthenticationRequestConfiguration("Confirm login", "Touch the fingerprint sensor")
                 {
-                    CancelTitle = "Отмена",
-                    FallbackTitle = "Использовать PIN"
+                    CancelTitle = "Cancel",
+                    FallbackTitle = "Use PIN"
                 };
 
                 var result = await CrossFingerprint.Current.AuthenticateAsync(cfg);
@@ -269,7 +269,7 @@ namespace AChatFull.ViewModels
             }
 
             var allow = await Application.Current.MainPage.DisplayAlert(
-                "Биометрия", "Включить вход по отпечатку пальца?", "Да", "Нет");
+                "Quick sign-in", "Sign in using face, fingerprint, or other method", "Confirm", "Skip");
 
             BiometricsEnabled = allow;
             ShowBiometricButton = allow;

@@ -52,7 +52,7 @@ namespace AChatFull.Views
 
         private async void OnAudioCallClicked(object sender, EventArgs e)
         {
-            bool answer = await DisplayAlert("Аудио-звонок", "Начать аудио-звонок?", "Да", "Отмена");
+            bool answer = await DisplayAlert("Start voice call?", "", "Call", "Cancel");
             if (answer)
             {
                 // Логика старта аудио
@@ -61,7 +61,7 @@ namespace AChatFull.Views
 
         private async void OnVideoCallClicked(object sender, EventArgs e)
         {
-            bool answer = await DisplayAlert("Видео-звонок", "Начать видео-звонок?", "Да", "Отмена");
+            bool answer = await DisplayAlert("Start video call?", "", "Call", "Cancel");
             if (answer)
             {
                 // Логика старта видео
@@ -70,18 +70,18 @@ namespace AChatFull.Views
 
         private async void OnMoreClicked(object sender, EventArgs e)
         {
-            string action = await DisplayActionSheet("Меню", "Отмена", null,
-                "Просмотреть контакт", "Заблокировать", "Удалить чат");
+            string action = await DisplayActionSheet("", "Cancel", null,
+                "Mute", "Block", "Delete chat");
 
             switch (action)
             {
-                case "Просмотреть контакт":
+                case "Mute":
                     // открыть инфо
                     break;
-                case "Заблокировать":
+                case "Block":
                     // блок
                     break;
-                case "Удалить чат":
+                case "Delete chat":
                     // удалить
                     break;
             }

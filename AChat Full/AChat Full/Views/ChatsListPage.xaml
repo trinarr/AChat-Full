@@ -19,7 +19,7 @@
 
             <!-- Заголовок (когда НЕ поиск) -->
             <Label Grid.Column="1"
-             Text="Чаты"
+             Text="Chats"
              TextColor="#fff"
              FontAttributes="Bold"
              FontSize="18"
@@ -30,7 +30,7 @@
             <Entry x:Name="SearchEntry"
              Grid.Column="1"
              TextColor="#fff"
-             Placeholder="Поиск по чатам"
+             Placeholder="Search"
              Text="{Binding SearchText}"
              ClearButtonVisibility="WhileEditing"
              IsVisible="{Binding IsSearchMode}"

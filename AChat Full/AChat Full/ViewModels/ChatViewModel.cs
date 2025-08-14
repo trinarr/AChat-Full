@@ -131,7 +131,7 @@ namespace AChatFull.ViewModels
             Device.BeginInvokeOnMainThread(() => Peer = user);
 
             string title = user.DisplayName;
-            string status = user.HasStatus ? user.DisplayStatus : "Онлайн";
+            string status = user.HasStatus ? user.DisplayStatus : "Online";
 
             if (!string.IsNullOrWhiteSpace(title)) Device.BeginInvokeOnMainThread(() => PeerName = title);
             if (!string.IsNullOrWhiteSpace(title)) Device.BeginInvokeOnMainThread(() => PeerStatus = status);
@@ -271,7 +271,7 @@ namespace AChatFull.ViewModels
                 var picked = await FilePicker.PickAsync(new PickOptions { PickerTitle = "Выберите документ" });
                 if (picked == null) return;
 
-                var fileName = string.IsNullOrWhiteSpace(picked.FileName) ? "Документ" : picked.FileName;
+                var fileName = string.IsNullOrWhiteSpace(picked.FileName) ? "Document" : picked.FileName;
 
                 /*var now = DateTime.UtcNow;
                 var msg = new Message

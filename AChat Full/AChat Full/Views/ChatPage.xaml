@@ -78,10 +78,10 @@
                     x:Name="MessageEditor"
                     Text="{Binding MessageText}"
                     AutoSize="TextChanges"
-                    Placeholder="Сообщение"/>
+                    Placeholder="Message"/>
 
             <Button Grid.Column="2"
-                    Text="Отправить"
+                    Text="Send"
                     Command="{Binding SendCommand}"
                     VerticalOptions="Center"/>
         </Grid>
