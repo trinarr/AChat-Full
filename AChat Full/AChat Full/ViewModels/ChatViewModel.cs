@@ -131,7 +131,7 @@ namespace AChatFull.ViewModels
             Device.BeginInvokeOnMainThread(() => Peer = user);
 
             string title = user.DisplayName;
-            string status = user.HasStatus ? user.DisplayStatus : "Online";
+            string status = user.HasStatus ? user.DisplayStatus : user.Presence.ToReadableLabel(); ;
 
             if (!string.IsNullOrWhiteSpace(title)) Device.BeginInvokeOnMainThread(() => PeerName = title);
             if (!string.IsNullOrWhiteSpace(title)) Device.BeginInvokeOnMainThread(() => PeerStatus = status);

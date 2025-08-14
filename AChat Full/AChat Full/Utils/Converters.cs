@@ -20,6 +20,22 @@ namespace AChatFull.Utils
         }
     }
 
+    public class PresenceToTextConverter : IValueConverter
+    {
+        // По умолчанию — «DoNotDisturb». Поставь false, если хочешь «Do not disturb».
+        public bool Compact { get; set; } = true;
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is Presence p)
+                return Compact ? p.ToLabel() : p.ToReadableLabel();
+            return null;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotSupportedException();
+    }
+
     public class PresenceToColorConverter : IValueConverter
     {
         public Color Online { get; set; } = Color.FromHex("#23A55A");     // зелёный

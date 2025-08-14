@@ -15,6 +15,7 @@
             <conv:FirstLetterConverter x:Key="FirstLetterConverter" />
             <conv:BoolToGridColumnConverter x:Key="BoolToGridColumnConverter" />
             <conv:PresenceToColorConverter x:Key="PresenceToColorConverter" />
+            <conv:PresenceToTextConverter x:Key="PresenceToTextConverter" Compact="True"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

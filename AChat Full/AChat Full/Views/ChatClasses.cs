@@ -53,6 +53,8 @@ namespace AChatFull.Views
         public string ChatId { get; set; }
     }
 
+
+
     public enum Presence
     {
         Offline,
