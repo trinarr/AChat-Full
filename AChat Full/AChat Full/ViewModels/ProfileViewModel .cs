@@ -8,7 +8,7 @@ using Xamarin.Forms;
 
 namespace AChatFull.ViewModels
 {
-    public class SettingsViewModel : INotifyPropertyChanged
+    public class ProfileViewModel : INotifyPropertyChanged
     {
         private readonly ChatRepository _repo;
 
@@ -17,7 +17,7 @@ namespace AChatFull.ViewModels
         public string LastName { get; set; }
         public string BirthDate { get; set; }
         public string About { get; set; }
-        public string Status { get; set; }
+        public string StatusCustom { get; set; }
 
         // Предустановки статуса (как в WhatsApp)
         public IList<string> StatusPresets { get; } = new[]
@@ -34,7 +34,7 @@ namespace AChatFull.ViewModels
         public bool IsBusy { get; set; }
         public ICommand SaveCommand { get; }
 
-        public SettingsViewModel(ChatRepository repo)
+        public ProfileViewModel(ChatRepository repo)
         {
             _repo = repo;
             SaveCommand = new Command(async () => await SaveAsync(), () => !IsBusy);
@@ -48,7 +48,7 @@ namespace AChatFull.ViewModels
             FirstName = u.FirstName; OnPropertyChanged(nameof(FirstName));
             LastName = u.LastName; OnPropertyChanged(nameof(LastName));
             About = u.About; OnPropertyChanged(nameof(About));
-            Status = u.Status; OnPropertyChanged(nameof(Status));
+            StatusCustom = u.StatusCustom; OnPropertyChanged(nameof(StatusCustom));
             BirthDate = u.BirthDate;
 
             /*var s = await _repo.GetAppSettingsAsync();

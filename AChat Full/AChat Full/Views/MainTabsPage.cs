@@ -23,7 +23,7 @@ namespace AChatFull
                 IconImageSource = "tab_contacts.png"
             };
 
-            var settings = new NavigationPage(new SettingsPage())
+            var settings = new NavigationPage(new ProfilePage())
             {
                 Title = "Settings",
                 IconImageSource = "tab_settings.png"

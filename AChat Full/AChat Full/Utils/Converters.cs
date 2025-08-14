@@ -20,6 +20,32 @@ namespace AChatFull.Utils
         }
     }
 
+    public class PresenceToColorConverter : IValueConverter
+    {
+        public Color Online { get; set; } = Color.FromHex("#23A55A");     // зелёный
+        public Color Idle { get; set; } = Color.FromHex("#F0B232");       // жёлтый
+        public Color DoNotDisturb { get; set; } = Color.FromHex("#F23F43"); // красный
+        public Color Offline { get; set; } = Color.FromHex("#80848E");    // серый
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is Presence p)
+            {
+                switch (p)
+                {
+                    case Presence.Online: return Online;
+                    case Presence.Idle: return Idle;
+                    case Presence.DoNotDisturb: return DoNotDisturb;
+                    default: return Offline;
+                }
+            }
+            return Offline;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotSupportedException();
+    }
+
     public class BoolToGridColumnConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

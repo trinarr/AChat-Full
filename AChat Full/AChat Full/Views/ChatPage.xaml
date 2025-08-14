@@ -20,28 +20,55 @@
             <ImageButton Grid.Column="0" Source="arrow_back.png"  BackgroundColor="Transparent"
                          HeightRequest="24" WidthRequest="24" Clicked="OnBackClicked" />
 
-            <Frame Grid.Column="1"
-                     WidthRequest="36" HeightRequest="36"
-                     CornerRadius="18"
-                     Padding="0"
-                     HasShadow="False"
-                     IsClippedToBounds="True"
-                     BackgroundColor="#E6E6E6"
-                     HorizontalOptions="Start"
-                     VerticalOptions="Center">
-                <Grid>
-                    <Image Source="{Binding PeerAvatarUrl}"
-                         Aspect="AspectFill"
-                         IsVisible="{Binding PeerHasAvatar}" />
-                    <Label Text="{Binding PeerInitials}"
-                         IsVisible="{Binding PeerNoAvatar}"
-                         HorizontalOptions="Center"
-                         VerticalOptions="Center"
-                         FontAttributes="Bold"
-                         FontSize="Medium"
-                         TextColor="#333"/>
+            <!-- СТАЛО -->
+            <AbsoluteLayout Grid.Column="1"
+                WidthRequest="36" HeightRequest="36"
+                HorizontalOptions="Start"
+                VerticalOptions="Center">
+
+                <!-- Круглый аватар (как и был) -->
+                <Frame Padding="0"
+           WidthRequest="36" HeightRequest="36"
+           CornerRadius="18"
+           HasShadow="False"
+           IsClippedToBounds="True"
+           BackgroundColor="#E6E6E6"
+           AbsoluteLayout.LayoutBounds="0,0,1,1"
+           AbsoluteLayout.LayoutFlags="All">
+                    <Grid>
+                        <Image Source="{Binding PeerAvatarUrl}"
+                   Aspect="AspectFill"
+                   IsVisible="{Binding PeerHasAvatar}" />
+                        <Label Text="{Binding PeerInitials}"
+                   IsVisible="{Binding PeerNoAvatar}"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   FontAttributes="Bold"
+                   FontSize="Medium"
+                   TextColor="#333"/>
+                    </Grid>
+                </Frame>
+
+                <!-- Индикатор статуса поверх, справа-снизу -->
+                <Grid InputTransparent="True"
+          AbsoluteLayout.LayoutBounds="1,1,14,14"
+          AbsoluteLayout.LayoutFlags="PositionProportional">
+                    <!-- белый ободок -->
+                    <Frame WidthRequest="14" HeightRequest="14"
+               CornerRadius="7"
+               Padding="0"
+               BackgroundColor="White"
+               HasShadow="False"/>
+                    <!-- цвет статуса -->
+                    <Frame WidthRequest="10" HeightRequest="10"
+               CornerRadius="5"
+               Padding="0"
+               HasShadow="False"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               BackgroundColor="{Binding Peer.Presence, Converter={StaticResource PresenceToColorConverter}}"/>
                 </Grid>
-            </Frame>
+            </AbsoluteLayout>
 
             <StackLayout Grid.Column="2" Spacing="0" VerticalOptions="Center">
                 <Label Text="{Binding PeerName}" FontAttributes="Bold" FontSize="16" LineBreakMode="TailTruncation" TextColor="#fff"/>

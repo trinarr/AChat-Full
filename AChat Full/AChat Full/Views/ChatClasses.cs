@@ -53,6 +53,14 @@ namespace AChatFull.Views
         public string ChatId { get; set; }
     }
 
+    public enum Presence
+    {
+        Online,
+        Idle,
+        DoNotDisturb,
+        Offline // и Invisible тоже мапим сюда
+    }
+
     // Модель таблицы Users
     [Table("Users")]
     public class User
@@ -68,8 +76,10 @@ namespace AChatFull.Views
         public string LastName { get; set; }
         public string BirthDate { get; set; }
         public string About { get; set; }   
-        public string Status { get; set; }
+        public string StatusCustom { get; set; }
         public string AvatarUrl { get; set; }
+
+        public Presence Presence { get; set; } = Presence.Offline;
 
         [Ignore]
         public DateTime BirthDateDate
@@ -83,8 +93,8 @@ namespace AChatFull.Views
                ? (string.IsNullOrWhiteSpace(LastName) ? UserId : LastName)
                : (string.IsNullOrWhiteSpace(LastName) ? FirstName : $"{FirstName} {LastName}");
 
-        public string DisplayStatus => Status;
-        public bool HasStatus => !string.IsNullOrWhiteSpace(Status);
+        public string DisplayStatus => StatusCustom;
+        public bool HasStatus => !string.IsNullOrWhiteSpace(StatusCustom);
 
         public bool HasAvatar => !string.IsNullOrWhiteSpace(AvatarUrl);
         public bool NoAvatar => string.IsNullOrWhiteSpace(AvatarUrl);

@@ -4,17 +4,17 @@ using AChatFull.ViewModels;
 
 namespace AChatFull.Views
 {
-    public partial class SettingsPage : ContentPage
+    public partial class ProfilePage : ContentPage
     {
-        private readonly SettingsViewModel _vm;
+        private readonly ProfileViewModel _vm;
 
-        public SettingsPage(SettingsViewModel vm)
+        public ProfilePage(ProfileViewModel vm)
         {
             InitializeComponent();
             BindingContext = _vm = vm;
         }
 
-        public SettingsPage() : this(new SettingsViewModel(DependencyService.Get<ChatRepository>()))
+        public ProfilePage() : this(new ProfileViewModel(DependencyService.Get<ChatRepository>()))
         {
         }
 

@@ -3,9 +3,17 @@
   xmlns="http://xamarin.com/schemas/2014/forms"
   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
   xmlns:vm="clr-namespace:AChatFull.Views"
+  xmlns:conv="clr-namespace:AChatFull.Utils"
   x:Class="AChatFull.Views.ChatsListPage"
   Title="Чаты"
   BackgroundColor="White">
+
+    <!-- локальный ресурс (если уже добавили в App.xaml — можно оставить как есть) -->
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <conv:PresenceToColorConverter x:Key="PresenceToColorConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <NavigationPage.TitleView>
         <Grid Padding="8" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">
@@ -38,16 +46,15 @@
 
             <!-- Иконка поиска (когда НЕ поиск) -->
             <ImageButton Grid.Column="2"
-                   Source="search.png"
-                   WidthRequest="24" HeightRequest="24"
-                   BackgroundColor="Transparent"
-                   VerticalOptions="Center"
-                   IsVisible="{Binding IsSearchMode, Converter={StaticResource InverseBoolConverter}}"
-                   Clicked="OnSearchIconClicked"/>
+             Source="search.png" 
+             HeightRequest="24" WidthRequest="24"
+             BackgroundColor="Transparent"
+             VerticalOptions="Center"
+             IsVisible="{Binding IsSearchMode, Converter={StaticResource InverseBoolConverter}}"
+             Clicked="OnSearchIconClicked"/>
         </Grid>
     </NavigationPage.TitleView>
 
-    <!-- Loader -->
     <StackLayout>
         <ActivityIndicator
       IsRunning="{Binding IsBusy}"
@@ -65,40 +72,63 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="vm:ChatSummary">
                     <Frame
-                        Padding="15,12"
+                      Padding="15,12"
                         Margin="5" 
                         CornerRadius="0">
                         <Grid ColumnSpacing="10">
-                            <!-- Колонки: текст и время+статус -->
+                            <!-- Колонки: аватар, текст, время/счетчик -->
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                           <!-- Аватар -->
-                            <Frame Grid.Column="0"
-                     WidthRequest="48" HeightRequest="48"
-                     CornerRadius="24"
-                     Padding="0"
-                     HasShadow="False"
-                     IsClippedToBounds="True"
-                     BackgroundColor="#E6E6E6"
-                     HorizontalOptions="Start"
-                     VerticalOptions="Center">
-                                <Grid>
-                                    <Image Source="{Binding PeerAvatarUrl}"
-                         Aspect="AspectFill"
-                         IsVisible="{Binding PeerHasAvatar}" />
-                                    <Label Text="{Binding PeerInitials}"
-                         IsVisible="{Binding PeerNoAvatar}"
-                         HorizontalOptions="Center"
-                         VerticalOptions="Center"
-                         FontAttributes="Bold"
-                         FontSize="Medium"
-                         TextColor="#333"/>
+                            <!-- Аватар + индикатор присутствия -->
+                            <Grid Grid.Column="0"
+                                  WidthRequest="48" HeightRequest="48"
+                                  HorizontalOptions="Start"
+                                  VerticalOptions="Center">
+                                <!-- аватарка -->
+                                <Frame
+                                    Padding="0"
+                                    WidthRequest="48" HeightRequest="48"
+                                    CornerRadius="24"
+                                    HasShadow="False"
+                                    IsClippedToBounds="True"
+                                    BackgroundColor="#E6E6E6">
+                                    <Grid>
+                                        <Image Source="{Binding PeerAvatarUrl}"
+                                               Aspect="AspectFill"
+                                               IsVisible="{Binding PeerHasAvatar}" />
+                                        <Label Text="{Binding PeerInitials}"
+                                               IsVisible="{Binding PeerNoAvatar}"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               FontAttributes="Bold"
+                                               FontSize="Medium"
+                                               TextColor="#333"/>
+                                    </Grid>
+                                </Frame>
+                                <!-- индикатор поверх -->
+                                <Grid
+                                      InputTransparent="True"
+                                      WidthRequest="16" HeightRequest="16"
+                                      HorizontalOptions="End"
+                                      VerticalOptions="End">
+                                    <Frame WidthRequest="16" HeightRequest="16"
+                                           CornerRadius="8"
+                                           Padding="0"
+                                           BackgroundColor="White"
+                                           HasShadow="False"/>
+                                    <Frame WidthRequest="12" HeightRequest="12"
+                                           CornerRadius="6"
+                                           Padding="0"
+                                           HasShadow="False"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           BackgroundColor="{Binding Peer.Presence, Converter={StaticResource PresenceToColorConverter}}"/>
                                 </Grid>
-                            </Frame>
+                            </Grid>
 
                             <!-- Левый столбец: имя и последнее сообщение -->
                             <StackLayout 
@@ -108,20 +138,18 @@
                                 <Label
                                     Text="{Binding Title}"
                                     FontAttributes="Bold"
-                                    FontSize="18"
-                                    TextColor="#000" />
+                                    FontSize="16"
+                                    TextColor="#000"/>
                                 <Label
                                     Text="{Binding LastMessage}"
                                     FontSize="Small"
+                                    TextColor="#666"
                                     LineBreakMode="TailTruncation"
-                                    MaxLines="1"
-                                    TextColor="#666" />   
+                                    MaxLines="1"/>
                             </StackLayout>
 
-                            <!-- Правый столбец: время и статус -->
-                            <StackLayout
-                                Grid.Column="2"
-                                Spacing="4"
+                            <!-- Правый столбец -->
+                            <StackLayout Grid.Column="2" Spacing="6"
                                 VerticalOptions="Start"
                                 HorizontalOptions="End">
                                 <Label
