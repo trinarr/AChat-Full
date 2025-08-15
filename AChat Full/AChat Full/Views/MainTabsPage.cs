@@ -27,7 +27,7 @@ namespace AChatFull
 
             var settings = new NavigationPage(new ProfilePage())
             {
-                Title = "You",
+                Title = "You"
             };
 
             Children.Add(chats);
