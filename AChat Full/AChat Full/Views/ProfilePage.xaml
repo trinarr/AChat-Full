@@ -45,56 +45,61 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Аватар с точкой статуса -->
-                <Grid>
+                <!-- Аватар + точка статуса -->
+                <AbsoluteLayout HeightRequest="72" WidthRequest="72">
+
+                    <!-- Круглая подложка -->
                     <Frame
-                        HasShadow="False"
-                        Padding="0"
-                        CornerRadius="36"
-                        HeightRequest="72"
-                        WidthRequest="72"
-                        BackgroundColor="#E6E9EE">
+            AbsoluteLayout.LayoutBounds="0,0,1,1"
+            AbsoluteLayout.LayoutFlags="All"
+            HasShadow="False"
+            Padding="0"
+            CornerRadius="36"
+            BackgroundColor="#E6E9EE">
+
+                        <!-- Либо фото, либо инициалы -->
                         <Grid>
-                            <!-- фото -->
+
+                            <!-- Фото: видно только если HasAvatar -->
                             <Image
-                                Aspect="AspectFill"
-                                Source="{Binding AvatarImage}"
-                                />
-                            <!-- инициалы, если фото нет -->
+                    Aspect="AspectFill"
+                    Source="{Binding AvatarImage}"
+                    IsVisible="{Binding HasAvatar}" />
+
+                            <!-- Инициалы: видно когда фото нет -->
                             <Label
-                                Text="{Binding Initials}"
-                                FontSize="24"
-                                TextColor="#606874"
-                                HorizontalOptions="Center"
-                                VerticalOptions="Center"/>
+                    Text="{Binding Initials}"
+                    IsVisible="{Binding HasAvatar, Converter={StaticResource InverseBoolConverter}}"
+                    FontSize="24"
+                    TextColor="#606874"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"/>
                         </Grid>
                     </Frame>
 
-                    <!-- индикатор статуса -->
+                    <!-- Индикатор статуса: правый-нижний угол, чуть внутрь -->
                     <Frame
-                        HasShadow="False"
-                        Padding="0"
-                        CornerRadius="7"
-                        HeightRequest="14"
-                        WidthRequest="14"
-                        BackgroundColor="White"
-                        HorizontalOptions="End"
-                        VerticalOptions="End"
-                        TranslationX="6"
-                        TranslationY="6">
+            AbsoluteLayout.LayoutBounds="1,1,14,14"
+            AbsoluteLayout.LayoutFlags="PositionProportional"
+            HasShadow="False"
+            Padding="0"
+            CornerRadius="7"
+            BackgroundColor="White"
+            TranslationX="-3"
+            TranslationY="-3">
                         <Frame
-                            HasShadow="False"
-                            Padding="0"
-                            CornerRadius="5.5"
-                            HeightRequest="11"
-                            WidthRequest="11"
-                            BackgroundColor="{Binding Presence, Converter={StaticResource PresenceToColorConverter}}"/>
+                HasShadow="False"
+                Padding="0"
+                CornerRadius="5.5"
+                HeightRequest="11"
+                WidthRequest="11"
+                BackgroundColor="{Binding PresenceColor}"/>
                     </Frame>
-                </Grid>
+                </AbsoluteLayout>
 
                 <!-- Имя + подпись статуса -->
                 <StackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                    <Label Text="{Binding DisplayName}" FontAttributes="Bold" FontSize="18"/>
+                    <Label Text="{Binding DisplayName}" FontAttributes="Bold" FontSize="18" TextColor="#000"/>
                     <Label Text="{Binding PresenceDisplay}" TextColor="#6F7683" FontSize="14"/>
                 </StackLayout>
             </Grid>

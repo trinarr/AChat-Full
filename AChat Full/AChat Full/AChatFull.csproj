@@ -83,5 +83,6 @@
 	<EmbeddedResource Include="Resources\Avatars\ellis_redding_192.png" />
 	<EmbeddedResource Include="Resources\Avatars\nick_fisher_192.png" />
 	<EmbeddedResource Include="Resources\Avatars\boris_the_blade_192.png" />
+	<EmbeddedResource Include="Resources\Avatars\hax_192.png" />
   </ItemGroup>
 </Project>

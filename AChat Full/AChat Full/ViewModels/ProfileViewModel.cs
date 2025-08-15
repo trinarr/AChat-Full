@@ -41,20 +41,36 @@ namespace AChatFull.ViewModels
         string _displayName;
         string _avatarSource; // локальный путь/ресурс
         string _initials;
-        string _presence; // "Online"/"Away"/"Busy"/"Offline"
 
         public string DisplayName { get { return _displayName; } set { Set(ref _displayName, value); } }
-        public string AvatarSource { get { return _avatarSource; } set { Set(ref _avatarSource, value); OnPropertyChanged("AvatarImage"); } }
-        public string Initials { get { return _initials; } set { Set(ref _initials, value); } }
-        public string Presence { get { return _presence; } set { Set(ref _presence, value); OnPropertyChanged("PresenceDisplay"); } }
-
-        // Привязка для <Image Source=...> (если пусто — покажем инициалы)
-        public ImageSource AvatarImage
-        {
-            get
+        public string AvatarSource {
+            get { return _avatarSource; } 
+            set 
             {
-                if (string.IsNullOrWhiteSpace(AvatarSource)) return null;
-                return ImageSource.FromFile(AvatarSource);
+                if (_avatarSource == value) return;
+                _avatarSource = value;
+                OnPropertyChanged(nameof(AvatarSource));
+                OnPropertyChanged(nameof(AvatarImage));
+                OnPropertyChanged(nameof(HasAvatar));
+            } 
+        }
+        // Простая логика «есть фото»
+        public bool HasAvatar => !string.IsNullOrWhiteSpace(_avatarSource);
+        public string Initials { get { return _initials; } set { Set(ref _initials, value); } }
+
+        public ImageSource AvatarImage => string.IsNullOrWhiteSpace(_avatarSource) ? null : ImageSource.FromFile(_avatarSource);
+
+        string _presence;                 // "Online"/"Away"/"Busy"/"Offline"
+        public string Presence
+        {
+            get => _presence;
+            set
+            {
+                if (_presence == value) return;
+                _presence = value;
+                OnPropertyChanged(nameof(Presence));
+                OnPropertyChanged(nameof(PresenceDisplay));
+                OnPropertyChanged(nameof(PresenceColor)); // <- важно
             }
         }
 
@@ -62,14 +78,33 @@ namespace AChatFull.ViewModels
         {
             get
             {
-                var p = (Presence ?? "").ToLowerInvariant();
+                var p = (_presence ?? "").ToLowerInvariant();
+                if (p == "online") return "Active";
+                if (p == "away" || p == "idle") return "Idle";
+                if (p == "busy" || p == "dnd" || p == "do not disturb" || p == "donotdisturb") return "Do Not Disturb";
+                if (p == "offline" || p == "invisible") return "Invisible";
+                return "Status";
+            }
+        }
+
+        // Цвет точки статуса — без конвертера
+        public Color PresenceColor
+        {
+            get
+            {
+                var p = (_presence ?? "").Trim().ToLowerInvariant();
                 switch (p)
                 {
-                    case "online": return "Active";
-                    case "away": return "Idle";
-                    case "busy": return "Do Not Disturb";
-                    case "offline": return "Invisible";
-                    default: return "Status";
+                    case "online":
+                    case "available": return Color.FromHex("#34C759");
+                    case "away":
+                    case "idle": return Color.FromHex("#FFCC00");
+                    case "busy":
+                    case "dnd":
+                    case "do not disturb": return Color.FromHex("#FF3B30");
+                    case "offline":
+                    case "invisible":
+                    default: return Color.FromHex("#AEAEB2");
                 }
             }
         }

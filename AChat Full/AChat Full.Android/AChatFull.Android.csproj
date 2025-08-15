@@ -99,7 +99,10 @@
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="..\AChat Full\Resources\Avatars\annaf_192.png">
+    <AndroidResource Include="..\AChat Full\Resources\Avatars\hax_192.png">
+      <Link>Resources\drawable\hax_192.png</Link>
+    </AndroidResource>
+	<AndroidResource Include="..\AChat Full\Resources\Avatars\annaf_192.png">
       <Link>Resources\drawable\annaf_192.png</Link>
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Avatars\ellis_redding_192.png">
