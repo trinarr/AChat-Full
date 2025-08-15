@@ -2,6 +2,8 @@
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
 using AChatFull.Views;
+using System.Threading.Tasks;
+using AChatFull.Utils;
 
 namespace AChatFull
 {
@@ -25,8 +27,7 @@ namespace AChatFull
 
             var settings = new NavigationPage(new ProfilePage())
             {
-                Title = "Settings",
-                IconImageSource = "tab_settings.png"
+                Title = "You",
             };
 
             Children.Add(chats);
@@ -38,6 +39,35 @@ namespace AChatFull
                 .SetToolbarPlacement(ToolbarPlacement.Bottom)
                 .SetIsSwipePagingEnabled(true)
                 .SetIsSmoothScrollEnabled(true);
+
+            _ = SetProfileTabIconAsync(settings, repo);
+
+        }
+
+        private async Task SetProfileTabIconAsync(NavigationPage settingsPage, ChatRepository repo)
+        {
+            try
+            {
+                var user = await repo.GetCurrentUserProfileAsync();
+                if (user == null) return;
+
+                var initials = AvatarIconBuilder.MakeInitials(string.Format("{0} {1}", user.FirstName, user.LastName));
+
+                // ВАЖНО: сюда передавайте локальный путь/имя ресурса/URI (content://, file://, bundle/drawable имя)
+                var icon = await AvatarIconBuilder.BuildAsync(
+                    user.AvatarUrl,   // локальный источник аватарки
+                    initials,
+                    user.Presence.ToString(),
+                    28
+                );
+
+                if (icon != null)
+                    settingsPage.IconImageSource = icon;
+            }
+            catch
+            {
+                // fail-safe: оставляем стандартную иконку
+            }
         }
     }
 }
