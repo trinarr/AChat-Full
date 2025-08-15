@@ -1,77 +1,156 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
+    x:Class="AChatFull.Views.ProfilePage"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    x:Class="AChatFull.Views.ProfilePage"
-    x:Name="PageRoot"
-    Title="Настройки">
+    xmlns:vm="clr-namespace:AChatFull.ViewModels"
+    Title="You">
 
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Сохранить" Command="{Binding SaveCommand}" />
-    </ContentPage.ToolbarItems>
+    <ContentPage.Resources>
+        <Style x:Key="RowStyle" TargetType="Grid">
+            <Setter Property="Padding" Value="16,12"/>
+            <Setter Property="ColumnDefinitions">
+                <Setter.Value>
+                    <ColumnDefinitionCollection>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </ColumnDefinitionCollection>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="RowIcon" TargetType="Image">
+            <Setter Property="HeightRequest" Value="22"/>
+            <Setter Property="WidthRequest" Value="22"/>
+            <Setter Property="Margin" Value="0,0,12,0"/>
+        </Style>
+        <Style x:Key="RowTitle" TargetType="Label">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="TextColor" Value="{StaticResource TextColor}"/>
+        </Style>
+        <Style x:Key="RowDivider" TargetType="BoxView">
+            <Setter Property="Color" Value="#1A000000"/>
+            <Setter Property="HeightRequest" Value="1"/>
+            <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+        </Style>
+    </ContentPage.Resources>
 
     <ScrollView>
-        <StackLayout Padding="16" Spacing="20">
+        <StackLayout Spacing="16" Padding="16,12,16,24">
 
-            <!-- Профиль -->
-            <StackLayout Spacing="8">
-                <Label Text="Профиль" FontAttributes="Bold" FontSize="Medium" />
-                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                    <Entry Grid.Column="0" Placeholder="Имя" Text="{Binding FirstName}" />
-                    <Entry Grid.Column="1" Placeholder="Фамилия" Text="{Binding LastName}" />
+            <!-- Header: аватар + имя + статус -->
+            <Grid ColumnSpacing="12" RowSpacing="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="72"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Аватар с точкой статуса -->
+                <Grid>
+                    <Frame
+                        HasShadow="False"
+                        Padding="0"
+                        CornerRadius="36"
+                        HeightRequest="72"
+                        WidthRequest="72"
+                        BackgroundColor="#E6E9EE">
+                        <Grid>
+                            <!-- фото -->
+                            <Image
+                                Aspect="AspectFill"
+                                Source="{Binding AvatarImage}"
+                                />
+                            <!-- инициалы, если фото нет -->
+                            <Label
+                                Text="{Binding Initials}"
+                                FontSize="24"
+                                TextColor="#606874"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"/>
+                        </Grid>
+                    </Frame>
+
+                    <!-- индикатор статуса -->
+                    <Frame
+                        HasShadow="False"
+                        Padding="0"
+                        CornerRadius="7"
+                        HeightRequest="14"
+                        WidthRequest="14"
+                        BackgroundColor="White"
+                        HorizontalOptions="End"
+                        VerticalOptions="End"
+                        TranslationX="6"
+                        TranslationY="6">
+                        <Frame
+                            HasShadow="False"
+                            Padding="0"
+                            CornerRadius="5.5"
+                            HeightRequest="11"
+                            WidthRequest="11"
+                            BackgroundColor="{Binding Presence, Converter={StaticResource PresenceToColorConverter}}"/>
+                    </Frame>
                 </Grid>
 
-                <DatePicker Date="{Binding BirthDate}" Format="dd.MM.yyyy" />
-                <Editor Placeholder="О себе" AutoSize="TextChanges" Text="{Binding About}" />
-            </StackLayout>
+                <!-- Имя + подпись статуса -->
+                <StackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                    <Label Text="{Binding DisplayName}" FontAttributes="Bold" FontSize="18"/>
+                    <Label Text="{Binding PresenceDisplay}" TextColor="#6F7683" FontSize="14"/>
+                </StackLayout>
+            </Grid>
 
-            <!-- Статус (как в WhatsApp) -->
-            <StackLayout Spacing="8">
-                <Label Text="Статус" FontAttributes="Bold" FontSize="Medium" />
-                <Entry Placeholder="Свой статус" Text="{Binding Status}" />
-                <FlexLayout Wrap="Wrap" JustifyContent="Start" AlignItems="Start" BindableLayout.ItemsSource="{Binding StatusPresets}">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate>
-                            <Frame Padding="8,4" Margin="0,6,6,0" CornerRadius="16" HasShadow="False" BackgroundColor="#EEF2F7">
-                                <Label>
-                                    <Label.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Source={x:Reference Name=PageRoot}, Path=BindingContext.SetStatusCommand}" CommandParameter="{Binding .}" />
-                                    </Label.GestureRecognizers>
-                                    <Label.Text>
-                                        <Binding />
-                                    </Label.Text>
-                                </Label>
-                            </Frame>
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
-                </FlexLayout>
-            </StackLayout>
+            <!-- БЛОК: быстрые действия -->
+            <Frame HasShadow="False" CornerRadius="16" BackgroundColor="White" Padding="0">
+                <StackLayout Spacing="0">
 
-            <!-- Приложение -->
-            <StackLayout Spacing="8">
-                <Label Text="Приложение" FontAttributes="Bold" FontSize="Medium" />
+                    <!-- Update your status (открывает лист выбора статуса / расширенный статус) -->
+                    <Grid Style="{StaticResource RowStyle}">
+                        <Image Style="{StaticResource RowIcon}" Source="ic_smile.png"/>
+                        <Label Grid.Column="1" Style="{StaticResource RowTitle}" Text="Update your status"/>
+                        <Image Grid.Column="2" Source="ic_chevron_right.png" HeightRequest="20" WidthRequest="20" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ChangeStatusCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                    <BoxView Style="{StaticResource RowDivider}" />
 
-                <Grid ColumnDefinitions="Auto,*" RowSpacing="12">
-                    <Label Grid.Column="0" Text="Язык" VerticalTextAlignment="Center" />
-                    <Picker Grid.Column="1"
-                  Title="Выберите язык"
-                  ItemsSource="{Binding Languages}"
-                  SelectedItem="{Binding SelectedLanguage}" />
-                </Grid>
+                    <!-- Set yourself as away -->
+                    <Grid Style="{StaticResource RowStyle}">
+                        <Image Style="{StaticResource RowIcon}" Source="ic_moon.png"/>
+                        <Label Grid.Column="1" Style="{StaticResource RowTitle}" Text="Set yourself as away"/>
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SetAwayCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </StackLayout>
+            </Frame>
 
-                <Grid ColumnDefinitions="Auto,*,Auto" RowSpacing="12">
-                    <Label Grid.Column="0" Text="Вибрация" VerticalTextAlignment="Center" />
-                    <Switch Grid.Column="2" IsToggled="{Binding VibrateOnMessage}" />
-                </Grid>
+            <!-- БЛОК: переходы -->
+            <Frame HasShadow="False" CornerRadius="16" BackgroundColor="White" Padding="0">
+                <StackLayout Spacing="0">
+                    <!-- Edit profile -->
+                    <Grid Style="{StaticResource RowStyle}">
+                        <Image Style="{StaticResource RowIcon}" Source="ic_edit.png"/>
+                        <Label Grid.Column="1" Style="{StaticResource RowTitle}" Text="Edit profile"/>
+                        <Image Grid.Column="2" Source="ic_chevron_right.png" HeightRequest="20" WidthRequest="20" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding EditProfileCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                    <BoxView Style="{StaticResource RowDivider}" />
 
-                <Grid ColumnDefinitions="Auto,*,Auto" RowSpacing="12">
-                    <Label Grid.Column="0" Text="Звуки" VerticalTextAlignment="Center" />
-                    <Switch Grid.Column="2" IsToggled="{Binding SoundOnMessage}" />
-                </Grid>
-            </StackLayout>
+                    <!-- Preferences / Settings -->
+                    <Grid Style="{StaticResource RowStyle}">
+                        <Image Style="{StaticResource RowIcon}" Source="ic_settings.png"/>
+                        <Label Grid.Column="1" Style="{StaticResource RowTitle}" Text="Preferences"/>
+                        <Image Grid.Column="2" Source="ic_chevron_right.png" HeightRequest="20" WidthRequest="20" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenSettingsCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </StackLayout>
+            </Frame>
 
-            <!-- Индикатор сохранения/загрузки -->
-            <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" HorizontalOptions="Center" />
         </StackLayout>
     </ScrollView>
 </ContentPage>

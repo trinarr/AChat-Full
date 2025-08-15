@@ -1,28 +1,51 @@
 ﻿using System;
 using Xamarin.Forms;
 using AChatFull.ViewModels;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace AChatFull.Views
 {
     public partial class ProfilePage : ContentPage
     {
-        private readonly ProfileViewModel _vm;
+        private readonly ChatRepository _repo;
+        ProfileViewModel _vm;
 
-        public ProfilePage(ProfileViewModel vm)
+        public bool IsInitialized { get; private set; }
+
+        //public ProfileViewModel VM => BindingContext as ProfileViewModel;
+
+        public ProfilePage(ChatRepository repo)
         {
+            Debug.WriteLine("ProfilePage");
+
             InitializeComponent();
-            BindingContext = _vm = vm;
+            _repo = repo;
+            //BindingContext = new ProfileViewModel(repo);
         }
 
-        public ProfilePage() : this(new ProfileViewModel(DependencyService.Get<ChatRepository>()))
+        public async Task EnsureInitAsync(INavigation nav)
         {
-        }
+            if (IsInitialized) return;
 
-        protected override async void OnAppearing()
-        {
-            base.OnAppearing();
-            /*if (_vm != null)
-                await _vm.LoadAsync();*/
+            _vm = new ProfileViewModel(_repo);
+            BindingContext = _vm;
+
+            try
+            {
+                // инициализация VM и загрузка данных
+                await _vm.InitializeAsync(nav).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Profile init failed: " + ex);
+            }
+
+            // Обновить биндинги на UI-потоке
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                IsInitialized = true;
+            });
         }
     }
 }

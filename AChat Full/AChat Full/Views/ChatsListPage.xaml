@@ -3,17 +3,9 @@
   xmlns="http://xamarin.com/schemas/2014/forms"
   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
   xmlns:vm="clr-namespace:AChatFull.Views"
-  xmlns:conv="clr-namespace:AChatFull.Utils"
   x:Class="AChatFull.Views.ChatsListPage"
   Title="Чаты"
   BackgroundColor="White">
-
-    <!-- локальный ресурс (если уже добавили в App.xaml — можно оставить как есть) -->
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <conv:PresenceToColorConverter x:Key="PresenceToColorConverter"/>
-        </ResourceDictionary>
-    </ContentPage.Resources>
 
     <NavigationPage.TitleView>
         <Grid Padding="8" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">

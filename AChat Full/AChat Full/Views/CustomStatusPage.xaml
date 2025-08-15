@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="AChatFull.Views.CustomStatusPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Set a custom status">
+
+    <ContentPage.Content>
+        <StackLayout Spacing="16" Padding="16">
+
+            <StackLayout Orientation="Horizontal" Spacing="12">
+                <Entry x:Name="EmojiEntry" WidthRequest="60" Placeholder="😊" HorizontalTextAlignment="Center"/>
+                <Entry x:Name="TextEntry" Placeholder="What's your status?"/>
+            </StackLayout>
+
+            <Picker x:Name="ClearAfterPicker" Title="Clear after">
+                <Picker.Items>
+                    <x:String>30 minutes</x:String>
+                    <x:String>1 hour</x:String>
+                    <x:String>4 hours</x:String>
+                    <x:String>Today</x:String>
+                    <x:String>This week</x:String>
+                    <x:String>Don't clear</x:String>
+                </Picker.Items>
+            </Picker>
+
+            <StackLayout Orientation="Horizontal" Spacing="12">
+                <Label Text="Do Not Disturb" VerticalOptions="Center"/>
+                <Switch x:Name="DndSwitch"/>
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" Spacing="12">
+                <Button Text="Save" Clicked="OnSaveClicked"/>
+                <Button Text="Clear" Clicked="OnClearClicked" />
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

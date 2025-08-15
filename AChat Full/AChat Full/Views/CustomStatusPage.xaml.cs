@@ -1,0 +1,75 @@
+﻿using System;
+using Xamarin.Forms;
+
+namespace AChatFull.Views
+{
+    public partial class CustomStatusPage : ContentPage
+    {
+        public CustomStatusPage()
+        {
+            InitializeComponent();
+            ClearAfterPicker.SelectedIndex = 5; // Don't clear
+        }
+
+        async void OnSaveClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                var emoji = EmojiEntry.Text;
+                var text = TextEntry.Text;
+                var clear = ClearAfterPicker.SelectedIndex; // смапишь как нужно
+                var dnd = DndSwitch.IsToggled;
+
+                // простая модель
+                var model = new CustomStatusModel
+                {
+                    Emoji = emoji,
+                    Text = text,
+                    ClearPolicy = clear,
+                    DoNotDisturb = dnd
+                };
+
+                // сохраним через репозиторий (реализуй метод)
+                var repo = DependencyService.Get<ChatRepository>() ?? new ChatRepository(App.DBPATH, App.USER_TOKEN_TEST);
+                await repo.UpdateCustomStatusAsync(model);
+
+                // возможно, обновим presence, если включен DND
+                if (dnd)
+                {
+                    await repo.UpdatePresenceAsync("Busy");
+                    MessagingCenter.Send<object>(this, "ProfileChanged");
+                }
+
+                await Navigation.PopAsync();
+            }
+            catch
+            {
+                await DisplayAlert("Error", "Failed to save status.", "OK");
+            }
+        }
+
+        async void OnClearClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                var repo = DependencyService.Get<ChatRepository>() ?? new ChatRepository(App.DBPATH, App.USER_TOKEN_TEST);
+                await repo.ClearCustomStatusAsync();
+                await Navigation.PopAsync();
+            }
+            catch
+            {
+                await DisplayAlert("Error", "Failed to clear status.", "OK");
+            }
+        }
+    }
+
+    // Простейшая модель для кастомного статуса — положи в Models при желании
+    public class CustomStatusModel
+    {
+        public string Emoji { get; set; }
+        public string Text { get; set; }
+        /// <summary>0:30m, 1:1h, 2:4h, 3:Today, 4:ThisWeek, 5:NoClear</summary>
+        public int ClearPolicy { get; set; }
+        public bool DoNotDisturb { get; set; }
+    }
+}

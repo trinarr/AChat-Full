@@ -9,6 +9,13 @@ using System.Globalization;
 namespace AChatFull.Views
 {
     public enum MessageKind { Text = 0, Document = 1 }
+    public enum Presence
+    {
+        Offline,
+        Online,
+        Idle,
+        DoNotDisturb
+    }
 
     public class ChatMessage
     {
@@ -45,14 +52,6 @@ namespace AChatFull.Views
     {
         [PrimaryKey]
         public string ChatId { get; set; }
-    }
-
-    public enum Presence
-    {
-        Offline,
-        Online,
-        Idle,
-        DoNotDisturb
     }
 
     // Модель таблицы Users
@@ -130,8 +129,6 @@ namespace AChatFull.Views
         public string Text { get; set; }
         public string CreatedAt { get; set; }
         //public bool IsRead { get; set; }
-
-        // NEW:
         public int Type { get; set; }                 // 0=Text, 1=Document
         public string FileName { get; set; }
         public long FileSize { get; set; }
@@ -162,12 +159,85 @@ namespace AChatFull.Views
         }
 
         public async Task<User> GetCurrentUserProfileAsync() =>
-    await _db.Table<User>().Where(u => u.UserId == _currentUserId).FirstOrDefaultAsync();
+            await _db.Table<User>().Where(u => u.UserId == _currentUserId).FirstOrDefaultAsync();
 
         public async Task SaveCurrentUserProfileAsync(User profile)
         {
             profile.UserId = _currentUserId;
             await _db.InsertOrReplaceAsync(profile);
+        }
+
+        public async Task UpdatePresenceAsync(string presence)
+        {
+            var p = NormalizePresence(presence);
+
+            // Пытаемся обновить запись текущего пользователя.
+            var rows = await _db.ExecuteAsync(
+                "UPDATE Users SET StatusDefault = ? WHERE UserId = ?",
+                (int)p, _currentUserId);
+
+            // Если пользователя ещё нет в таблице — создадим.
+            if (rows == 0)
+                await _db.InsertAsync(new User { UserId = _currentUserId, Presence = p });
+        }
+
+        public async Task UpdateCustomStatusAsync(CustomStatusModel model)
+        {
+            var status = ComposeCustomStatus(model);
+
+            var rows = await _db.ExecuteAsync(
+                "UPDATE Users SET StatusCustom = ? WHERE UserId = ?",
+                status, _currentUserId);
+
+            if (rows == 0)
+                await _db.InsertAsync(new User { UserId = _currentUserId, StatusCustom = status });
+        }
+
+        // ---------- приватные помощники ----------
+        private static Presence NormalizePresence(string presence)
+        {
+            if (string.IsNullOrWhiteSpace(presence)) return Presence.Offline;
+            var p = presence.Trim().ToLowerInvariant();
+
+            switch (p)
+            {
+                case "online":
+                    return Presence.Online;
+                case "away":
+                case "idle":
+                    return Presence.Idle;
+                case "busy":
+                case "dnd":
+                case "do not disturb":
+                case "do_not_disturb":
+                case "do-not-disturb":
+                case "donotdisturb":
+                    return Presence.DoNotDisturb;
+                case "offline":
+                case "invisible":
+                default:
+                    return Presence.Offline;
+            }
+        }
+
+        private static string ComposeCustomStatus(CustomStatusModel model)
+        {
+            if (model == null) return null;
+
+            // Храним короткую строку: "😊 Working on PR"
+            var emoji = string.IsNullOrWhiteSpace(model.Emoji) ? "" : model.Emoji.Trim();
+            var text = string.IsNullOrWhiteSpace(model.Text) ? "" : model.Text.Trim();
+
+            var combined = (emoji + " " + text).Trim();
+            return string.IsNullOrEmpty(combined) ? null : combined;
+        }
+
+        public Task ClearCustomStatusAsync()
+        {
+            // Если записи нет — UPDATE просто вернёт 0, это ок.
+            return _db.ExecuteAsync(
+                "UPDATE Users SET StatusCustom = NULL WHERE UserId = ?",
+                _currentUserId);
         }
 
         public Task<List<User>> SearchUsersAsync(string query, int limit = 50)
@@ -333,9 +403,6 @@ namespace AChatFull.Views
                    .ToList();
         }
 
-        // Новый метод:
-
-        // New overload: get last {take} messages, optionally older than 'beforeExclusiveCreatedAt' (format "yyyy-MM-dd HH:mm:ss")
         public Task<List<Message>> GetMessagesForChatAsync(string chatId, int take, string beforeExclusiveCreatedAt)
         {
             if (string.IsNullOrEmpty(beforeExclusiveCreatedAt))

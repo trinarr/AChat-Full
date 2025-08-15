@@ -10,6 +10,7 @@ namespace AChatFull
     public partial class App : Application
     {
         public static string USER_TOKEN_TEST = "user1";
+        public static string DBPATH;
 
         const int LockGraceSeconds = 10;
 
@@ -74,11 +75,11 @@ namespace AChatFull
 
         private async Task OnPinSuccess()
         {
-            var dbPath = await Utils.PreloadDatabase.GetDatabasePathAsync();
+            DBPATH = await Utils.PreloadDatabase.GetDatabasePathAsync();
 
             _lockShown = false;
 
-            var repo = new ChatRepository(dbPath, USER_TOKEN_TEST);
+            var repo = new ChatRepository(DBPATH, USER_TOKEN_TEST);
             Current.MainPage = new MainTabsPage(USER_TOKEN_TEST, repo);
         }
     }

@@ -3,48 +3,151 @@ using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
 using AChatFull.Views;
 using System.Threading.Tasks;
+using System;
 using AChatFull.Utils;
 
 namespace AChatFull
 {
     public class MainTabsPage : Xamarin.Forms.TabbedPage
     {
+        NavigationPage _youPlaceholderNav;
+        bool _youReplaced;
+        ChatRepository _repo;
+
         public MainTabsPage(string userToken, ChatRepository repo)
         {
-            Title = "AChat";
+            _repo = repo;
 
-            var chats = new NavigationPage(new ChatsListPage(userToken, repo))
-            {
-                Title = "Chats",
-                IconImageSource = "tab_chat.png"
-            };
+            NavigationPage chats = new NavigationPage(new ChatsListPage(userToken, _repo)) { Title = "Chats", IconImageSource = "tab_chat.png" };
+            NavigationPage contacts = new NavigationPage(new ContactsPage(_repo)) { Title = "Contacts", IconImageSource = "tab_contacts.png" };
+            //NavigationPage you = new NavigationPage(new ProfilePage(repo)) { Title = "You", IconImageSource = "tab_contacts.png" };
 
-            var contacts = new NavigationPage(new ContactsPage(repo))
+            // 1) Вкладка-плейсхолдер "You": Проста, не грузит VM/репо
+            _youPlaceholderNav = new NavigationPage(new ContentPage { Title = "You" })
             {
-                Title = "Contacts",
-                IconImageSource = "tab_contacts.png"
-            };
-
-            var settings = new NavigationPage(new ProfilePage())
-            {
-                Title = "You"
+                Title = "You",
             };
 
             Children.Add(chats);
             Children.Add(contacts);
-            Children.Add(settings);
+            Children.Add(_youPlaceholderNav);
 
             // Android: вкладки внизу
-            this.On<Android>()
+            On<Android>()
                 .SetToolbarPlacement(ToolbarPlacement.Bottom)
                 .SetIsSwipePagingEnabled(true)
                 .SetIsSmoothScrollEnabled(true);
 
-            _ = SetProfileTabIconAsync(settings, repo);
+            // инициализируем профиль при первом показе нужной вкладки
+            this.CurrentPageChanged += async (s, e) => await TryInitCurrentLazyPageAsync();
+            // на всякий случай — если вкладка профиля выбрана по умолчанию
+            Device.BeginInvokeOnMainThread(async () => await TryInitCurrentLazyPageAsync());
 
         }
 
-        private async Task SetProfileTabIconAsync(NavigationPage settingsPage, ChatRepository repo)
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            if (!_youReplaced)
+            {
+                _youReplaced = true;
+                // Деферим подмену вкладки до момента, когда таббар уже показан (PIN закрыт)
+                Device.BeginInvokeOnMainThread(async () => await ReplaceYouTabAsync().ConfigureAwait(false));
+            }
+        }
+
+        private async Task ReplaceYouTabAsync()
+        {
+            try
+            {
+                // 2) Создаём настоящую страницу профиля только сейчас
+                var profilePage = new ProfilePage(_repo);
+                var youNav = new NavigationPage(profilePage)
+                {
+                    Title = "You",
+                    IconImageSource = _youPlaceholderNav.IconImageSource
+                };
+
+                // 3) Подменяем плейсхолдер на реальную вкладку без мерцания
+                var idx = Children.IndexOf(_youPlaceholderNav);
+                if (idx >= 0)
+                {
+                    Children.RemoveAt(idx);
+                    Children.Insert(idx, youNav);
+                }
+
+                // 4) Безопасно инициализируем VM профиля (лениво)
+                if (profilePage is ILazyInitPage lazy && !lazy.IsInitialized)
+                {
+                    await lazy.EnsureInitAsync(youNav.Navigation).ConfigureAwait(false);
+                }
+
+                // 5) Построим иконку с аватаркой и точкой статуса (в фоне)
+                _ = RefreshProfileTabIconSafeAsync(youNav);
+
+                // 6) Подпишемся на обновление иконки (меняется статус/аватар)
+                MessagingCenter.Subscribe<object>(this, "ProfileChanged", async _ =>
+                {
+                    await RefreshProfileTabIconSafeAsync(youNav).ConfigureAwait(false);
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("ReplaceYouTabAsync error: " + ex);
+                // В худшем случае останется плейсхолдер — табы всё равно работают, PIN закроется.
+            }
+        }
+
+        private async Task RefreshProfileTabIconSafeAsync(NavigationPage targetNav)
+        {
+            try
+            {
+                // грузим профиль НЕ на UI-потоке
+                var user = await _repo.GetCurrentUserProfileAsync().ConfigureAwait(false);
+                if (user == null) return;
+
+                var initials = AvatarIconBuilder.MakeInitials($"{user.FirstName} {user.LastName}");
+                var icon = await AvatarIconBuilder.BuildAsync(
+                    user.AvatarUrl,   // локальный путь/ресурс
+                    initials,
+                    user.Presence.ToString(),    // "Online"/"Away"/"Busy"/"Offline"
+                    28
+                ).ConfigureAwait(false);
+
+                if (icon != null)
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        try { targetNav.IconImageSource = icon; } catch { /* ignore */ }
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("RefreshProfileTabIconSafeAsync error: " + ex);
+            }
+        }
+
+        private async Task TryInitCurrentLazyPageAsync()
+        {
+            try
+            {
+                if (!(CurrentPage is NavigationPage nav)) return;
+                // Текущая отображаемая страница в стеке навигации
+                var page = nav.CurrentPage;
+                if (page is AChatFull.Views.ILazyInitPage lazy && !lazy.IsInitialized)
+                {
+                    await lazy.EnsureInitAsync(nav.Navigation).ConfigureAwait(false);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("TryInitCurrentLazyPageAsync error: " + ex);
+            }
+        }
+
+private async Task SetProfileTabIconAsync(NavigationPage targetPage, ChatRepository repo)
         {
             try
             {
@@ -62,7 +165,7 @@ namespace AChatFull
                 );
 
                 if (icon != null)
-                    settingsPage.IconImageSource = icon;
+                    targetPage.IconImageSource = icon;
             }
             catch
             {
