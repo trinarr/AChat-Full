@@ -77,16 +77,10 @@ namespace AChatFull
                     Children.Insert(idx, youNav);
                 }
 
-                // 4) Безопасно инициализируем VM профиля (лениво)
-                if (profilePage is ILazyInitPage lazy && !lazy.IsInitialized)
-                {
-                    await lazy.EnsureInitAsync(youNav.Navigation).ConfigureAwait(false);
-                }
+                await InitializeProfileAsync(profilePage, youNav.Navigation).ConfigureAwait(false);
 
-                // 5) Построим иконку с аватаркой и точкой статуса (в фоне)
                 _ = RefreshProfileTabIconSafeAsync(youNav);
 
-                // 6) Подпишемся на обновление иконки (меняется статус/аватар)
                 MessagingCenter.Subscribe<object>(this, "ProfileChanged", async _ =>
                 {
                     await RefreshProfileTabIconSafeAsync(youNav).ConfigureAwait(false);
@@ -96,6 +90,30 @@ namespace AChatFull
             {
                 System.Diagnostics.Debug.WriteLine("ReplaceYouTabAsync error: " + ex);
                 // В худшем случае останется плейсхолдер — табы всё равно работают, PIN закроется.
+            }
+        }
+
+        private async Task InitializeProfileAsync(Page page, INavigation nav)
+        {
+            try
+            {
+                // 1) Если страница поддерживает ленивую инициализацию — используем её
+                if (page is ILazyInitPage lazy && !lazy.IsInitialized)
+                {
+                    await lazy.EnsureInitAsync(nav).ConfigureAwait(false);
+                    return;
+                }
+
+                // 2) Иначе — пробуем вызвать у уже заданной VM
+                var vm = page.BindingContext as ILazyInitViewModel;
+                if (vm != null)
+                {
+                    await vm.InitializeAsync(nav).ConfigureAwait(false);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("InitializeProfileAsync error: " + ex);
             }
         }
 
@@ -136,7 +154,7 @@ namespace AChatFull
                 if (!(CurrentPage is NavigationPage nav)) return;
                 // Текущая отображаемая страница в стеке навигации
                 var page = nav.CurrentPage;
-                if (page is AChatFull.Views.ILazyInitPage lazy && !lazy.IsInitialized)
+                if (page is ILazyInit lazy && !lazy.IsInitialized)
                 {
                     await lazy.EnsureInitAsync(nav.Navigation).ConfigureAwait(false);
                 }

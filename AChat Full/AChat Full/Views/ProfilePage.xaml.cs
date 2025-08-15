@@ -6,46 +6,34 @@ using System.Threading.Tasks;
 
 namespace AChatFull.Views
 {
-    public partial class ProfilePage : ContentPage
+    public partial class ProfilePage : ContentPage, ILazyInitPage
     {
         private readonly ChatRepository _repo;
-        ProfileViewModel _vm;
+        private ProfileViewModel _vm;
 
         public bool IsInitialized { get; private set; }
-
-        //public ProfileViewModel VM => BindingContext as ProfileViewModel;
 
         public ProfilePage(ChatRepository repo)
         {
             Debug.WriteLine("ProfilePage");
 
-            InitializeComponent();
             _repo = repo;
-            //BindingContext = new ProfileViewModel(repo);
+            InitializeComponent();
         }
 
         public async Task EnsureInitAsync(INavigation nav)
         {
             if (IsInitialized) return;
 
-            _vm = new ProfileViewModel(_repo);
-            BindingContext = _vm;
+            if (BindingContext is ProfileViewModel vmFromXaml)
+                _vm = vmFromXaml;
+            else
+                BindingContext = _vm = _vm ?? new ProfileViewModel(_repo);
 
-            try
-            {
-                // инициализация VM и загрузка данных
-                await _vm.InitializeAsync(nav).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("Profile init failed: " + ex);
-            }
+            try { await _vm.InitializeAsync(nav).ConfigureAwait(false); }
+            catch (System.Exception ex) { System.Diagnostics.Debug.WriteLine("Profile init failed: " + ex); }
 
-            // Обновить биндинги на UI-потоке
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                IsInitialized = true;
-            });
+            Device.BeginInvokeOnMainThread(() => IsInitialized = true);
         }
     }
 }

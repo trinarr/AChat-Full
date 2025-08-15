@@ -4,10 +4,11 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using AChatFull.Utils;
 using AChatFull.Views;
+using System.Diagnostics;
 
 namespace AChatFull.ViewModels
 {
-    public class ProfileViewModel : INotifyPropertyChanged
+    public class ProfileViewModel : INotifyPropertyChanged, ILazyInitViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
         private readonly ChatRepository _repo;
@@ -75,6 +76,8 @@ namespace AChatFull.ViewModels
 
         public async Task InitializeAsync(INavigation nav)
         {
+            Debug.WriteLine("ProfileViewModel InitializeAsync");
+
             _nav = nav;
             await LoadAsync().ConfigureAwait(false);
             // Возврат на UI-поток для обновления bound-свойств
@@ -93,13 +96,12 @@ namespace AChatFull.ViewModels
 
             DisplayName = string.Format("{0} {1}", user.FirstName, user.LastName).Trim();
             Initials = AvatarIconBuilder.MakeInitials(DisplayName);
-            AvatarSource = user.AvatarUrl;  
-            Presence = user.Presence.ToString();   
+            AvatarSource = user.AvatarUrl;
+            Presence = user.Presence.ToString();
         }
 
         async Task ChangeStatusAsync()
         {
-            // стандартные + расширенный
             var selection = await Application.Current.MainPage.DisplayActionSheet(
                 "Change Online Status", "Cancel", null,
                 "Online", "Idle", "Do Not Disturb", "Invisible", "Set a custom status");
@@ -113,7 +115,6 @@ namespace AChatFull.ViewModels
                 return;
             }
 
-            // map и сохранить
             if (selection == "Online") await SetPresenceAsync("Online");
             else if (selection == "Idle") await SetPresenceAsync("Away");
             else if (selection == "Do Not Disturb") await SetPresenceAsync("Busy");
