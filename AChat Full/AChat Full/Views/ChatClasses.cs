@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using SQLite;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
+using AChatFull.ViewModels;
 
 namespace AChatFull.Views
 {
@@ -167,33 +169,70 @@ namespace AChatFull.Views
             await _db.InsertOrReplaceAsync(profile);
         }
 
-        // Обновление имени/фамилии/о себе/даты рождения текущего пользователя.
-        // TODO: при наличии API/БД — допишите реальное сохранение (см. комментарий ниже).
-        public async System.Threading.Tasks.Task UpdateProfileAsync(ProfileUpdate update)
+        public async Task UpdateProfileAsync(ProfileUpdate update)
         {
-            // 1) Получаем текущий профиль
-            var me = await GetCurrentUserProfileAsync();
-            if (me == null) return;
+            if (update == null) return;
 
-            // 2) Перезаписываем поля
-            me.FirstName = (update?.FirstName ?? string.Empty).Trim();
-            me.LastName = (update?.LastName ?? string.Empty).Trim();
-            me.About = update?.About ?? string.Empty;
+            var first = (update.FirstName ?? string.Empty).Trim();
+            var last = (update.LastName ?? string.Empty).Trim();
+            var about = (update.About ?? string.Empty).Trim();
 
-            // Если null — очистим дату (используйте вашу семантику, например null/MinValue)
-            /*if (update?.Birthdate is System.DateTime d && d.Year > 1900)
-                me.Birthdate = d.Date;
-            else
-                me.Birthdate = default(System.DateTime);*/
+            // Users.BirthDate у вас строкой, парсится BirthDateDate через "yyyy-MM-dd HH:mm:ss"
+            string birthStr = null;
+            if (update.Birthdate.HasValue && update.Birthdate.Value.Year > 1900)
+                birthStr = update.Birthdate.Value.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
 
-            // 3) (опционально) Сохранение в вашу БД/бэкенд
-            // --- примеры, раскомментируйте/замените под свой код ---
-            // await UpdateCurrentUserAsync(me);         // если есть метод обновления сущности
-            // await _api.UpdateProfileAsync(update);    // если есть API-клиент
-            // await _db.UpdateAsync(me);                // если используете sqlite-net
+            // Обновляем существующую запись
+            var rows = await _db.ExecuteAsync(
+                "UPDATE Users SET FirstName = ?, LastName = ?, About = ?, BirthDate = ? WHERE UserId = ?",
+                first, last, about, birthStr, _currentUserId);
 
-            // 4) Уведомим UI
+            // Если текущего пользователя ещё нет — создаём
+            if (rows == 0)
+            {
+                await _db.InsertAsync(new User
+                {
+                    UserId = _currentUserId,
+                    FirstName = first,
+                    LastName = last,
+                    About = about,
+                    BirthDate = birthStr
+                });
+            }
+
+            // Дадим знать UI, что профиль обновился
             Xamarin.Forms.MessagingCenter.Send<object>(this, "ProfileChanged");
+        }
+
+        public async Task<string> UpdateAvatarAsync(Stream imageStream, string fileName)
+        {
+            if (imageStream == null) return null;
+
+            // Папка для аватаров в памяти приложения
+            var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "avatars");
+            Directory.CreateDirectory(dir);
+
+            var ext = Path.GetExtension(fileName);
+            if (string.IsNullOrWhiteSpace(ext)) ext = ".jpg";
+
+            var path = Path.Combine(dir, $"{_currentUserId}{ext}");
+
+            // Сохраняем файл
+            using (var fs = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                await imageStream.CopyToAsync(fs);
+            }
+
+            // Обновляем ссылку в БД
+            var rows = await _db.ExecuteAsync(
+                "UPDATE Users SET AvatarUrl = ? WHERE UserId = ?",
+                path, _currentUserId);
+
+            if (rows == 0)
+                await _db.InsertAsync(new User { UserId = _currentUserId, AvatarUrl = path });
+
+            Xamarin.Forms.MessagingCenter.Send<object>(this, "ProfileChanged");
+            return path;
         }
 
         public async Task UpdatePresenceAsync(string presence)
@@ -451,13 +490,6 @@ namespace AChatFull.Views
             }
         }
 
-        public class ProfileUpdate
-        {
-            public string FirstName { get; set; }
-            public string LastName { get; set; }   // сюда кладём SecondName
-            public string About { get; set; }
-            public System.DateTime? Birthdate { get; set; }
-        }
         public Task<int> InsertMessageAsync(Message message)
         {
             // Если вам нужно заменять существующее при совпадении PK:

@@ -201,17 +201,7 @@ namespace AChatFull.ViewModels
                         });
                     });
 
-                    // обновляем кастомный статус, когда он меняется
-                    MessagingCenter.Subscribe<object>(this, "ProfileChanged", async _ =>
-                    {
-                        try
-                        {
-                            var user = await _repo.GetCurrentUserProfileAsync();
-                            Device.BeginInvokeOnMainThread(() =>
-                                CustomStatusCombined = user?.StatusCustom);
-                        }
-                        catch { /* ignore */ }
-                    });
+                    MessagingCenter.Subscribe<object>(this, "ProfileChanged", _ => Device.BeginInvokeOnMainThread(() => _ = LoadAsync()));
                 }
             });
         }

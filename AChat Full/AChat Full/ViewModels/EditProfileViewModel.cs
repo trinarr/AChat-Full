@@ -179,56 +179,6 @@ namespace AChatFull.ViewModels
             }
         }
 
-        ImageSource BuildAvatarImage(string raw)
-        {
-            if (string.IsNullOrWhiteSpace(raw)) return null;
-            var s = raw.Trim();
-
-            // data URI: data:image/png;base64,...
-            if (s.StartsWith("data:image", StringComparison.OrdinalIgnoreCase))
-            {
-                var i = s.IndexOf(',');
-                if (i > 0 && i < s.Length - 1)
-                {
-                    try
-                    {
-                        var bytes = Convert.FromBase64String(s.Substring(i + 1));
-                        return ImageSource.FromStream(() => new MemoryStream(bytes));
-                    }
-                    catch { return null; }
-                }
-            }
-
-            // Локальный файл-путь
-            if (File.Exists(s))
-                return ImageSource.FromFile(s);
-
-            // Абсолютный URI (http/https/file/content и т.п.)
-            if (Uri.TryCreate(s, UriKind.Absolute, out var uri))
-            {
-                try
-                {
-                    // Для file:// можно сразу FromFile
-                    if (uri.IsFile && !string.IsNullOrEmpty(uri.LocalPath) && File.Exists(uri.LocalPath))
-                        return ImageSource.FromFile(uri.LocalPath);
-
-                    // http/https/content:// — пробуем как Uri
-                    return ImageSource.FromUri(uri);
-                }
-                catch { /* игнор, упадём в плейсхолдер */ }
-            }
-
-            // Если приходит относительный путь (например, "/avatars/a.png"),
-            // можно склеить с базовым URL вашего API:
-            // if (s.StartsWith("/")) {
-            //     var baseUri = new Uri(App.ApiBaseUrl); // подставьте своё
-            //     if (Uri.TryCreate(baseUri, s, out var abs))
-            //         return ImageSource.FromUri(abs);
-            // }
-
-            return null;
-        }
-
         async Task ChangeAvatarAsync()
         {
             try
@@ -273,7 +223,7 @@ namespace AChatFull.ViewModels
                     Birthdate = HasBirthdate ? (DateTime?)BirthdateValue.Date : null
                 };
 
-                //await _repo.UpdateProfileAsync(update);
+                await _repo.UpdateProfileAsync(update);
 
                 // 2) Если выбран новый аватар — загружаем
                 if (_pickedPhoto != null)
