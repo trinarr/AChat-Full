@@ -31,7 +31,7 @@ namespace AChatFull.Views
                 BindingContext = _vm = _vm ?? new ProfileViewModel(_repo);
 
             try { await _vm.InitializeAsync(nav).ConfigureAwait(false); }
-            catch (System.Exception ex) { System.Diagnostics.Debug.WriteLine("Profile init failed: " + ex); }
+            catch (Exception ex) { Debug.WriteLine("Profile init failed: " + ex); }
 
             Device.BeginInvokeOnMainThread(() => IsInitialized = true);
         }

@@ -15,6 +15,17 @@ namespace AChatFull.Utils
             }
         }
 
+        public static string ToDotKey(this Presence p)
+        {
+            switch (p)
+            {
+                case Presence.Online: return "Online";
+                case Presence.Idle: return "Away";
+                case Presence.DoNotDisturb: return "Busy";
+                default: return "Offline";
+            }
+        }
+
         public static string ToReadableLabel(this Presence p)
         {
             switch (p)

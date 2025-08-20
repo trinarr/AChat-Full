@@ -53,9 +53,9 @@ namespace AChatFull.ViewModels
                 OnPropertyChanged(nameof(AvatarSource));
                 OnPropertyChanged(nameof(AvatarImage));
                 OnPropertyChanged(nameof(HasAvatar));
-            } 
+            }
         }
-        // Простая логика «есть фото»
+
         public bool HasAvatar => !string.IsNullOrWhiteSpace(_avatarSource);
         public string Initials { get { return _initials; } set { Set(ref _initials, value); } }
 
@@ -71,7 +71,7 @@ namespace AChatFull.ViewModels
                 _presence = value;
                 OnPropertyChanged(nameof(Presence));
                 OnPropertyChanged(nameof(PresenceDisplay));
-                OnPropertyChanged(nameof(PresenceColor)); // <- важно
+                OnPropertyChanged(nameof(PresenceColor));
             }
         }
 
@@ -94,18 +94,26 @@ namespace AChatFull.ViewModels
             get
             {
                 var p = (_presence ?? "").Trim().ToLowerInvariant();
+
+                Debug.WriteLine("ProfileViewModel PresenceColor "+ p);
+
                 switch (p)
                 {
                     case "online":
-                    case "available": return Color.FromHex("#34C759");
+                    case "available": 
+                        return Color.FromHex("#34C759");
                     case "away":
-                    case "idle": return Color.FromHex("#FFCC00");
+                    case "idle": 
+                        return Color.FromHex("#FFCC00");
                     case "busy":
                     case "dnd":
-                    case "do not disturb": return Color.FromHex("#FF3B30");
+                    case "do not disturb":
+                    case "donotdisturb":
+                        return Color.FromHex("#FF3B30");
                     case "offline":
                     case "invisible":
-                    default: return Color.FromHex("#AEAEB2");
+                    default: 
+                        return Color.FromHex("#AEAEB2");
                 }
             }
         }
@@ -143,7 +151,7 @@ namespace AChatFull.ViewModels
             if (p == "online") return "Online";
             if (p == "away" || p == "idle") return "Away";
             if (p == "busy" || p == "dnd" || p.Contains("do not disturb")) return "Busy";
-            return "Offline"; // invisible/offline/прочее
+            return "Offline";
         }
 
         async Task LoadAsync()

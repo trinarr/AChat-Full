@@ -126,10 +126,11 @@ namespace AChatFull
                 if (user == null) return;
 
                 var initials = AvatarIconBuilder.MakeInitials($"{user.FirstName} {user.LastName}");
+                var dotKey = user.Presence.ToDotKey();
                 var icon = await AvatarIconBuilder.BuildAsync(
                     user.AvatarUrl,   // локальный путь/ресурс
                     initials,
-                    user.Presence.ToString(),    // "Online"/"Away"/"Busy"/"Offline"
+                    dotKey,    // "Online"/"Away"/"Busy"/"Offline"
                     28
                 ).ConfigureAwait(false);
 
