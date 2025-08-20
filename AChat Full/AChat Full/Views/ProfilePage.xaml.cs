@@ -21,6 +21,19 @@ namespace AChatFull.Views
             InitializeComponent();
         }
 
+        async void OnClearCustomStatusTapped(object sender, EventArgs e)
+        {
+            if (BindingContext is ProfileViewModel vm)
+                await (vm?.GetType().GetMethod("ClearCustomStatusAsync",
+                      System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                      ?.Invoke(vm, new object[] { }) as System.Threading.Tasks.Task);
+        }
+
+        private async void OnCustomStatusTapped(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new CustomStatusPage());
+        }
+
         public async Task EnsureInitAsync(INavigation nav)
         {
             if (IsInitialized) return;

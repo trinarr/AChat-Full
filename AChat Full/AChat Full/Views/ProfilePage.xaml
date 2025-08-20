@@ -107,6 +107,64 @@
                 </StackLayout>
             </Grid>
 
+            <!-- Custom status under avatar -->
+            <Frame
+    IsVisible="{Binding HasCustomStatus}"
+    Margin="0,6,0,12"
+    Padding="10"
+    HasShadow="False"
+    BackgroundColor="#F3F4F6"
+    CornerRadius="12">
+
+                <!-- 👇 тап по чипу открывает редактор -->
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnCustomStatusTapped"/>
+                </Frame.GestureRecognizers>
+
+                <Grid ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Эмодзи (если нет – просто пусто, остаётся отступ) -->
+                    <Label Text="{Binding CustomStatusEmoji}"
+               FontSize="18"
+               VerticalTextAlignment="Center"/>
+
+                    <!-- Текст -->
+                    <Label Grid.Column="1"
+               Text="{Binding CustomStatusText}"
+               VerticalTextAlignment="Center"
+               TextColor="#111827"
+               LineBreakMode="TailTruncation"/>
+
+                    <!-- Маленькая кнопка очистки (как у Slack крестик) -->
+                    <!-- Новая иконка "×" -->
+                    <Frame Grid.Column="2"
+       WidthRequest="28" HeightRequest="28"
+       Padding="0"
+       BackgroundColor="#FFFFFF"
+       BorderColor="#D1D5DB"
+       CornerRadius="14"
+       HasShadow="False"
+       IsVisible="{Binding HasCustomStatus}">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ClearCustomStatusCommand}" />
+                        </Frame.GestureRecognizers>
+
+                        <!-- сам крестик -->
+                        <Label Text="✕"
+           FontSize="14"
+           HorizontalTextAlignment="Center"
+           VerticalTextAlignment="Center"
+           AutomationProperties.IsInAccessibleTree="True"
+           AutomationProperties.Name="Clear status"/>
+                    </Frame>
+                </Grid>
+            </Frame>
+
             <!-- БЛОК: быстрые действия -->
             <Frame HasShadow="False" CornerRadius="16" BackgroundColor="White" Padding="0">
                 <StackLayout Spacing="0">

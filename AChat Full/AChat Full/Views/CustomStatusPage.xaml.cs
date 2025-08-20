@@ -15,36 +15,26 @@ namespace AChatFull.Views
         {
             try
             {
-                var emoji = EmojiEntry.Text;
-                var text = TextEntry.Text;
-                var clear = ClearAfterPicker.SelectedIndex; // смапишь как нужно
-                var dnd = DndSwitch.IsToggled;
-
-                // простая модель
                 var model = new CustomStatusModel
                 {
-                    Emoji = emoji,
-                    Text = text,
-                    ClearPolicy = clear,
-                    DoNotDisturb = dnd
+                    Emoji = EmojiEntry.Text,
+                    Text = TextEntry.Text,
+                    ClearPolicy = ClearAfterPicker.SelectedIndex,
+                    DoNotDisturb = DndSwitch.IsToggled
                 };
 
-                // сохраним через репозиторий (реализуй метод)
                 var repo = DependencyService.Get<ChatRepository>() ?? new ChatRepository(App.DBPATH, App.USER_TOKEN_TEST);
                 await repo.UpdateCustomStatusAsync(model);
 
-                // возможно, обновим presence, если включен DND
-                if (dnd)
-                {
+                if (model.DoNotDisturb)
                     await repo.UpdatePresenceAsync("Busy");
-                    MessagingCenter.Send<object>(this, "ProfileChanged");
-                }
 
+                MessagingCenter.Send<object>(this, "ProfileChanged");
                 await Navigation.PopAsync();
             }
             catch
             {
-                await DisplayAlert("Error", "Failed to save status.", "OK");
+                await DisplayAlert("Error", "Failed to update status.", "OK");
             }
         }
 
@@ -54,6 +44,7 @@ namespace AChatFull.Views
             {
                 var repo = DependencyService.Get<ChatRepository>() ?? new ChatRepository(App.DBPATH, App.USER_TOKEN_TEST);
                 await repo.ClearCustomStatusAsync();
+                MessagingCenter.Send<object>(this, "ProfileChanged");
                 await Navigation.PopAsync();
             }
             catch

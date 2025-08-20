@@ -18,9 +18,9 @@ namespace AChatFull.ViewModels
 
         // зависимости
         readonly Command _changeStatusCommand;
-        //readonly Command _setAwayCommand;
         readonly Command _editProfileCommand;
         readonly Command _openSettingsCommand;
+        readonly Command _clearCustomStatusCommand;
 
         public ProfileViewModel(ChatRepository repo)
         {
@@ -28,15 +28,15 @@ namespace AChatFull.ViewModels
             _repo = repo;
 
             _changeStatusCommand = new Command(async () => await ChangeStatusAsync());
-            //_setAwayCommand = new Command(async () => await SetPresenceAsync("Away"));
             _editProfileCommand = new Command(async () => await OpenEditProfileAsync());
             _openSettingsCommand = new Command(async () => await OpenSettingsAsync());
+            _clearCustomStatusCommand = new Command(async () => await ClearCustomStatusAsync());
         }
 
         public Command ChangeStatusCommand { get { return _changeStatusCommand; } }
-        //public Command SetAwayCommand { get { return _setAwayCommand; } }
         public Command EditProfileCommand { get { return _editProfileCommand; } }
         public Command OpenSettingsCommand { get { return _openSettingsCommand; } }
+        public Command ClearCustomStatusCommand => _clearCustomStatusCommand;
 
         // UI-модель
         string _displayName;
@@ -75,6 +75,51 @@ namespace AChatFull.ViewModels
             }
         }
 
+        string _customStatusCombined;
+        public string CustomStatusCombined
+        {
+            get => _customStatusCombined;
+            set
+            {
+                if (_customStatusCombined == value) return;
+                _customStatusCombined = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(CustomStatusEmoji));
+                OnPropertyChanged(nameof(CustomStatusText));
+                OnPropertyChanged(nameof(HasCustomStatus));
+            }
+        }
+        public string CustomStatusEmoji
+        {
+            get
+            {
+                var (emoji, _) = SplitStatus(_customStatusCombined);
+                return emoji;
+            }
+        }
+        public string CustomStatusText
+        {
+            get
+            {
+                var (_, text) = SplitStatus(_customStatusCombined);
+                return text;
+            }
+        }
+        public bool HasCustomStatus =>
+            !string.IsNullOrWhiteSpace(CustomStatusEmoji) || !string.IsNullOrWhiteSpace(CustomStatusText);
+
+        static (string emoji, string text) SplitStatus(string raw)
+        {
+            // В БД лежит строка вида "😊 Working on PR"
+            if (string.IsNullOrWhiteSpace(raw)) return ("", "");
+            var s = raw.Trim();
+            var i = s.IndexOf(' ');
+            if (i > 0 && i <= 4)
+                return (s.Substring(0, i).Trim(), s.Substring(i + 1).Trim());
+            // Если эмодзи нет – считаем всё текстом
+            return ("", s);
+        }
+
         public string PresenceDisplay
         {
             get
@@ -85,6 +130,20 @@ namespace AChatFull.ViewModels
                 if (p == "busy" || p == "dnd" || p == "do not disturb" || p == "donotdisturb") return "Do Not Disturb";
                 if (p == "offline" || p == "invisible") return "Invisible";
                 return "Status";
+            }
+        }
+
+        async Task ClearCustomStatusAsync()
+        {
+            try
+            {
+                await _repo.ClearCustomStatusAsync();
+                CustomStatusCombined = null;
+                MessagingCenter.Send<object>(this, "ProfileChanged");
+            }
+            catch
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "Failed to clear status.", "OK");
             }
         }
 
@@ -140,6 +199,18 @@ namespace AChatFull.ViewModels
                             Presence = CanonicalPresence(newPresence); // обновит PresenceDisplay/PresenceColor
                         });
                     });
+
+                    // обновляем кастомный статус, когда он меняется
+                    MessagingCenter.Subscribe<object>(this, "ProfileChanged", async _ =>
+                    {
+                        try
+                        {
+                            var user = await _repo.GetCurrentUserProfileAsync();
+                            Device.BeginInvokeOnMainThread(() =>
+                                CustomStatusCombined = user?.StatusCustom);
+                        }
+                        catch { /* ignore */ }
+                    });
                 }
             });
         }
@@ -163,6 +234,7 @@ namespace AChatFull.ViewModels
             Initials = AvatarIconBuilder.MakeInitials(DisplayName);
             AvatarSource = user.AvatarUrl;
             Presence = user.Presence.ToString();
+            CustomStatusCombined = user.StatusCustom;
         }
 
         async Task ChangeStatusAsync()
