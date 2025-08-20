@@ -141,8 +141,14 @@
     <AndroidResource Include="..\AChat Full\Resources\Icons\tab_chat.png">
       <Link>Resources\drawable\tab_chat.png</Link>
     </AndroidResource>
-    <AndroidResource Include="..\AChat Full\Resources\Icons\tab_settings.png">
-      <Link>Resources\drawable\tab_settings.png</Link>
+    <AndroidResource Include="..\AChat Full\Resources\Icons\settings.png">
+      <Link>Resources\drawable\settings.png</Link>
+    </AndroidResource>
+	<AndroidResource Include="..\AChat Full\Resources\Icons\status.png">
+      <Link>Resources\drawable\status.png</Link>
+    </AndroidResource>
+	<AndroidResource Include="..\AChat Full\Resources\Icons\account.png">
+      <Link>Resources\drawable\account.png</Link>
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\tab_contacts.png">
       <Link>Resources\drawable\tab_contacts.png</Link>

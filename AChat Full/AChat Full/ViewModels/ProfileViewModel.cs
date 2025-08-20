@@ -18,7 +18,7 @@ namespace AChatFull.ViewModels
 
         // зависимости
         readonly Command _changeStatusCommand;
-        readonly Command _setAwayCommand;
+        //readonly Command _setAwayCommand;
         readonly Command _editProfileCommand;
         readonly Command _openSettingsCommand;
 
@@ -28,13 +28,13 @@ namespace AChatFull.ViewModels
             _repo = repo;
 
             _changeStatusCommand = new Command(async () => await ChangeStatusAsync());
-            _setAwayCommand = new Command(async () => await SetPresenceAsync("Away"));
+            //_setAwayCommand = new Command(async () => await SetPresenceAsync("Away"));
             _editProfileCommand = new Command(async () => await OpenEditProfileAsync());
             _openSettingsCommand = new Command(async () => await OpenSettingsAsync());
         }
 
         public Command ChangeStatusCommand { get { return _changeStatusCommand; } }
-        public Command SetAwayCommand { get { return _setAwayCommand; } }
+        //public Command SetAwayCommand { get { return _setAwayCommand; } }
         public Command EditProfileCommand { get { return _editProfileCommand; } }
         public Command OpenSettingsCommand { get { return _openSettingsCommand; } }
 
@@ -112,7 +112,7 @@ namespace AChatFull.ViewModels
                         return Color.FromHex("#FF3B30");
                     case "offline":
                     case "invisible":
-                    default: 
+                    default:
                         return Color.FromHex("#AEAEB2");
                 }
             }
