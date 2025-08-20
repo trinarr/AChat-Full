@@ -9,6 +9,7 @@ namespace AChatFull.Views
     public partial class ChatPage : ContentPage
     {  
         private readonly ChatViewModel _vm;
+        private readonly ChatRepository _repo;
 
         private readonly string _chatId;
         private bool _messagesViewCreated;
@@ -25,6 +26,7 @@ namespace AChatFull.Views
             InitializeComponent();
 
             _chatId = chatId;
+            _repo = repo;
             _vm = new ChatViewModel(repo, chatId, userToken);
             BindingContext = _vm;
 
@@ -77,6 +79,17 @@ namespace AChatFull.Views
                 case "Block":
                     break;
                 case "Delete chat":
+                    // Подтвердим удаление
+                    bool confirm = await DisplayAlert("Delete chat",
+                        "This will remove the conversation and all its messages from this device.",
+                        "Delete", "Cancel");
+
+                    if (confirm)
+                    {
+                        await _repo.DeleteChatAsync(_chatId);
+                        await CloseModalAsync(animated: false); // закроем страницу
+                                                                // CloseModalAsync вызовет NotifyClosedOnce() => ChatsList перезагрузится
+                    }
                     break;
             }
         }

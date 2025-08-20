@@ -169,6 +169,44 @@ namespace AChatFull.Views
             await _db.InsertOrReplaceAsync(profile);
         }
 
+        public async Task DeleteChatAsync(string chatId)
+        {
+            if (string.IsNullOrWhiteSpace(chatId)) return;
+
+            // 1) Соберём локальные файлы документов, чтобы удалить их с диска
+            try
+            {
+                var docs = await _db.Table<Message>()
+                                    .Where(m => m.ChatId == chatId && !string.IsNullOrEmpty(m.LocalPath))
+                                    .ToListAsync();
+
+                foreach (var d in docs)
+                {
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(d.LocalPath) && System.IO.File.Exists(d.LocalPath))
+                            System.IO.File.Delete(d.LocalPath);
+                    }
+                    catch
+                    {
+                        // Игнорируем ошибки IO, чтобы не ломать транзакцию БД
+                    }
+                }
+            }
+            catch
+            {
+                // Игнорируем — удаление из БД всё равно продолжим
+            }
+
+            // 2) Удаляем из БД в транзакции
+            await _db.RunInTransactionAsync(conn =>
+            {
+                conn.Execute("DELETE FROM Messages WHERE ChatId = ?", chatId);
+                conn.Execute("DELETE FROM ChatParticipants WHERE ChatId = ?", chatId);
+                conn.Execute("DELETE FROM Chats WHERE ChatId = ?", chatId);
+            });
+        }
+
         public async Task UpdateProfileAsync(ProfileUpdate update)
         {
             if (update == null) return;
