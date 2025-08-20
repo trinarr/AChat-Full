@@ -12,6 +12,7 @@ namespace AChatFull.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged;
         private readonly ChatRepository _repo;
+        bool _presenceSubscribed;
 
         INavigation _nav;
 
@@ -111,17 +112,38 @@ namespace AChatFull.ViewModels
 
         public async Task InitializeAsync(INavigation nav)
         {
-            Debug.WriteLine("ProfileViewModel InitializeAsync");
-
             _nav = nav;
             await LoadAsync().ConfigureAwait(false);
-            // Возврат на UI-поток для обновления bound-свойств
+
             Device.BeginInvokeOnMainThread(() =>
             {
-                // дергаем PropertyChanged для уже выставленных значений, если нужно
                 OnPropertyChanged(nameof(AvatarImage));
                 OnPropertyChanged(nameof(PresenceDisplay));
+
+                if (!_presenceSubscribed)
+                {
+                    _presenceSubscribed = true;
+
+                    // получаем новый статус из шита и обновляем UI
+                    MessagingCenter.Subscribe<object, string>(this, "PresenceChanged", (s, newPresence) =>
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Presence = CanonicalPresence(newPresence); // обновит PresenceDisplay/PresenceColor
+                        });
+                    });
+                }
             });
+        }
+
+        private string CanonicalPresence(string p)
+        {
+            if (string.IsNullOrWhiteSpace(p)) return "Offline";
+            p = p.Trim().ToLowerInvariant();
+            if (p == "online") return "Online";
+            if (p == "away" || p == "idle") return "Away";
+            if (p == "busy" || p == "dnd" || p.Contains("do not disturb")) return "Busy";
+            return "Offline"; // invisible/offline/прочее
         }
 
         async Task LoadAsync()
@@ -137,7 +159,7 @@ namespace AChatFull.ViewModels
 
         async Task ChangeStatusAsync()
         {
-            var selection = await Application.Current.MainPage.DisplayActionSheet(
+            /*var selection = await Application.Current.MainPage.DisplayActionSheet(
                 "Change Online Status", "Cancel", null,
                 "Online", "Idle", "Do Not Disturb", "Invisible", "Set a custom status");
 
@@ -153,7 +175,11 @@ namespace AChatFull.ViewModels
             if (selection == "Online") await SetPresenceAsync("Online");
             else if (selection == "Idle") await SetPresenceAsync("Away");
             else if (selection == "Do Not Disturb") await SetPresenceAsync("Busy");
-            else if (selection == "Invisible") await SetPresenceAsync("Offline");
+            else if (selection == "Invisible") await SetPresenceAsync("Offline");*/
+
+            // Показываем айшит как модалку с бэкдропом
+            var mainNav = Application.Current.MainPage?.Navigation ?? _nav;
+            await mainNav.PushModalAsync(new Views.Sheets.StatusBottomSheetPage(_nav), false);
         }
 
         async Task SetPresenceAsync(string presence)

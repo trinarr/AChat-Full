@@ -1,0 +1,293 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="AChatFull.Views.Sheets.StatusBottomSheetPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Name="SheetPage"
+    BackgroundColor="#80000000"
+    Padding="0"
+    NavigationPage.HasNavigationBar="False">
+
+    <AbsoluteLayout x:Name="Root">
+
+        <!-- Backdrop (тап по фону закрывает) -->
+        <BoxView
+            Color="#00000000"
+            AbsoluteLayout.LayoutBounds="0,0,1,1"
+            AbsoluteLayout.LayoutFlags="All">
+            <BoxView.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding CloseCommand}"/>
+            </BoxView.GestureRecognizers>
+        </BoxView>
+
+        <!-- «Квадратим» низ: перекрываем нижние скругления шита белой полосой под ним -->
+        <BoxView
+            Color="White"
+            InputTransparent="True"
+            AbsoluteLayout.LayoutBounds="0,1,1,24"
+            AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" />
+
+        <!-- Bottom sheet -->
+        <Frame x:Name="SheetPanel"
+               HasShadow="False"
+               Padding="16,12,16,24"
+               CornerRadius="20"
+               BackgroundColor="White">
+            <AbsoluteLayout.LayoutBounds>
+                <!-- X=0, Y=1 (низ), Width=1 (100%), Height=AutoSize -->
+                <Rect X="0" Y="1" Width="1" Height="{x:Static AbsoluteLayout.AutoSize}" />
+            </AbsoluteLayout.LayoutBounds>
+            <AbsoluteLayout.LayoutFlags>
+                PositionProportional,WidthProportional
+            </AbsoluteLayout.LayoutFlags>
+
+            <StackLayout Spacing="12">
+
+                <!-- Drag handle (сюда навешивается PanGesture в .cs) -->
+                <Grid x:Name="DragArea" Padding="0,6,0,6">
+                    <BoxView HeightRequest="4" WidthRequest="40" CornerRadius="2"
+                             Color="#E5E7EB" HorizontalOptions="Center"/>
+                </Grid>
+
+                <Label Text="Change Online Status"
+                       FontAttributes="Bold" 
+                       FontSize="18"
+                       TextColor="#000"/>
+
+                <!-- ========== ONLINE ========== -->
+                <Grid Padding="4,10" ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- цветная точка слева -->
+                    <Frame WidthRequest="14" HeightRequest="14"
+                           CornerRadius="7" Padding="0" HasShadow="False"
+                           BackgroundColor="#34C759"
+                           VerticalOptions="Center"/>
+
+                    <Label Grid.Column="1" Text="Online" FontSize="16" VerticalTextAlignment="Center" TextColor="#000"/>
+
+                    <!-- radio справа -->
+                    <Grid Grid.Column="2" WidthRequest="22" HeightRequest="22"
+      HorizontalOptions="End" VerticalOptions="Center">
+
+                        <!-- выбранное -->
+                        <Grid IsVisible="False">
+                            <!-- чёрное кольцо -->
+                            <Frame WidthRequest="22" HeightRequest="22" CornerRadius="11"
+           Padding="0" HasShadow="False" BackgroundColor="#000000"/>
+                            <Frame WidthRequest="18" HeightRequest="18" CornerRadius="9"
+           Padding="0" HasShadow="False" BackgroundColor="White"
+           HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <!-- чёрная точка внутри -->
+                            <Frame WidthRequest="10" HeightRequest="10" CornerRadius="5"
+           Padding="0" HasShadow="False" BackgroundColor="#000000"
+           HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Grid.Triggers>
+                                <DataTrigger TargetType="Grid"
+                   Binding="{Binding Source={x:Reference SheetPage}, Path=SelectedPresence}"
+                   Value="Online">
+                                    <Setter Property="IsVisible" Value="True"/>
+                                </DataTrigger>
+                            </Grid.Triggers>
+                        </Grid>
+
+                        <!-- невыбранное -->
+                        <Grid IsVisible="True">
+                            <Frame WidthRequest="22" HeightRequest="22" CornerRadius="11"
+           Padding="0" HasShadow="False" BackgroundColor="#000000"/>
+                            <Frame WidthRequest="18" HeightRequest="18" CornerRadius="9"
+           Padding="0" HasShadow="False" BackgroundColor="White"
+           HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Grid.Triggers>
+                                <DataTrigger TargetType="Grid"
+                   Binding="{Binding Source={x:Reference SheetPage}, Path=SelectedPresence}"
+                   Value="Online">
+                                    <Setter Property="IsVisible" Value="False"/>
+                                </DataTrigger>
+                            </Grid.Triggers>
+                        </Grid>
+                    </Grid>
+
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SetPresenceCommand}" CommandParameter="Online"/>
+                    </Grid.GestureRecognizers>
+                </Grid>
+
+                <BoxView Color="#F1F5F9" HeightRequest="1"/>
+
+                <!-- ========== IDLE ========== -->
+                <Grid Padding="4,10" ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Frame WidthRequest="14" HeightRequest="14"
+                           CornerRadius="7" Padding="0" HasShadow="False"
+                           BackgroundColor="#FFCC00"
+                           VerticalOptions="Center"/>
+
+                    <Label Grid.Column="1" Text="Idle" FontSize="16" VerticalTextAlignment="Center" TextColor="#000"/>
+
+                    <Grid Grid.Column="2" WidthRequest="22" HeightRequest="22"
+      HorizontalOptions="End" VerticalOptions="Center">
+                        <Grid IsVisible="False">
+                            <Frame WidthRequest="22" HeightRequest="22" CornerRadius="11" Padding="0" HasShadow="False" BackgroundColor="#000000"/>
+                            <Frame WidthRequest="18" HeightRequest="18" CornerRadius="9"  Padding="0" HasShadow="False" BackgroundColor="White"
+           HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Frame WidthRequest="10" HeightRequest="10" CornerRadius="5"  Padding="0" HasShadow="False" BackgroundColor="#000000"
+           HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Grid.Triggers>
+                                <DataTrigger TargetType="Grid"
+                   Binding="{Binding Source={x:Reference SheetPage}, Path=SelectedPresence}"
+                   Value="Away">
+                                    <Setter Property="IsVisible" Value="True"/>
+                                </DataTrigger>
+                            </Grid.Triggers>
+                        </Grid>
+                        <Grid IsVisible="True">
+                            <Frame WidthRequest="22" HeightRequest="22" CornerRadius="11" Padding="0" HasShadow="False" BackgroundColor="#000000"/>
+                            <Frame WidthRequest="18" HeightRequest="18" CornerRadius="9"  Padding="0" HasShadow="False" BackgroundColor="White"
+           HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Grid.Triggers>
+                                <DataTrigger TargetType="Grid"
+                   Binding="{Binding Source={x:Reference SheetPage}, Path=SelectedPresence}"
+                   Value="Away">
+                                    <Setter Property="IsVisible" Value="False"/>
+                                </DataTrigger>
+                            </Grid.Triggers>
+                        </Grid>
+                    </Grid>
+
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SetPresenceCommand}" CommandParameter="Away"/>
+                    </Grid.GestureRecognizers>
+                </Grid>
+
+                <BoxView Color="#F1F5F9" HeightRequest="1"/>
+
+                <!-- ========== DO NOT DISTURB ========== -->
+                <Grid Padding="4,10" ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Frame WidthRequest="14" HeightRequest="14"
+                           CornerRadius="7" Padding="0" HasShadow="False"
+                           BackgroundColor="#FF3B30"
+                           VerticalOptions="Center"/>
+
+                    <Label Grid.Column="1" Text="Do Not Disturb" FontSize="16" VerticalTextAlignment="Center" TextColor="#000"/>
+
+                    <Grid Grid.Column="2" WidthRequest="22" HeightRequest="22"
+      HorizontalOptions="End" VerticalOptions="Center">
+                        <Grid IsVisible="False">
+                            <Frame WidthRequest="22" HeightRequest="22" CornerRadius="11" Padding="0" HasShadow="False" BackgroundColor="#000000"/>
+                            <Frame WidthRequest="18" HeightRequest="18" CornerRadius="9"  Padding="0" HasShadow="False" BackgroundColor="White"
+           HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Frame WidthRequest="10" HeightRequest="10" CornerRadius="5"  Padding="0" HasShadow="False" BackgroundColor="#000000"
+           HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Grid.Triggers>
+                                <DataTrigger TargetType="Grid"
+                   Binding="{Binding Source={x:Reference SheetPage}, Path=SelectedPresence}"
+                   Value="Busy">
+                                    <Setter Property="IsVisible" Value="True"/>
+                                </DataTrigger>
+                            </Grid.Triggers>
+                        </Grid>
+                        <Grid IsVisible="True">
+                            <Frame WidthRequest="22" HeightRequest="22" CornerRadius="11" Padding="0" HasShadow="False" BackgroundColor="#000000"/>
+                            <Frame WidthRequest="18" HeightRequest="18" CornerRadius="9"  Padding="0" HasShadow="False" BackgroundColor="White"
+           HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Grid.Triggers>
+                                <DataTrigger TargetType="Grid"
+                   Binding="{Binding Source={x:Reference SheetPage}, Path=SelectedPresence}"
+                   Value="Busy">
+                                    <Setter Property="IsVisible" Value="False"/>
+                                </DataTrigger>
+                            </Grid.Triggers>
+                        </Grid>
+                    </Grid>
+
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SetPresenceCommand}" CommandParameter="Busy"/>
+                    </Grid.GestureRecognizers>
+                </Grid>
+
+                <BoxView Color="#F1F5F9" HeightRequest="1"/>
+
+                <!-- ========== INVISIBLE ========== -->
+                <Grid Padding="4,10" ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Frame WidthRequest="14" HeightRequest="14"
+                           CornerRadius="7" Padding="0" HasShadow="False"
+                           BackgroundColor="#AEAEB2"
+                           VerticalOptions="Center"/>
+
+                    <Label Grid.Column="1" Text="Invisible" FontSize="16" VerticalTextAlignment="Center" TextColor="#000"/>
+
+                    <Grid Grid.Column="2" WidthRequest="22" HeightRequest="22"
+      HorizontalOptions="End" VerticalOptions="Center">
+                        <Grid IsVisible="False">
+                            <Frame WidthRequest="22" HeightRequest="22" CornerRadius="11" Padding="0" HasShadow="False" BackgroundColor="#000000"/>
+                            <Frame WidthRequest="18" HeightRequest="18" CornerRadius="9"  Padding="0" HasShadow="False" BackgroundColor="White"
+           HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Frame WidthRequest="10" HeightRequest="10" CornerRadius="5"  Padding="0" HasShadow="False" BackgroundColor="#000000"
+           HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Grid.Triggers>
+                                <DataTrigger TargetType="Grid"
+                   Binding="{Binding Source={x:Reference SheetPage}, Path=SelectedPresence}"
+                   Value="Offline">
+                                    <Setter Property="IsVisible" Value="True"/>
+                                </DataTrigger>
+                            </Grid.Triggers>
+                        </Grid>
+                        <Grid IsVisible="True">
+                            <Frame WidthRequest="22" HeightRequest="22" CornerRadius="11" Padding="0" HasShadow="False" BackgroundColor="#000000"/>
+                            <Frame WidthRequest="18" HeightRequest="18" CornerRadius="9"  Padding="0" HasShadow="False" BackgroundColor="White"
+           HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Grid.Triggers>
+                                <DataTrigger TargetType="Grid"
+                   Binding="{Binding Source={x:Reference SheetPage}, Path=SelectedPresence}"
+                   Value="Offline">
+                                    <Setter Property="IsVisible" Value="False"/>
+                                </DataTrigger>
+                            </Grid.Triggers>
+                        </Grid>
+                    </Grid>
+
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SetPresenceCommand}" CommandParameter="Offline"/>
+                    </Grid.GestureRecognizers>
+                </Grid>
+
+                <!-- Custom status chip -->
+                <Frame Padding="12" BackgroundColor="#F3F4F6" CornerRadius="14" HasShadow="False">
+                    <Grid ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Text="😊" FontSize="18" VerticalTextAlignment="Center"/>
+                        <Label Grid.Column="1" Text="Set a custom status" VerticalTextAlignment="Center"/>
+                        <Button Grid.Column="2" Text="Edit" Clicked="OnCustomStatusClicked" />
+                    </Grid>
+                </Frame>
+
+            </StackLayout>
+        </Frame>
+    </AbsoluteLayout>
+</ContentPage>

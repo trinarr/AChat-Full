@@ -5,7 +5,7 @@
              x:Class="AChatFull.App">
     <Application.Resources>
         <ResourceDictionary>
-            <Color x:Key="TextColor">#111827</Color>
+            <Color x:Key="TextColor">#000</Color>
             <Color x:Key="MutedTextColor">#6F7683</Color>
         </ResourceDictionary>
         <ResourceDictionary>
@@ -19,6 +19,7 @@
             <conv:FirstLetterConverter x:Key="FirstLetterConverter" />
             <conv:BoolToGridColumnConverter x:Key="BoolToGridColumnConverter" />
             <conv:PresenceToColorConverter x:Key="PresenceToColorConverter" />
+            <conv:PresenceToColorConverter x:Key="EqualsConverter" />
             <conv:PresenceToTextConverter x:Key="PresenceToTextConverter" Compact="True"/>
         </ResourceDictionary>
     </Application.Resources>

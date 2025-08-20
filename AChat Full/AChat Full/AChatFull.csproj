@@ -67,6 +67,9 @@
     <EmbeddedResource Update="Views\SettingsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="Views\Sheets\StatusBottomSheetPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
@@ -78,7 +81,6 @@
 	<EmbeddedResource Include="Resources\Icons\header_video.png" />
 	<EmbeddedResource Include="Resources\Icons\fingerprint.png" />
 	<EmbeddedResource Include="Resources\Icons\backspace.png" />
-	
 	<EmbeddedResource Include="Resources\Avatars\annaf_192.png" />
 	<EmbeddedResource Include="Resources\Avatars\ellis_redding_192.png" />
 	<EmbeddedResource Include="Resources\Avatars\nick_fisher_192.png" />

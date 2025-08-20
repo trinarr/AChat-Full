@@ -20,6 +20,17 @@ namespace AChatFull.Utils
         }
     }
 
+    /// Возвращает true, если value == parameter (без учёта регистра).
+    /// В ConvertBack при установке true возвращает параметр (для TwoWay биндинга).
+    public class EqualsConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+            string.Equals(value?.ToString(), parameter?.ToString(), StringComparison.OrdinalIgnoreCase);
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+            (value is bool b && b) ? parameter?.ToString() : Binding.DoNothing;
+    }
+
     public class PresenceToTextConverter : IValueConverter
     {
         // По умолчанию — «DoNotDisturb». Поставь false, если хочешь «Do not disturb».
@@ -59,7 +70,10 @@ namespace AChatFull.Utils
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => throw new NotSupportedException();
+        {
+            // Ничего не меняем в исходном свойстве, даже если нас случайно вызвали
+            return Binding.DoNothing;
+        }
     }
 
     public class BoolToGridColumnConverter : IValueConverter

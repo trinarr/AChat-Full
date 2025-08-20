@@ -15631,25 +15631,22 @@ namespace AChat_Full.Droid
 			public const int search = 2131230875;
 			
 			// aapt resource value: 0x7F08009C
-			public const int tab_call = 2131230876;
+			public const int tab_chat = 2131230876;
 			
 			// aapt resource value: 0x7F08009D
-			public const int tab_chat = 2131230877;
+			public const int tab_contacts = 2131230877;
 			
 			// aapt resource value: 0x7F08009E
-			public const int tab_contacts = 2131230878;
+			public const int tab_settings = 2131230878;
 			
 			// aapt resource value: 0x7F08009F
-			public const int tab_settings = 2131230879;
+			public const int test_custom_background = 2131230879;
 			
 			// aapt resource value: 0x7F0800A0
-			public const int test_custom_background = 2131230880;
+			public const int tooltip_frame_dark = 2131230880;
 			
 			// aapt resource value: 0x7F0800A1
-			public const int tooltip_frame_dark = 2131230881;
-			
-			// aapt resource value: 0x7F0800A2
-			public const int tooltip_frame_light = 2131230882;
+			public const int tooltip_frame_light = 2131230881;
 			
 			static Drawable()
 			{

@@ -147,9 +147,6 @@
     <AndroidResource Include="..\AChat Full\Resources\Icons\tab_contacts.png">
       <Link>Resources\drawable\tab_contacts.png</Link>
     </AndroidResource>
-    <AndroidResource Include="..\AChat Full\Resources\Icons\tab_call.png">
-      <Link>Resources\drawable\tab_call.png</Link>
-    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\styles.xml" />

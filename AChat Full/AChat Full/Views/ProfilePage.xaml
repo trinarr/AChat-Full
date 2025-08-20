@@ -77,24 +77,27 @@
                         </Grid>
                     </Frame>
 
-                    <!-- Индикатор статуса: правый-нижний угол, чуть внутрь -->
-                    <Frame
-            AbsoluteLayout.LayoutBounds="1,1,14,14"
-            AbsoluteLayout.LayoutFlags="PositionProportional"
-            HasShadow="False"
-            Padding="0"
-            CornerRadius="7"
-            BackgroundColor="White"
-            TranslationX="-3"
-            TranslationY="-3">
-                        <Frame
-                HasShadow="False"
-                Padding="0"
-                CornerRadius="5.5"
-                HeightRequest="11"
-                WidthRequest="11"
-                BackgroundColor="{Binding PresenceColor}"/>
-                    </Frame>
+                    <!-- Индикатор статуса с белой обводкой (правый-нижний угол) -->
+                    <Grid
+    AbsoluteLayout.LayoutBounds="1,1,18,18"
+    AbsoluteLayout.LayoutFlags="PositionProportional">
+                        <!-- Белое кольцо -->
+                        <Frame HasShadow="False"
+           Padding="0"
+           HeightRequest="18"
+           WidthRequest="18"
+           CornerRadius="9"
+           BackgroundColor="White"/>
+                        <!-- Цветная точка -->
+                        <Frame HasShadow="False"
+           Padding="0"
+           HeightRequest="14"
+           WidthRequest="14"
+           CornerRadius="7"
+           BackgroundColor="{Binding PresenceColor}"
+           HorizontalOptions="Center"
+           VerticalOptions="Center"/>
+                    </Grid>
                 </AbsoluteLayout>
 
                 <!-- Имя + подпись статуса -->
