@@ -8,7 +8,7 @@ namespace AChatFull.Views
         public CustomStatusPage()
         {
             InitializeComponent();
-            ClearAfterPicker.SelectedIndex = 5; // Don't clear
+            //ClearAfterPicker.SelectedIndex = 5; // Don't clear
         }
 
         async void OnSaveClicked(object sender, EventArgs e)
@@ -19,15 +19,14 @@ namespace AChatFull.Views
                 {
                     Emoji = EmojiEntry.Text,
                     Text = TextEntry.Text,
-                    ClearPolicy = ClearAfterPicker.SelectedIndex,
-                    DoNotDisturb = DndSwitch.IsToggled
+                    //ClearPolicy = ClearAfterPicker.SelectedIndex,
                 };
 
                 var repo = DependencyService.Get<ChatRepository>() ?? new ChatRepository(App.DBPATH, App.USER_TOKEN_TEST);
                 await repo.UpdateCustomStatusAsync(model);
 
-                if (model.DoNotDisturb)
-                    await repo.UpdatePresenceAsync("Busy");
+                /*if (model.DoNotDisturb)
+                    await repo.UpdatePresenceAsync("Busy");*/
 
                 MessagingCenter.Send<object>(this, "ProfileChanged");
                 await Navigation.PopAsync();
@@ -61,6 +60,6 @@ namespace AChatFull.Views
         public string Text { get; set; }
         /// <summary>0:30m, 1:1h, 2:4h, 3:Today, 4:ThisWeek, 5:NoClear</summary>
         public int ClearPolicy { get; set; }
-        public bool DoNotDisturb { get; set; }
+        //public bool DoNotDisturb { get; set; }
     }
 }
