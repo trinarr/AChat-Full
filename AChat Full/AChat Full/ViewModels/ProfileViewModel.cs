@@ -31,6 +31,7 @@ namespace AChatFull.ViewModels
             _editProfileCommand = new Command(async () => await OpenEditProfileAsync());
             _openSettingsCommand = new Command(async () => await OpenSettingsAsync());
             _clearCustomStatusCommand = new Command(async () => await ClearCustomStatusAsync());
+            _editProfileCommand = new Command(async () => await OpenEditProfileAsync());
         }
 
         public Command ChangeStatusCommand { get { return _changeStatusCommand; } }
@@ -281,7 +282,7 @@ namespace AChatFull.ViewModels
         {
             try
             {
-                //await _nav.PushAsync(new EditProfilePage()); // если у тебя другой класс — подставь свой
+                await _nav.PushModalAsync(new NavigationPage(new EditProfilePage()));
             }
             catch
             {

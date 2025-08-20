@@ -167,6 +167,35 @@ namespace AChatFull.Views
             await _db.InsertOrReplaceAsync(profile);
         }
 
+        // Обновление имени/фамилии/о себе/даты рождения текущего пользователя.
+        // TODO: при наличии API/БД — допишите реальное сохранение (см. комментарий ниже).
+        public async System.Threading.Tasks.Task UpdateProfileAsync(ProfileUpdate update)
+        {
+            // 1) Получаем текущий профиль
+            var me = await GetCurrentUserProfileAsync();
+            if (me == null) return;
+
+            // 2) Перезаписываем поля
+            me.FirstName = (update?.FirstName ?? string.Empty).Trim();
+            me.LastName = (update?.LastName ?? string.Empty).Trim();
+            me.About = update?.About ?? string.Empty;
+
+            // Если null — очистим дату (используйте вашу семантику, например null/MinValue)
+            /*if (update?.Birthdate is System.DateTime d && d.Year > 1900)
+                me.Birthdate = d.Date;
+            else
+                me.Birthdate = default(System.DateTime);*/
+
+            // 3) (опционально) Сохранение в вашу БД/бэкенд
+            // --- примеры, раскомментируйте/замените под свой код ---
+            // await UpdateCurrentUserAsync(me);         // если есть метод обновления сущности
+            // await _api.UpdateProfileAsync(update);    // если есть API-клиент
+            // await _db.UpdateAsync(me);                // если используете sqlite-net
+
+            // 4) Уведомим UI
+            Xamarin.Forms.MessagingCenter.Send<object>(this, "ProfileChanged");
+        }
+
         public async Task UpdatePresenceAsync(string presence)
         {
             var p = NormalizePresence(presence);
@@ -420,6 +449,14 @@ namespace AChatFull.Views
                 const string sql = "SELECT * FROM Message WHERE ChatId = ? AND CreatedAt < ? ORDER BY CreatedAt DESC LIMIT ?";
                 return _db.QueryAsync<Message>(sql, chatId, beforeExclusiveCreatedAt, take);
             }
+        }
+
+        public class ProfileUpdate
+        {
+            public string FirstName { get; set; }
+            public string LastName { get; set; }   // сюда кладём SecondName
+            public string About { get; set; }
+            public System.DateTime? Birthdate { get; set; }
         }
         public Task<int> InsertMessageAsync(Message message)
         {

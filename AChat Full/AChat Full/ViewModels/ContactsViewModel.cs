@@ -185,7 +185,6 @@ namespace AChatFull.ViewModels
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
-    // Вспомогательная группа для CollectionView IsGrouped=True
     public class UserGroup : ObservableCollection<User>
     {
         public string Title { get; }

@@ -26,7 +26,7 @@ namespace AChatFull.Views
             if (BindingContext is ProfileViewModel vm)
                 await (vm?.GetType().GetMethod("ClearCustomStatusAsync",
                       System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-                      ?.Invoke(vm, new object[] { }) as System.Threading.Tasks.Task);
+                      ?.Invoke(vm, new object[] { }) as Task);
         }
 
         private async void OnCustomStatusTapped(object sender, EventArgs e)
