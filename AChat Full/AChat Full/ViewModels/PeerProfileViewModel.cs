@@ -39,8 +39,6 @@ namespace AChatFull.ViewModels
             Presence = u.Presence;
             AvatarSource = u.AvatarUrl;
 
-            Debug.WriteLine("PeerProfileViewModel InitializeAsync "+ About+" | "+ StatusCustom+" | "+ Presence);
-
             // В UserDto дата уже нормализована к "dd.MM.yyyy" или null
             BirthdateFormatted = string.IsNullOrWhiteSpace(u.Birthdate) ? null : u.Birthdate;
 

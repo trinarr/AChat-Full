@@ -49,12 +49,11 @@ namespace AChatFull.Views
 
         private async void OnMoreTapped(object sender, EventArgs e)
         {
-            // destructive: "Remove contact"
             var action = await DisplayActionSheet(
                 title: null,
                 cancel: "Cancel",
-                destruction: "Remove contact",
-                buttons: new[] { "Call", "Video", "Save", "Search" });
+                destruction: null,
+                buttons: new[] { "Remove contact"});
 
             switch (action)
             {
@@ -74,19 +73,6 @@ namespace AChatFull.Views
                     {
                         await DisplayAlert("Error", "Couldn't remove contact. Try again later.", "OK");
                     }*/
-                    break;
-
-                case "Call":
-                    //MessagingCenter.Send(this, "PeerProfile_Call", _vm.UserId);
-                    break;
-                case "Video":
-                    //MessagingCenter.Send(this, "PeerProfile_Video", _vm.UserId);
-                    break;
-                case "Save":
-                    //MessagingCenter.Send(this, "PeerProfile_Save", _vm.UserId);
-                    break;
-                case "Search":
-                    //MessagingCenter.Send(this, "PeerProfile_Search", _vm.UserId);
                     break;
             }
         }
