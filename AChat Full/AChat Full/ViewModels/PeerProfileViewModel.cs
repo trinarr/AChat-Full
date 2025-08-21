@@ -28,17 +28,21 @@ namespace AChatFull.ViewModels
             var u = await _repo.GetUserAsync(_userId);
             if (u == null) return;
 
-            // если в данных есть First/Last, соберём из них; иначе берём DisplayName
+            // Собираем ФИО для заголовка (как было)
             var fn = (u.FirstName ?? "").Trim();
             var ln = (u.LastName ?? "").Trim();
-
             var composed = $"{fn} {ln}".Trim();
             FullName = string.IsNullOrWhiteSpace(composed) ? (u.DisplayName ?? "") : composed;
+
+            // ВАЖНО: заполняем отдельные поля, из которых строятся Initials
+            FirstName = u.FirstName;
+            LastName = u.LastName;
+            DisplayName = u.DisplayName;
 
             About = u.About;
             StatusCustom = u.StatusCustom;
             Presence = u.Presence;
-            AvatarSource = u.AvatarUrl;
+            AvatarSource = u.AvatarUrl;   // см. п.2 про AvatarImage
 
             BirthdateFormatted = string.IsNullOrWhiteSpace(u.Birthdate) ? null : u.Birthdate;
 
@@ -112,10 +116,17 @@ namespace AChatFull.ViewModels
         {
             get
             {
-                if (!string.IsNullOrWhiteSpace(FirstName)) return FirstName.Substring(0, 1).ToUpperInvariant();
-                if (!string.IsNullOrWhiteSpace(LastName)) return LastName.Substring(0, 1).ToUpperInvariant();
-                if (!string.IsNullOrWhiteSpace(DisplayName)) return DisplayName.Substring(0, 1).ToUpperInvariant();
-                return "?";
+                var f = (FirstName ?? "").Trim();
+                var l = (LastName ?? "").Trim();
+                var fi = string.IsNullOrEmpty(f) ? "" : f.Substring(0, 1).ToUpperInvariant();
+                var li = string.IsNullOrEmpty(l) ? "" : l.Substring(0, 1).ToUpperInvariant();
+                var res = fi + li;
+                if (!string.IsNullOrEmpty(res)) return res;
+
+                var dn = (DisplayName ?? FullName ?? "").Trim();
+                return string.IsNullOrEmpty(dn)
+                    ? "#"
+                    : dn.Substring(0, Math.Min(2, dn.Length)).ToUpperInvariant();
             }
         }
 
