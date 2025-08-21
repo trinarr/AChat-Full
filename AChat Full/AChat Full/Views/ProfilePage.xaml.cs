@@ -31,7 +31,7 @@ namespace AChatFull.Views
 
         private async void OnCustomStatusTapped(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new CustomStatusPage());
+            await Navigation.PushModalAsync(new NavigationPage(new CustomStatusPage(_repo)));
         }
 
         public async Task EnsureInitAsync(INavigation nav)

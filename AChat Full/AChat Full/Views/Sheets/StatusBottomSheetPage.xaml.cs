@@ -50,8 +50,7 @@ namespace AChatFull.Views.Sheets
             {
                 try
                 {
-                    await (_mainNav ?? Application.Current.MainPage?.Navigation)
-                        .PushAsync(new CustomStatusPage());
+                    await (_mainNav ?? Application.Current.MainPage?.Navigation).PushModalAsync(new NavigationPage(new CustomStatusPage(_repo)));
                 }
                 catch { /* ignore */ }
             });

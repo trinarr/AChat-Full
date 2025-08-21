@@ -3,20 +3,130 @@
     x:Class="AChatFull.Views.CustomStatusPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    Title="Set a custom status">
+    x:Name="RootPage"
+    NavigationPage.HasNavigationBar="True"
+    NavigationPage.HasBackButton="False">
+
+    <NavigationPage.TitleView>
+        <Grid Padding="0" ColumnSpacing="8" HeightRequest="44">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Иконка "Назад" слева -->
+            <ImageButton
+                Source="arrow_back.png"       
+                BackgroundColor="Transparent"
+                WidthRequest="24"
+                HeightRequest="24"
+                Padding="0"
+                Clicked="OnBackClicked"
+                HorizontalOptions="Start"
+                VerticalOptions="Center" />
+
+                <!-- Заголовок -->
+                <Label Grid.Column="1"
+                   Text="Set a status"
+                   FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="#fff"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Start" />
+        </Grid>
+    </NavigationPage.TitleView>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Save" Order="Primary" Priority="0" Clicked="OnSaveClicked" />
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Resources>
+        <Color x:Key="ChipBackground">#1A000000</Color>
+    </ContentPage.Resources>
 
     <ContentPage.Content>
-        <StackLayout Spacing="16" Padding="16">
+        <ScrollView>
+            <StackLayout Padding="16" Spacing="16">
 
-            <StackLayout Orientation="Horizontal" Spacing="12">
-                <Entry x:Name="EmojiEntry" WidthRequest="60" Placeholder="😊" HorizontalTextAlignment="Center"/>
-                <Entry x:Name="TextEntry" Placeholder="What's your status?"/>
-            </StackLayout>
+                <!-- Чип: слева эмодзи/плейсхолдер (кликабельно), справа Entry -->
+                <Frame Padding="12" CornerRadius="16" HasShadow="False" BackgroundColor="{StaticResource ChipBackground}">
+                    <Grid ColumnSpacing="10" VerticalOptions="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-            <StackLayout Orientation="Horizontal" Spacing="12">
-                <Button Text="Save" Clicked="OnSaveClicked"/>
-                <Button Text="Clear" Clicked="OnClearClicked" />
+                        <!-- Левая колонка: эмодзи/плейсхолдер -->
+                        <ContentView Grid.Column="0" VerticalOptions="Center">
+                            <ContentView.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnEmojiTapped" />
+                            </ContentView.GestureRecognizers>
+
+                            <Grid>
+                                <!-- Плейсхолдер по умолчанию -->
+                                <Image WidthRequest="24" HeightRequest="24" VerticalOptions="Center"
+                                       Source="status.png" IsVisible="True">
+                                    <Image.Triggers>
+                                        <DataTrigger TargetType="Image" Binding="{Binding HasEmoji}" Value="True">
+                                            <Setter Property="IsVisible" Value="False" />
+                                        </DataTrigger>
+                                    </Image.Triggers>
+                                </Image>
+
+                                <!-- Эмодзи, если выбран -->
+                                <Label FontSize="24" VerticalOptions="Center" Text="{Binding StatusEmoji}" IsVisible="False"
+                                       Opacity="1"
+       TextColor="{AppThemeBinding Light=#FF000000, Dark=#FFFFFFFF}">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding HasEmoji}" Value="True">
+                                            <Setter Property="IsVisible" Value="True" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Grid>
+                        </ContentView>
+
+                        <!-- Правая колонка: текст статуса -->
+                        <Entry Grid.Column="1"
+                               x:Name="StatusTextEntry"
+                               VerticalOptions="Center"
+                               Placeholder="What's your status?"
+                               Text="{Binding StatusText, Mode=TwoWay}"
+                               ReturnType="Done"
+                               Completed="OnStatusTextCompleted" />
+                    </Grid>
+                </Frame>
+
+                <!-- Сетка эмоджи без подложек -->
+                <Label Text="Smileys and people" Opacity="0.6" FontSize="12" />
+                <CollectionView ItemsSource="{Binding EmojiChoices}"
+                                SelectionMode="None"
+                                Margin="0,-4,0,16">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical" Span="8"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <!-- невидимая обертка только для увеличения зоны тапа -->
+                            <ContentView Padding="6" BackgroundColor="Transparent">
+                                <Label Text="{Binding .}"
+                                       FontSize="24"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       Opacity="1"
+       TextColor="{AppThemeBinding Light=#FF000000, Dark=#FFFFFFFF}">
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding BindingContext.PickEmojiCommand, Source={x:Reference RootPage}}"
+                                            CommandParameter="{Binding .}" />
+                                    </Label.GestureRecognizers>
+                                </Label>
+                            </ContentView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
             </StackLayout>
-        </StackLayout>
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>

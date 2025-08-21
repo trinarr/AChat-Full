@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Essentials;
@@ -8,7 +7,6 @@ using AChatFull.Views;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
-using System.IO;
 
 namespace AChatFull.ViewModels
 {
@@ -188,10 +186,10 @@ namespace AChatFull.ViewModels
 
                 _pickedPhoto = pick;
 
-                using (var stream = await pick.OpenReadAsync())
+                /*using (var stream = await pick.OpenReadAsync())
                 {
                     AvatarPreview = ImageSource.FromStream(() => stream);
-                }
+                }*/
             }
             catch (FeatureNotSupportedException)
             {

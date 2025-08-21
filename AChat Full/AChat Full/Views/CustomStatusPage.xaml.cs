@@ -1,65 +1,82 @@
-﻿using System;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
+using System;
+using System.Threading.Tasks;
+using AChatFull.ViewModels;
 
 namespace AChatFull.Views
 {
     public partial class CustomStatusPage : ContentPage
     {
-        public CustomStatusPage()
+        private readonly ChatRepository _repo;
+        private readonly CustomStatusViewModel _vm;
+        private bool _isSaving;
+
+        public CustomStatusPage(ChatRepository repo)
         {
             InitializeComponent();
-            //ClearAfterPicker.SelectedIndex = 5; // Don't clear
+            _repo = repo;
+            _vm = new CustomStatusViewModel(repo);
+            BindingContext = _vm;
         }
 
-        async void OnSaveClicked(object sender, EventArgs e)
+        protected override async void OnAppearing()
         {
+            base.OnAppearing();
+            await _vm.ReloadStatusAsync();
+        }
+
+        private async void OnBackClicked(object sender, EventArgs e)
+        {
+            await Navigation.PopModalAsync(true);
+        }
+
+        private async void OnEmojiTapped(object sender, EventArgs e)
+        {
+            // опционально: открыть ваш StatusBottomSheetPage
+            // await Navigation.PushModalAsync(new StatusBottomSheetPage(_repo), true);
+            // await _vm.ReloadStatusAsync();
+        }
+
+        private async void OnStatusTextCompleted(object sender, EventArgs e)
+        {
+            await SaveStatusAsync();
+        }
+
+        private async void OnSaveClicked(object sender, EventArgs e)
+        {
+            if (_isSaving) return;
+            _isSaving = true;
             try
             {
-                var model = new CustomStatusModel
+                await _repo.UpdateCustomStatusAsync(new CustomStatusModel
                 {
-                    Emoji = EmojiEntry.Text,
-                    Text = TextEntry.Text,
-                    //ClearPolicy = ClearAfterPicker.SelectedIndex,
-                };
+                    Emoji = _vm.StatusEmoji,
+                    Text = _vm.StatusText
+                });
 
-                var repo = DependencyService.Get<ChatRepository>() ?? new ChatRepository(App.DBPATH, App.USER_TOKEN_TEST);
-                await repo.UpdateCustomStatusAsync(model);
-
-                /*if (model.DoNotDisturb)
-                    await repo.UpdatePresenceAsync("Busy");*/
-
+                // уведомим другие экраны (как вы уже делаете)
                 MessagingCenter.Send<object>(this, "ProfileChanged");
-                await Navigation.PopAsync();
+
+                // закрыть модалку
+                await Navigation.PopModalAsync(true);
             }
-            catch
+            catch (Exception ex)
             {
-                await DisplayAlert("Error", "Failed to update status.", "OK");
+                await DisplayAlert("Error", ex.Message, "OK");
             }
+            finally { _isSaving = false; }
         }
 
-        async void OnClearClicked(object sender, EventArgs e)
+        private async Task SaveStatusAsync()
         {
-            try
+            await _repo.UpdateCustomStatusAsync(new CustomStatusModel
             {
-                var repo = DependencyService.Get<ChatRepository>() ?? new ChatRepository(App.DBPATH, App.USER_TOKEN_TEST);
-                await repo.ClearCustomStatusAsync();
-                MessagingCenter.Send<object>(this, "ProfileChanged");
-                await Navigation.PopAsync();
-            }
-            catch
-            {
-                await DisplayAlert("Error", "Failed to clear status.", "OK");
-            }
-        }
-    }
+                Emoji = _vm.StatusEmoji,
+                Text = _vm.StatusText
+            });
 
-    // Простейшая модель для кастомного статуса — положи в Models при желании
-    public class CustomStatusModel
-    {
-        public string Emoji { get; set; }
-        public string Text { get; set; }
-        /// <summary>0:30m, 1:1h, 2:4h, 3:Today, 4:ThisWeek, 5:NoClear</summary>
-        public int ClearPolicy { get; set; }
-        //public bool DoNotDisturb { get; set; }
+            // уведомляем остальные экраны (вы уже используете это событие)
+            MessagingCenter.Send<object>(this, "ProfileChanged");
+        }
     }
 }

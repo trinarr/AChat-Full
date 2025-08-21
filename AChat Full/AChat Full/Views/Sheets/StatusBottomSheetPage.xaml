@@ -293,7 +293,9 @@
         <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
 
-      <Label Text="{Binding CustomStatusEmoji}" FontSize="18" VerticalTextAlignment="Center"/>
+      <Label Text="{Binding CustomStatusEmoji}" FontSize="18" VerticalTextAlignment="Center"
+             Opacity="1"
+       TextColor="{AppThemeBinding Light=#FF000000, Dark=#FFFFFFFF}"/>
 
       <Label Grid.Column="1"
              Text="{Binding CustomStatusText}"

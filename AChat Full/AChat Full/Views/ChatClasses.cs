@@ -19,6 +19,12 @@ namespace AChatFull.Views
         DoNotDisturb
     }
 
+    public class CustomStatusModel
+    {
+        public string Emoji { get; set; }
+        public string Text { get; set; }
+    }
+
     public class ChatMessage
     {
         public MessageKind Kind { get; set; } = MessageKind.Text;
@@ -338,6 +344,52 @@ namespace AChatFull.Views
 
             var combined = (emoji + " " + text).Trim();
             return string.IsNullOrEmpty(combined) ? null : combined;
+        }
+
+        /// <summary>
+        /// Возвращает кастомный статус текущего пользователя,
+        /// парся Users.StatusCustom (пример: "😊 На встрече").
+        /// Если статус пуст — возвращает объект с null-полями.
+        /// </summary>
+        public async Task<CustomStatusModel> GetCustomStatusAsync()
+        {
+            // Подтянем текущего пользователя
+            var u = await _db.Table<User>() // <-- замените тип, если у вас класс сущности называется иначе
+                             .Where(x => x.UserId == _currentUserId)
+                             .FirstOrDefaultAsync();
+
+            if (u == null || string.IsNullOrWhiteSpace(u.StatusCustom))
+                return new CustomStatusModel();
+
+            var raw = u.StatusCustom.Trim();
+
+            // Попытка отделить первый графемный кластер как "эмодзи",
+            // иначе считаем, что весь статус — это текст без эмодзи.
+            var si = new StringInfo(raw);
+            var emoji = string.Empty;
+            var text = raw;
+
+            if (si.LengthInTextElements > 0)
+            {
+                var first = si.SubstringByTextElements(0, 1); // 1 графемный кластер
+                var rest = raw.Substring(first.Length).TrimStart();
+
+                // Эвристика: если первый кластер не буква/цифра, считаем его эмодзи
+                var c0 = first[0];
+                var isAlphaNum = char.IsLetterOrDigit(c0);
+
+                if (!isAlphaNum || first.Length > 1) // surrogate/комбинированный — скорее всего эмодзи
+                {
+                    emoji = first;
+                    text = rest;
+                }
+            }
+
+            return new CustomStatusModel
+            {
+                Emoji = string.IsNullOrWhiteSpace(emoji) ? null : emoji,
+                Text = string.IsNullOrWhiteSpace(text) ? null : text
+            };
         }
 
         public Task ClearCustomStatusAsync()

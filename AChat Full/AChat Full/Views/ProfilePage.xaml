@@ -130,7 +130,9 @@
                     <!-- Эмодзи (если нет – просто пусто, остаётся отступ) -->
                     <Label Text="{Binding CustomStatusEmoji}"
                FontSize="18"
-               VerticalTextAlignment="Center"/>
+               VerticalTextAlignment="Center"
+                           Opacity="1"
+       TextColor="{AppThemeBinding Light=#FF000000, Dark=#FFFFFFFF}"/>
 
                     <!-- Текст -->
                     <Label Grid.Column="1"
