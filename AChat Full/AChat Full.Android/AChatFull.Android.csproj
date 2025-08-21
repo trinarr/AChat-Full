@@ -120,11 +120,20 @@
     <AndroidResource Include="..\AChat Full\Resources\Icons\header_call.png">
       <Link>Resources\drawable\header_call.png</Link>
     </AndroidResource>
+	    <AndroidResource Include="..\AChat Full\Resources\Icons\header_call_black.png">
+      <Link>Resources\drawable\header_call_black.png</Link>
+    </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\header_video.png">
       <Link>Resources\drawable\header_video.png</Link>
     </AndroidResource>
+    <AndroidResource Include="..\AChat Full\Resources\Icons\header_video_black.png">
+      <Link>Resources\drawable\header_video_black.png</Link>
+    </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\header_more.png">
       <Link>Resources\drawable\header_more.png</Link>
+    </AndroidResource>
+	    <AndroidResource Include="..\AChat Full\Resources\Icons\header_more_black.png">
+      <Link>Resources\drawable\header_more_black.png</Link>
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\attach_file.png">
       <Link>Resources\drawable\attach_file.png</Link>
@@ -134,6 +143,9 @@
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\arrow_back.png">
       <Link>Resources\drawable\arrow_back.png</Link>
+    </AndroidResource>
+	<AndroidResource Include="..\AChat Full\Resources\Icons\arrow_back_black.png">
+      <Link>Resources\drawable\arrow_back_black.png</Link>
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\search.png">
       <Link>Resources\drawable\search.png</Link>

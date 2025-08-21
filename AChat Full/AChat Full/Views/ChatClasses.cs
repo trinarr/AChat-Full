@@ -67,7 +67,9 @@ namespace AChatFull.Views
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string BirthDate { get; set; }
+        [Column("Birthdate")]
+        public string Birthdate { get; set; } // ХРАНИМ в виде "dd.MM.yyyy"
+        [Column("About")]
         public string About { get; set; }
         public string StatusCustom { get; set; }
         public string AvatarUrl { get; set; }
@@ -78,7 +80,7 @@ namespace AChatFull.Views
         [Ignore]
         public DateTime BirthDateDate
             => DateTime.ParseExact(
-                 BirthDate,
+                 Birthdate,
                  "yyyy-MM-dd HH:mm:ss",
                  CultureInfo.InvariantCulture);
 
@@ -184,8 +186,8 @@ namespace AChatFull.Views
                 {
                     try
                     {
-                        if (!string.IsNullOrWhiteSpace(d.LocalPath) && System.IO.File.Exists(d.LocalPath))
-                            System.IO.File.Delete(d.LocalPath);
+                        if (!string.IsNullOrWhiteSpace(d.LocalPath) && File.Exists(d.LocalPath))
+                            File.Delete(d.LocalPath);
                     }
                     catch
                     {
@@ -234,7 +236,7 @@ namespace AChatFull.Views
                     FirstName = first,
                     LastName = last,
                     About = about,
-                    BirthDate = birthStr
+                    Birthdate = birthStr
                 });
             }
 

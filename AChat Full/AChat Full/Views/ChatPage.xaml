@@ -20,11 +20,13 @@
             <ImageButton Grid.Column="0" Source="arrow_back.png"  BackgroundColor="Transparent"
                          HeightRequest="24" WidthRequest="24" Clicked="OnBackClicked" />
 
-            <!-- СТАЛО -->
             <AbsoluteLayout Grid.Column="1"
                 WidthRequest="36" HeightRequest="36"
                 HorizontalOptions="Start"
                 VerticalOptions="Center">
+                <AbsoluteLayout.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnPeerHeaderTapped" />
+                </AbsoluteLayout.GestureRecognizers>
 
                 <!-- Круглый аватар (как и был) -->
                 <Frame Padding="0"
@@ -73,6 +75,9 @@
             <StackLayout Grid.Column="2" Spacing="0" VerticalOptions="Center">
                 <Label Text="{Binding PeerName}" FontAttributes="Bold" FontSize="16" LineBreakMode="TailTruncation" TextColor="#fff"/>
                 <Label Text="{Binding PeerStatus}" FontSize="12" TextColor="#fff"/>
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnPeerHeaderTapped" />
+                </StackLayout.GestureRecognizers>
             </StackLayout>
 
             <ImageButton Grid.Column="3" Source="header_call.png"  BackgroundColor="Transparent"

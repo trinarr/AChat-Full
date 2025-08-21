@@ -158,7 +158,7 @@ namespace AChatFull.ViewModels
 
                 About = user?.About;
 
-                if (user.BirthDate != null)
+                if (user.Birthdate != null)
                 {
                     HasBirthdate = true;
                     BirthdateValue = user.BirthDateDate;

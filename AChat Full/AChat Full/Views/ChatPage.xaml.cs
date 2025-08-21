@@ -58,6 +58,15 @@ namespace AChatFull.Views
             }
         }
 
+        private async void OnPeerHeaderTapped(object sender, EventArgs e)
+        {
+            var peer = _vm?.Peer;
+            if (peer == null) return;
+
+            await Navigation.PushModalAsync(new PeerProfilePage(peer.UserId, _repo), animated: false);
+        }
+
+
         private async void OnVideoCallClicked(object sender, EventArgs e)
         {
             bool answer = await DisplayAlert("Start video call?", "", "Call", "Cancel");
