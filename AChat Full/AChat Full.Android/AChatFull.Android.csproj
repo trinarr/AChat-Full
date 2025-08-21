@@ -128,6 +128,12 @@
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\header_video_black.png">
       <Link>Resources\drawable\header_video_black.png</Link>
+    </AndroidResource>    
+	<AndroidResource Include="..\AChat Full\Resources\Icons\birthday.png">
+      <Link>Resources\drawable\birthday.png</Link>
+    </AndroidResource>
+		<AndroidResource Include="..\AChat Full\Resources\Icons\info.png">
+      <Link>Resources\drawable\info.png</Link>
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\header_more.png">
       <Link>Resources\drawable\header_more.png</Link>

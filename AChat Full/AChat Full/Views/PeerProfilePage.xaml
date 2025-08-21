@@ -57,11 +57,11 @@
                 <Setter Property="Padding" Value="0,8" />
             </Style>
             <Style x:Key="SectionIcon" TargetType="Image">
-                <Setter Property="WidthRequest" Value="22"/>
-                <Setter Property="HeightRequest" Value="22"/>
+                <Setter Property="WidthRequest" Value="28"/>
+                <Setter Property="HeightRequest" Value="28"/>
                 <Setter Property="Opacity" Value="0.85"/>
                 <Setter Property="HorizontalOptions" Value="Start"/>
-                <Setter Property="VerticalOptions" Value="Start"/>
+                <Setter Property="VerticalOptions" Value="Center"/>
                 <Setter Property="Margin" Value="6,2,8,0"/>
             </Style>
             <Style x:Key="SectionTitle" TargetType="Label">
@@ -110,9 +110,9 @@
                             </Grid>
                         </Frame>
                         <!-- Индикатор присутствия -->
-                        <Grid WidthRequest="24" HeightRequest="24" HorizontalOptions="End" VerticalOptions="End" Margin="8">
+                        <Grid WidthRequest="24" HeightRequest="24" HorizontalOptions="End" VerticalOptions="End" Margin="12">
                             <Frame HasShadow="False" Padding="0" WidthRequest="24" HeightRequest="24"
-                                   CornerRadius="12" BackgroundColor="White"/>
+                                   CornerRadius="12" BackgroundColor="#F3F4F6"/>
                             <Frame HasShadow="False" Padding="0" WidthRequest="18" HeightRequest="18"
                                    CornerRadius="9" HorizontalOptions="Center" VerticalOptions="Center"
                                    BackgroundColor="{Binding Presence, Converter={StaticResource PresenceToColorConverter}}"/>
@@ -138,7 +138,7 @@
                     <StackLayout Grid.Column="0" Spacing="8" HorizontalOptions="Center">
                         <Frame Style="{StaticResource CircleButton}">
                             <Grid>
-                                <Image Style="{StaticResource ActionIcon}" Source="icon_message.png"/>
+                                <Image Style="{StaticResource ActionIcon}" Source="tab_chat.png"/>
                             </Grid>
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnMessageTapped"/>
@@ -150,7 +150,7 @@
                     <StackLayout Grid.Column="1" Spacing="8" HorizontalOptions="Center">
                         <Frame Style="{StaticResource CircleButton}">
                             <Grid>
-                                <Image Style="{StaticResource ActionIcon}" Source="icon_call.png"/>
+                                <Image Style="{StaticResource ActionIcon}" Source="header_call_black.png"/>
                             </Grid>
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnVoiceTapped"/>
@@ -162,7 +162,7 @@
                     <StackLayout Grid.Column="2" Spacing="8" HorizontalOptions="Center">
                         <Frame Style="{StaticResource CircleButton}">
                             <Grid>
-                                <Image Style="{StaticResource ActionIcon}" Source="icon_video.png"/>
+                                <Image Style="{StaticResource ActionIcon}" Source="header_video_black.png"/>
                             </Grid>
                             <Frame.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnVideoTapped"/>
@@ -187,7 +187,7 @@
                     <StackLayout Spacing="0">
                         <!-- About -->
                         <Grid Style="{StaticResource SectionRow}" IsVisible="{Binding ShowAbout}">
-                            <Image Source="icon_info.png" Style="{StaticResource SectionIcon}"/>
+                            <Image Source="info.png" Style="{StaticResource SectionIcon}"/>
                             <StackLayout Grid.Column="1" Spacing="2">
                                 <Label Text="About" Style="{StaticResource SectionTitle}"/>
                                 <Label Text="{Binding About}" Style="{StaticResource SectionValue}" LineBreakMode="WordWrap"/>
@@ -196,11 +196,11 @@
 
                         <!-- Divider между About и Birthdate: показывать только если есть оба поля -->
                         <BoxView Style="{StaticResource SectionDivider}"
-         IsVisible="{Binding ShowAboutBirthdateDivider}" />
+                                 IsVisible="{Binding ShowAboutBirthdateDivider}" />
 
                         <!-- Birthdate -->
                         <Grid Style="{StaticResource SectionRow}" IsVisible="{Binding ShowBirthdate}">
-                            <Image Source="icon_cake.png" Style="{StaticResource SectionIcon}"/>
+                            <Image Source="birthday.png" Style="{StaticResource SectionIcon}"/>
                             <StackLayout Grid.Column="1" Spacing="2">
                                 <Label Text="Birth date" Style="{StaticResource SectionTitle}"/>
                                 <Label Text="{Binding BirthdateFormatted}" Style="{StaticResource SectionValue}"/>
@@ -220,13 +220,13 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <ImageButton Grid.Column="0" Source="header_back.png"
+            <ImageButton Grid.Column="0" Source="arrow_back_black.png"
                          WidthRequest="28" HeightRequest="28"
                          BackgroundColor="Transparent"
                          Clicked="OnBackTapped"
                          HorizontalOptions="Start" VerticalOptions="Start"/>
 
-            <ImageButton Grid.Column="2" Source="header_more.png"
+            <ImageButton Grid.Column="2" Source="header_more_black.png"
                          WidthRequest="28" HeightRequest="28"
                          BackgroundColor="Transparent"
                          Clicked="OnMoreTapped"
