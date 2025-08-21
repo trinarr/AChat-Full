@@ -453,6 +453,37 @@ namespace AChatFull.Views
             return newChatId;
         }
 
+        // 1. Снять флажок контакта
+        public Task UnmarkUserAsContactAsync(string otherUserId)
+            => _db.ExecuteAsync("UPDATE Users SET IsContact = 0 WHERE UserId = ?", otherUserId);
+
+        // 2. Найти существующий direct-чат (НЕ создавая новый)
+        public async Task<string> FindDirectChatIdAsync(string otherUserId)
+        {
+            if (string.IsNullOrWhiteSpace(otherUserId)) return null;
+
+            var myParts = await _db.Table<ChatParticipant>()
+                                   .Where(p => p.UserId == _currentUserId)
+                                   .ToListAsync();
+
+            foreach (var chatId in myParts.Select(p => p.ChatId).Distinct())
+            {
+                var other = await _db.Table<ChatParticipant>()
+                                     .Where(p => p.ChatId == chatId && p.UserId == otherUserId)
+                                     .FirstOrDefaultAsync();
+                if (other != null) return chatId;
+            }
+            return null;
+        }
+
+        // 3. Проверка существования чата (для страховки в ChatPage)
+        public async Task<bool> ChatExistsAsync(string chatId)
+        {
+            if (string.IsNullOrWhiteSpace(chatId)) return false;
+            var chat = await _db.Table<Chat>().Where(c => c.ChatId == chatId).FirstOrDefaultAsync();
+            return chat != null;
+        }
+
         public async Task<List<ChatSummary>> GetChatSummariesAsync()
         {
             Debug.WriteLine("TESTLOG GetChatSummariesAsync");

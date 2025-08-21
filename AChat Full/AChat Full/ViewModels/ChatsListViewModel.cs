@@ -6,6 +6,7 @@ using Xamarin.Forms;
 using AChatFull.Views;
 using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace AChatFull.ViewModels
 {
@@ -67,13 +68,14 @@ namespace AChatFull.ViewModels
         {
             _repo = repo;
 
-            MessagingCenter.Subscribe<ChatPage, string>(this, "ChatClosed", (_, __) =>
+            MessagingCenter.Subscribe<object, string>(this, "ChatClosed", (sender, chatId) =>
             {
                 Device.BeginInvokeOnMainThread(async () =>
                 {
                     await Task.Delay(150);
                     await LoadChatsAsync();
                 });
+
             });
         }
 

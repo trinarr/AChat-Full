@@ -107,6 +107,12 @@ namespace AChatFull.Views
         {
             base.OnAppearing();
 
+            if (!await _repo.ChatExistsAsync(_chatId))
+            {
+                try { await CloseModalAsync(false); } catch { }
+                return;
+            }
+
             if (!_messagesViewCreated)
             {
                 await Task.Yield();
@@ -153,8 +159,7 @@ namespace AChatFull.Views
             if (_closedNotified) return;
             _closedNotified = true;
 
-            Device.BeginInvokeOnMainThread(() =>
-                MessagingCenter.Send(this, "ChatClosed", _chatId));
+            MessagingCenter.Send<object, string>(this, "ChatClosed", _chatId);
         }
 
         protected override bool OnBackButtonPressed()

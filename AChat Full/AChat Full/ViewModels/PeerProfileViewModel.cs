@@ -15,10 +15,12 @@ namespace AChatFull.ViewModels
         private readonly ChatRepository _repo;
         private readonly string _userId;
 
+        public string UserId => _userId;
+
         public PeerProfileViewModel(ChatRepository repo, string userId)
         {
-            _repo = repo;
-            _userId = userId;
+            _repo = repo ?? throw new ArgumentNullException(nameof(repo));
+            _userId = userId ?? throw new ArgumentNullException(nameof(userId));
         }
 
         public async Task InitializeAsync()
@@ -33,16 +35,13 @@ namespace AChatFull.ViewModels
             var composed = $"{fn} {ln}".Trim();
             FullName = string.IsNullOrWhiteSpace(composed) ? (u.DisplayName ?? "") : composed;
 
-            //DisplayName = u.DisplayName;
             About = u.About;
             StatusCustom = u.StatusCustom;
             Presence = u.Presence;
             AvatarSource = u.AvatarUrl;
 
-            // В UserDto дата уже нормализована к "dd.MM.yyyy" или null
             BirthdateFormatted = string.IsNullOrWhiteSpace(u.Birthdate) ? null : u.Birthdate;
 
-            // Запустить обновление видимости
             OnPropertyChanged(nameof(ShowBirthdate));
             OnPropertyChanged(nameof(ShowAbout));
             OnPropertyChanged(nameof(ShowCustomStatus));
@@ -52,7 +51,6 @@ namespace AChatFull.ViewModels
             OnPropertyChanged(nameof(PresenceText));
         }
 
-        // --- Отображаемые свойства ---
         string _displayName;
         public string DisplayName { get => _displayName; set => Set(ref _displayName, value); }
 
@@ -70,7 +68,7 @@ namespace AChatFull.ViewModels
             {
                 Set(ref _about, value);
                 OnPropertyChanged(nameof(ShowAbout));
-                OnPropertyChanged(nameof(ShowAboutBirthdateDivider)); // <- добавили
+                OnPropertyChanged(nameof(ShowAboutBirthdateDivider));
             }
         }
 
@@ -85,7 +83,7 @@ namespace AChatFull.ViewModels
             {
                 Set(ref _birthdateFormatted, value);
                 OnPropertyChanged(nameof(ShowBirthdate));
-                OnPropertyChanged(nameof(ShowAboutBirthdateDivider)); // <- добавили
+                OnPropertyChanged(nameof(ShowAboutBirthdateDivider));
             }
         }
 
@@ -118,6 +116,27 @@ namespace AChatFull.ViewModels
                 if (!string.IsNullOrWhiteSpace(LastName)) return LastName.Substring(0, 1).ToUpperInvariant();
                 if (!string.IsNullOrWhiteSpace(DisplayName)) return DisplayName.Substring(0, 1).ToUpperInvariant();
                 return "?";
+            }
+        }
+
+        public async Task<bool> RemoveContactAsync()
+        {
+            try
+            {
+                // 1) снять флажок контакта
+                await _repo.UnmarkUserAsContactAsync(_userId);
+
+                // 2) удалить переписку 1-на-1, если есть
+                var chatId = await _repo.FindDirectChatIdAsync(_userId);
+                if (!string.IsNullOrEmpty(chatId))
+                    await _repo.DeleteChatAsync(chatId);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                return false;
             }
         }
 

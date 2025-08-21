@@ -2,6 +2,7 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using AChatFull.ViewModels;
+using System.Threading.Tasks;
 
 namespace AChatFull.Views
 {
@@ -9,17 +10,22 @@ namespace AChatFull.Views
     public partial class PeerProfilePage : ContentPage
     {
         private readonly PeerProfileViewModel _vm;
+        private readonly ChatRepository _repo;
         private bool _initialized;
 
         public PeerProfilePage(string userId, ChatRepository repo)
         {
             InitializeComponent();
-            BindingContext = _vm = new PeerProfileViewModel(repo, userId);
+
+            _repo = repo ?? throw new ArgumentNullException(nameof(repo));
+
+            BindingContext = _vm = new PeerProfileViewModel(_repo, userId);
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+
             if (_initialized) return;
             await _vm.InitializeAsync();
             _initialized = true;
@@ -34,6 +40,25 @@ namespace AChatFull.Views
         {
             // Сообщаем вверх (ChatPage/Router) открыть переписку
             //MessagingCenter.Send(this, "PeerProfile_Message", _vm.UserId);
+        }
+
+        async Task CloseProfileAndUnderlyingChatIfAnyAsync()
+        {
+            var nav = Application.Current.MainPage?.Navigation;
+            if (nav == null) { await Navigation.PopModalAsync(false); return; }
+
+            // Смотрим страницу ПОД текущим модальным профилем
+            Page chatBelow = null;
+            if (nav.ModalStack != null && nav.ModalStack.Count >= 2)
+                chatBelow = nav.ModalStack[nav.ModalStack.Count - 2];
+
+            // 1) закрываем профиль
+            if (nav.ModalStack?.Count > 0)
+                await nav.PopModalAsync(false);
+
+            // 2) если под ним ChatPage — закрываем и его
+            if (chatBelow is ChatPage)
+                await nav.PopModalAsync(false);
         }
 
         private void OnVoiceTapped(object sender, EventArgs e)
@@ -58,22 +83,23 @@ namespace AChatFull.Views
             switch (action)
             {
                 case "Remove contact":
-                    var yes = await DisplayAlert("Remove contact",
-                        "This will remove the contact from your list. Continue?",
-                        "Remove", "Cancel");
-                    if (!yes) return;
+                    {
+                        var confirm = await DisplayAlert("Remove contact",
+                            $"Remove {_vm.DisplayName ?? "this user"} from contacts and delete your direct chat?",
+                            "Remove", "Cancel");
+                        if (!confirm) return;
 
-                    /*var ok = await _vm.RemoveContactAsync();
-                    if (ok)
-                    {
-                        await DisplayAlert("Removed", "Contact has been removed.", "OK");
-                        await Navigation.PopModalAsync(false);
+                        await _repo.UnmarkUserAsContactAsync(_vm.UserId);
+
+                        var chatId = await _repo.FindDirectChatIdAsync(_vm.UserId);
+                        if (!string.IsNullOrEmpty(chatId))
+                            await _repo.DeleteChatAsync(chatId);
+
+                        MessagingCenter.Send<object, string>(this, "ChatClosed", _vm.UserId);
+
+                        await CloseProfileAndUnderlyingChatIfAnyAsync();
+                        break;
                     }
-                    else
-                    {
-                        await DisplayAlert("Error", "Couldn't remove contact. Try again later.", "OK");
-                    }*/
-                    break;
             }
         }
     }
