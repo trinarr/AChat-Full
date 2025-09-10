@@ -125,7 +125,6 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

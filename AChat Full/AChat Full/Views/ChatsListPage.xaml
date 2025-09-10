@@ -19,11 +19,12 @@
 
             <!-- Заголовок (когда НЕ поиск) -->
             <Label Grid.Column="1"
-             Text="ICQ2"
+             Text="Chats"
              TextColor="#fff"
              FontAttributes="Bold"
              FontSize="18"
              VerticalTextAlignment="Center"
+             HorizontalTextAlignment="Center"
              IsVisible="{Binding IsSearchMode, Converter={StaticResource InverseBoolConverter}}"/>
 
             <!-- Поле поиска (когда поиск) -->

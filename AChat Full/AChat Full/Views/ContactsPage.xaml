@@ -21,6 +21,7 @@
              FontAttributes="Bold"
              FontSize="18"
              VerticalTextAlignment="Center"
+             HorizontalTextAlignment="Center"
              IsVisible="{Binding IsSearchMode, Converter={StaticResource InverseBoolConverter}}"/>
 
                 <Entry x:Name="SearchEntry"
