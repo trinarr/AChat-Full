@@ -77,68 +77,20 @@
                             </Grid.ColumnDefinitions>
 
                             <!-- Аватар + индикатор присутствия -->
-                            <Grid Grid.Column="0"
-                                  WidthRequest="48" HeightRequest="48"
-                                  HorizontalOptions="Start"
-                                  VerticalOptions="Center">
-                                <!-- аватарка -->
-                                <Frame
-                                    Padding="0"
-                                    WidthRequest="48" HeightRequest="48"
-                                    CornerRadius="24"
-                                    HasShadow="False"
-                                    IsClippedToBounds="True"
-                                    BackgroundColor="#E6E6E6">
-                                    <Grid>
-                                        <Image Source="{Binding PeerAvatarUrl}"
-                                               Aspect="AspectFill"
-                                               IsVisible="{Binding PeerHasAvatar}" />
-                                        <Label Text="{Binding PeerInitials}"
-                                               IsVisible="{Binding PeerNoAvatar}"
-                                               HorizontalOptions="Center"
-                                               VerticalOptions="Center"
-                                               FontAttributes="Bold"
-                                               FontSize="18"
-                                               TextColor="#333"/>
-                                    </Grid>
-                                </Frame>
-                                <!-- индикатор поверх -->
-                                <Grid
-                                      InputTransparent="True"
-                                      WidthRequest="16" HeightRequest="16"
-                                      HorizontalOptions="End"
-                                      VerticalOptions="End">
-                                    <Frame WidthRequest="16" HeightRequest="16"
-                                           CornerRadius="8"
-                                           Padding="0"
-                                           BackgroundColor="White"
-                                           HasShadow="False"/>
-                                    <Frame WidthRequest="12" HeightRequest="12"
-                                           CornerRadius="6"
-                                           Padding="0"
-                                           HasShadow="False"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center"
-                                           BackgroundColor="{Binding Peer.Presence, Converter={StaticResource PresenceToColorConverter}}"/>
-                                </Grid>
-                            </Grid>
+                            <!-- Статус-иконка вместо аватарки -->
+                            <Image Grid.Column="0"
+       Source="{Binding Peer.Presence, Converter={StaticResource PresenceToImageConverter}}"
+       WidthRequest="35" HeightRequest="35"
+       HorizontalOptions="Start"
+       VerticalOptions="Center"
+       Aspect="AspectFit"/>
 
-                            <!-- Левый столбец: имя и последнее сообщение -->
-                            <StackLayout 
-                                Grid.Column="1" 
-                                Spacing="2"
-                                VerticalOptions="Center">
-                                <Label
-                                    Text="{Binding Title}"
-                                    FontAttributes="Bold"
-                                    FontSize="16"
-                                    TextColor="#000"/>
-                                <Label
-                                    Text="{Binding LastMessage}"
-                                    FontSize="Small"
-                                    TextColor="#666"
-                                    LineBreakMode="TailTruncation"
-                                    MaxLines="1"/>
+                            <!-- Центральная колонка: только ник -->
+                            <StackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label Text="{Binding Title}"
+         FontAttributes="Bold"
+         FontSize="16"
+         TextColor="#000"/>
                             </StackLayout>
 
                             <!-- Правый столбец -->

@@ -20,6 +20,37 @@ namespace AChatFull.Utils
         }
     }
 
+    public class PresenceToImageConverter : IValueConverter
+    {
+        // Имена файлов (лежать в Resources/Icons/*). Можно переопределить в XAML.
+        public string OnlineImage { get; set; } = "icon_online.png";
+        public string IdleImage { get; set; } = "icon_away.png";
+        public string DoNotDisturbImage { get; set; } = "icon_dnd.png";
+        public string OfflineImage { get; set; } = "icon_offline.png";
+        public string FallbackImage { get; set; } = "status.png";
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is Presence p)
+            {
+                switch (p)
+                {
+                    case Presence.Online: return OnlineImage;
+                    case Presence.Idle: return IdleImage;
+                    case Presence.DoNotDisturb: return DoNotDisturbImage;
+                    case Presence.Offline: return OfflineImage;
+                }
+            }
+            if (value is string s && Enum.TryParse<Presence>(s, true, out var pres))
+                return Convert(pres, targetType, parameter, culture);
+
+            return FallbackImage;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotSupportedException();
+    }
+
     /// Возвращает true, если value == parameter (без учёта регистра).
     /// В ConvertBack при установке true возвращает параметр (для TwoWay биндинга).
     public class EqualsConverter : IValueConverter

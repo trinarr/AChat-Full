@@ -20,15 +20,13 @@ namespace AChatFull
 
             NavigationPage chats = new NavigationPage(new ChatsListPage(userToken, _repo)) { Title = "Chats", IconImageSource = "tab_chat.png" };
             NavigationPage contacts = new NavigationPage(new ContactsPage(_repo)) { Title = "Contacts", IconImageSource = "tab_contacts.png" };
-            //NavigationPage you = new NavigationPage(new ProfilePage(repo)) { Title = "You", IconImageSource = "tab_contacts.png" };
 
-            // 1) Вкладка-плейсхолдер "You": Проста, не грузит VM/репо
             _youPlaceholderNav = new NavigationPage(new ContentPage { Title = "You" })
             {
                 Title = "You",
             };
 
-            Children.Add(chats);
+            //Children.Add(chats);
             Children.Add(contacts);
             Children.Add(_youPlaceholderNav);
 

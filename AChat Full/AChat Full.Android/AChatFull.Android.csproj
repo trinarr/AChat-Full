@@ -171,6 +171,21 @@
     <AndroidResource Include="..\AChat Full\Resources\Icons\tab_contacts.png">
       <Link>Resources\drawable\tab_contacts.png</Link>
     </AndroidResource>
+	<AndroidResource Include="..\AChat Full\Resources\Statuses\icon_away.png">
+      <Link>Resources\drawable\icon_away.png</Link>
+    </AndroidResource>
+	<AndroidResource Include="..\AChat Full\Resources\Statuses\icon_online.png">
+      <Link>Resources\drawable\icon_online.png</Link>
+    </AndroidResource>
+	<AndroidResource Include="..\AChat Full\Resources\Statuses\icon_dnd.png">
+      <Link>Resources\drawable\icon_dnd.png</Link>
+    </AndroidResource>
+	<AndroidResource Include="..\AChat Full\Resources\Statuses\icon_invisible.png">
+      <Link>Resources\drawable\icon_invisible.png</Link>
+    </AndroidResource>
+	<AndroidResource Include="..\AChat Full\Resources\Statuses\icon_offline.png">
+      <Link>Resources\drawable\icon_offline.png</Link>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\styles.xml" />
