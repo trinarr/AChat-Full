@@ -27,6 +27,7 @@ namespace AChatFull.Utils
         public string IdleImage { get; set; } = "icon_away.png";
         public string DoNotDisturbImage { get; set; } = "icon_dnd.png";
         public string OfflineImage { get; set; } = "icon_offline.png";
+        public string InvisibleImage { get; set; } = "icon_invisible.png";
         public string FallbackImage { get; set; } = "status.png";
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -38,6 +39,7 @@ namespace AChatFull.Utils
                     case Presence.Online: return OnlineImage;
                     case Presence.Idle: return IdleImage;
                     case Presence.DoNotDisturb: return DoNotDisturbImage;
+                    case Presence.Invisible: return InvisibleImage;
                     case Presence.Offline: return OfflineImage;
                 }
             }

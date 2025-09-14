@@ -16,6 +16,7 @@ namespace AChatFull.Views
         Offline,
         Online,
         Idle,
+        Invisible,
         DoNotDisturb
     }
 

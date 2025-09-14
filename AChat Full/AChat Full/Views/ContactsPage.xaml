@@ -60,13 +60,13 @@
                         IsVisible="{Binding IsSearchMode, Converter={StaticResource InverseBoolConverter}}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid Padding="15,12" ColumnDefinitions="50,*,Auto">
+                        <Grid Padding="15,12" ColumnDefinitions="40,*,Auto">
 
                             <!-- Аватар + индикатор статуса — ЗАМЕНА на иконку статуса -->
                             <Image Grid.Column="0"
                                    Source="{Binding Presence, Converter={StaticResource PresenceToImageConverter}}"
-                                   WidthRequest="35"
-                                   HeightRequest="35"
+                                   WidthRequest="30"
+                                   HeightRequest="30"
                                    HorizontalOptions="Start"
                                    VerticalOptions="Center"
                                    Aspect="AspectFit" />
@@ -121,13 +121,13 @@
 
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid Padding="15,12" ColumnDefinitions="60,*,Auto">
+                        <Grid Padding="15,12" ColumnDefinitions="40,*,Auto">
 
                             <!-- Аватар + индикатор статуса — ЗАМЕНА на иконку статуса -->
                             <Image Grid.Column="0"
                                    Source="{Binding Presence, Converter={StaticResource PresenceToImageConverter}}"
-                                   WidthRequest="35"
-                                   HeightRequest="35"
+                                   WidthRequest="30"
+                                   HeightRequest="30"
                                    HorizontalOptions="Start"
                                    VerticalOptions="Center"
                                    Aspect="AspectFit" />
