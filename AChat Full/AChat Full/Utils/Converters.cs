@@ -39,7 +39,7 @@ namespace AChatFull.Utils
                     case Presence.Online: return OnlineImage;
                     case Presence.Idle: return IdleImage;
                     case Presence.DoNotDisturb: return DoNotDisturbImage;
-                    case Presence.Invisible: return InvisibleImage;
+                    case Presence.Invisible: return OfflineImage;
                     case Presence.Offline: return OfflineImage;
                 }
             }

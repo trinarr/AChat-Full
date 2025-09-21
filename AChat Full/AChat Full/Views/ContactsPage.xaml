@@ -55,9 +55,19 @@
           Padding="0"
           Margin="0">
             <CollectionView Grid.Row="0"
-                        ItemsSource="{Binding Contacts}"
+                        ItemsSource="{Binding ContactsGroups}"
+                        IsGrouped="True"
                         SelectionMode="None"
                         IsVisible="{Binding IsSearchMode, Converter={StaticResource InverseBoolConverter}}">
+
+                <CollectionView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <Grid Padding="15,8">
+                            <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="Small" TextColor="#666"/>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.GroupHeaderTemplate>
+
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Grid Padding="15,12" ColumnDefinitions="40,*,Auto">
