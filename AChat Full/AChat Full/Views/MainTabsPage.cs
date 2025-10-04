@@ -63,7 +63,7 @@ namespace AChatFull
                 var profilePage = new ProfilePage(_repo);
                 var youNav = new NavigationPage(profilePage)
                 {
-                    Title = "You",
+                    Title = "Settings",
                     IconImageSource = _youPlaceholderNav.IconImageSource
                 };
 
