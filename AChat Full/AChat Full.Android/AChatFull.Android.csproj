@@ -123,6 +123,9 @@
 	    <AndroidResource Include="..\AChat Full\Resources\Icons\header_call_black.png">
       <Link>Resources\drawable\header_call_black.png</Link>
     </AndroidResource>
+		    <AndroidResource Include="..\AChat Full\Resources\Icons\view_column.png">
+      <Link>Resources\drawable\view_column.png</Link>
+    </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\header_video.png">
       <Link>Resources\drawable\header_video.png</Link>
     </AndroidResource>
