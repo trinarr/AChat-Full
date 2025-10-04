@@ -55,18 +55,12 @@
                        TextColor="#000"/>
 
                 <!-- ========== ONLINE ========== -->
-                <Grid Padding="4,10" ColumnSpacing="12">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                <Grid Padding="4,10" ColumnSpacing="12" ColumnDefinitions="Auto,*,Auto">
 
                     <!-- цветная точка слева -->
-                    <Frame WidthRequest="14" HeightRequest="14"
-                           CornerRadius="7" Padding="0" HasShadow="False"
-                           BackgroundColor="#34C759"
-                           VerticalOptions="Center"/>
+                    <Image WidthRequest="28" HeightRequest="28" Aspect="AspectFit"
+       Source="{Binding Source='Online',
+                        Converter={StaticResource PresenceToImageConverter}}" />
 
                     <Label Grid.Column="1" Text="Online" FontSize="16" VerticalTextAlignment="Center" TextColor="#000"/>
 
@@ -120,17 +114,11 @@
                 <BoxView Color="#F1F5F9" HeightRequest="1"/>
 
                 <!-- ========== IDLE ========== -->
-                <Grid Padding="4,10" ColumnSpacing="12">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                <Grid Padding="4,10" ColumnSpacing="12" ColumnDefinitions="Auto,*,Auto">
 
-                    <Frame WidthRequest="14" HeightRequest="14"
-                           CornerRadius="7" Padding="0" HasShadow="False"
-                           BackgroundColor="#FFCC00"
-                           VerticalOptions="Center"/>
+                    <Image WidthRequest="28" HeightRequest="28" Aspect="AspectFit"
+       Source="{Binding Source='Idle',
+                        Converter={StaticResource PresenceToImageConverter}}" />
 
                     <Label Grid.Column="1" Text="Idle" FontSize="16" VerticalTextAlignment="Center" TextColor="#000"/>
 
@@ -172,17 +160,11 @@
                 <BoxView Color="#F1F5F9" HeightRequest="1"/>
 
                 <!-- ========== DO NOT DISTURB ========== -->
-                <Grid Padding="4,10" ColumnSpacing="12">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                <Grid Padding="4,10" ColumnSpacing="12" ColumnDefinitions="Auto,*,Auto">
 
-                    <Frame WidthRequest="14" HeightRequest="14"
-                           CornerRadius="7" Padding="0" HasShadow="False"
-                           BackgroundColor="#FF3B30"
-                           VerticalOptions="Center"/>
+                    <Image WidthRequest="28" HeightRequest="28" Aspect="AspectFit"
+       Source="{Binding Source='DoNotDisturb',
+                        Converter={StaticResource PresenceToImageConverter}}" />
 
                     <Label Grid.Column="1" Text="Do Not Disturb" FontSize="16" VerticalTextAlignment="Center" TextColor="#000"/>
 
@@ -224,17 +206,10 @@
                 <BoxView Color="#F1F5F9" HeightRequest="1"/>
 
                 <!-- ========== INVISIBLE ========== -->
-                <Grid Padding="4,10" ColumnSpacing="12">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Frame WidthRequest="14" HeightRequest="14"
-                           CornerRadius="7" Padding="0" HasShadow="False"
-                           BackgroundColor="#AEAEB2"
-                           VerticalOptions="Center"/>
+                <Grid Padding="4,10" ColumnSpacing="12" ColumnDefinitions="Auto,*,Auto">
+                    <Image WidthRequest="28" HeightRequest="28" Aspect="AspectFit"
+       Source="{Binding Source='Invisible',
+                        Converter={StaticResource PresenceToImageConverter}}" />
 
                     <Label Grid.Column="1" Text="Invisible" FontSize="16" VerticalTextAlignment="Center" TextColor="#000"/>
 

@@ -9,6 +9,7 @@ using Xamarin.Forms;
 using System.Linq;
 using AChatFull.Views;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 
 namespace AChatFull.ViewModels
 {
@@ -38,15 +39,47 @@ namespace AChatFull.ViewModels
             SearchCommand = new Command<string>(async (text) => await SearchAsync(text));
             ClearSearchCommand = new Command(async () => await SearchAsync(string.Empty));
             OpenChatCommand = new Command<User>(async (u) => await OpenChatAsync(u));
+            Contacts.CollectionChanged += OnContactsChanged;
 
             // Первичная загрузка контактов
             _ = LoadContactsAsync();
+        }
+
+        private void OnContactsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            RebuildContactsGroups();
         }
 
         public ObservableCollection<User> Contacts { get; }
 
         // Группированные результаты поиска: [Контакты], [Пользователи]
         public ObservableCollection<UserGroup> SearchGroups { get; }
+
+        public ObservableCollection<UserGroup> ContactsGroups { get; } = new ObservableCollection<UserGroup>();
+
+        private void RebuildContactsGroups(IEnumerable<User> source = null)
+        {
+            var data = source ?? Contacts;
+
+            var online = data
+                .Where(u => u.Presence != Presence.Offline && u.Presence != Presence.Invisible)
+                .OrderBy(u => u.DisplayName, StringComparer.CurrentCultureIgnoreCase)
+                .ToList();
+
+            var offline = data
+                .Where(u => u.Presence == Presence.Offline || u.Presence == Presence.Invisible)
+                .OrderBy(u => u.DisplayName, StringComparer.CurrentCultureIgnoreCase)
+                .ToList();
+
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                ContactsGroups.Clear();
+                if (online.Count > 0)
+                    ContactsGroups.Add(new UserGroup("Online", online));
+                if (offline.Count > 0)
+                    ContactsGroups.Add(new UserGroup("Offline", offline));
+            });
+        }
 
         public bool IsBusy
         {
@@ -82,26 +115,6 @@ namespace AChatFull.ViewModels
         public ObservableCollection<AlphaGroup<User>> ContactsGrouped { get; } = new ObservableCollection<AlphaGroup<User>>();
         public ObservableCollection<User> SearchResults { get; } = new ObservableCollection<User>();
 
-        private void BuildContactGroups(IEnumerable<User> users)
-        {
-            string KeyOf(User u)
-            {
-                var n = (u?.FirstName ?? u?.DisplayName ?? "").Trim();
-                if (string.IsNullOrEmpty(n)) return "#";
-                var ch = char.ToUpperInvariant(n[0]);
-                return char.IsLetter(ch) ? ch.ToString() : "#";
-            }
-
-            var grouped = users
-                .OrderBy(u => u.FirstName)
-                .GroupBy(KeyOf)
-                .OrderBy(g => g.Key);
-
-            ContactsGrouped.Clear();
-            foreach (var g in grouped)
-                ContactsGrouped.Add(new AlphaGroup<User>(g.Key, g));
-        }
-
         public async Task LoadContactsAsync()
         {
             try
@@ -122,7 +135,10 @@ namespace AChatFull.ViewModels
                 // Можно оставить старую группировку в коде, но НЕ использовать её в XAML
                 // BuildContactGroups(Contacts);
             }
-            finally { IsBusy = false; }
+            finally { 
+                IsBusy = false;
+                RebuildContactsGroups();
+            }
         }
 
         private async Task DebouncedSearchAsync(string text)
@@ -165,10 +181,10 @@ namespace AChatFull.ViewModels
                                 .ToList();
 
                 if (contacts.Count > 0)
-                    SearchGroups.Add(new UserGroup("Контакты", contacts));
+                    SearchGroups.Add(new UserGroup("Contacts", contacts));
 
                 if (others.Count > 0)
-                    SearchGroups.Add(new UserGroup("Глобальный поиск", others));
+                    SearchGroups.Add(new UserGroup("Global Search", others));
             }
             finally { IsBusy = false; }
         }
@@ -189,6 +205,10 @@ namespace AChatFull.ViewModels
     {
         public string Title { get; }
         public UserGroup(string title) { Title = title; }
-        public UserGroup(string title, IEnumerable<User> items) : base(items) { Title = title; }
+        public UserGroup(string title, IEnumerable<User> items = null)
+        : base(items ?? Enumerable.Empty<User>())
+        {
+            Title = title;
+        }
     }
 }
