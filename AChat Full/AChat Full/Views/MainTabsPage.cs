@@ -18,10 +18,11 @@ namespace AChatFull
         {
             _repo = repo;
 
-            NavigationPage chats = new NavigationPage(new ChatsListPage(userToken, _repo)) { Title = "Chats", IconImageSource = "tab_chat.png" };
+            //NavigationPage chats = new NavigationPage(new ChatsListPage(userToken, _repo)) { Title = "Chats", IconImageSource = "tab_chat.png" };
             NavigationPage contacts = new NavigationPage(new ContactsPage(_repo)) { Title = "Contacts", IconImageSource = "tab_contacts.png" };
+            NavigationPage calls = new NavigationPage(new CallsPage(_repo)) { Title = "Calls", IconImageSource = "tab_contacts.png" };
 
-            _youPlaceholderNav = new NavigationPage(new ContentPage { Title = "You" })
+            _youPlaceholderNav = new NavigationPage(new ContentPage { Title = "Settings" })
             {
                 Title = "You",
             };
