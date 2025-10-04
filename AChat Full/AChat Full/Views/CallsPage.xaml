@@ -1,9 +1,143 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="AChatFull.Views.CallsPage">
-    <StackLayout Padding="16">
-        <Label Text="Звонки" FontSize="Large" />
-        <Label Text="Страница-заглушка." />
-    </StackLayout>
+             x:Class="AChatFull.Views.CallsPage"
+             x:Name="ThisPage"
+             Padding="0"
+             Title="Calls">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Локальные акцентные цвета -->
+            <Color x:Key="WaGreen">#22C55E</Color>
+            <Color x:Key="WaRed">#EF4444</Color>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <NavigationPage.TitleView>
+        <Grid>
+            <Label Text="{Binding Title, Source={x:Reference ThisPage}}"
+                   FontAttributes="Bold"
+                   FontSize="18"
+                   TextColor="#fff"
+                   HorizontalOptions="CenterAndExpand"
+                   HorizontalTextAlignment="Center"/>
+        </Grid>
+    </NavigationPage.TitleView>
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- Заголовок «Недавние» -->
+        <Label Text="Недавние"
+               Margin="16,16,16,8"
+               FontSize="20"
+               FontAttributes="Bold"
+               TextColor="{DynamicResource Color.TextPrimary}" />
+
+        <!-- Контейнер для списка + плавающая кнопка -->
+        <Grid Grid.Row="1">
+            <!-- Список звонков -->
+            <CollectionView ItemsSource="{Binding Calls}"
+                            SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="16,10"
+                              ColumnDefinitions="48,*,Auto"
+                              RowDefinitions="Auto,Auto">
+                            <!-- Аватар/инициалы — БОЛЬШЕ и во весь круг -->
+                            <Frame Grid.RowSpan="2"
+       WidthRequest="52" HeightRequest="52"
+       CornerRadius="26"
+       Padding="0"
+       IsClippedToBounds="True"
+       HasShadow="False"
+       BackgroundColor="{DynamicResource Color.Surface}"
+       VerticalOptions="Center">
+                                <Grid>
+                                    <Image Source="{Binding AvatarUrl}"
+               Aspect="AspectFill"
+               HorizontalOptions="Fill"
+               VerticalOptions="Fill"
+               IsVisible="{Binding HasAvatar}" />
+                                    <Label Text="{Binding Initials}"
+               FontAttributes="Bold"
+               FontSize="18"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               IsVisible="{Binding HasAvatar, Converter={StaticResource InverseBoolConverter}}"
+               TextColor="{DynamicResource Color.TextPrimary}" />
+                                </Grid>
+                            </Frame>
+
+                            <!-- Имя -->
+                            <Label Grid.Column="1"
+                                   Text="{Binding Title}"
+                                   FontSize="17"
+                                   FontAttributes="Bold"
+                                   TextColor="{DynamicResource Color.TextPrimary}" />
+
+                            <!-- Подзаголовок: стрелка + дата/время -->
+                            <StackLayout Grid.Row="1" Grid.Column="1"
+                                         Orientation="Horizontal" Spacing="6">
+                                <Label Text="{Binding ArrowGlyph}"
+                                       FontSize="14"
+                                       TextColor="{Binding ArrowColor}" />
+                                <Label Text="{Binding Subtitle}"
+                                       FontSize="14"
+                                       TextColor="{DynamicResource Color.TextSecondary}" />
+                            </StackLayout>
+
+                            <!-- Иконка «позвонить» справа (картинка вместо эмодзи) -->
+                            <Frame Grid.RowSpan="2" Grid.Column="2"
+                                   WidthRequest="36" HeightRequest="36"
+                                   CornerRadius="18"
+                                   Padding="0"
+                                   BackgroundColor="Transparent"
+                                   HasShadow="False"
+                                   VerticalOptions="Center">
+                                <Image Source="header_call_black.png"
+                                       WidthRequest="24"
+                                       HeightRequest="24"
+                                       Aspect="AspectFit"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding BindingContext.CallCommand, Source={x:Reference ThisPage}}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Frame>
+
+                            <!-- Разделитель -->
+                            <BoxView Grid.RowSpan="2" Grid.ColumnSpan="3"
+                                     HeightRequest="1"
+                                     VerticalOptions="End"
+                                     Margin="80,0,16,0"
+                                     Color="{DynamicResource Color.Separator}" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- FAB «новый звонок» (тоже иконка) -->
+            <Frame CornerRadius="28"
+                   BackgroundColor="{StaticResource WaGreen}"
+                   WidthRequest="56" HeightRequest="56"
+                   Padding="0"
+                   HasShadow="True"
+                   HorizontalOptions="End"
+                   VerticalOptions="End"
+                   Margin="16">
+                <Image Source="header_call_black.png"
+                       WidthRequest="24"
+                       HeightRequest="24"
+                       Aspect="AspectFit"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NewCallCommand}" />
+                    </Image.GestureRecognizers>
+                </Image>
+            </Frame>
+        </Grid>
+    </Grid>
 </ContentPage>
