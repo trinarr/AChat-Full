@@ -4,7 +4,7 @@
              x:Class="AChatFull.Views.CallsPage"
              x:Name="ThisPage"
              Padding="0"
-             Title="Звонки">
+             Title="Calls">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -13,6 +13,17 @@
             <Color x:Key="WaRed">#EF4444</Color>
         </ResourceDictionary>
     </ContentPage.Resources>
+
+    <NavigationPage.TitleView>
+        <Grid>
+            <Label Text="{Binding Title, Source={x:Reference ThisPage}}"
+                   FontAttributes="Bold"
+                   FontSize="18"
+                   TextColor="#fff"
+                   HorizontalOptions="CenterAndExpand"
+                   HorizontalTextAlignment="Center"/>
+        </Grid>
+    </NavigationPage.TitleView>
 
     <Grid RowDefinitions="Auto,*">
         <!-- Заголовок «Недавние» -->
