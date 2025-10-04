@@ -164,7 +164,7 @@ namespace AChatFull
             }
         }
 
-private async Task SetProfileTabIconAsync(NavigationPage targetPage, ChatRepository repo)
+        private async Task SetProfileTabIconAsync(NavigationPage targetPage, ChatRepository repo)
         {
             try
             {

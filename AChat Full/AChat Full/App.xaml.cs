@@ -3,7 +3,6 @@ using AChatFull.Views;
 using Xamarin.Essentials;
 using System;
 using System.Threading.Tasks;
-using System.Threading;
 
 namespace AChatFull
 {
@@ -20,6 +19,7 @@ namespace AChatFull
         public App()
         {
             InitializeComponent();
+
             MainPage = new ContentPage { Content = new ActivityIndicator { IsRunning = true, VerticalOptions = LayoutOptions.Center, HorizontalOptions = LayoutOptions.Center } };
             _ = InitAsync();
         }

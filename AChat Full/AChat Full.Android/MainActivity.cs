@@ -4,6 +4,7 @@ using Android.Runtime;
 using Android.OS;
 using Xamarin.Essentials;
 using Plugin.Fingerprint;
+using AndroidX.AppCompat.App;
 
 namespace AChatFull.Droid
 {
@@ -12,13 +13,14 @@ namespace AChatFull.Droid
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            AppCompatDelegate.DefaultNightMode = AppCompatDelegate.ModeNightNo;
             base.OnCreate(savedInstanceState);
 
             /*Window.SetFlags(
                 WindowManagerFlags.Secure,
                 WindowManagerFlags.Secure);*/
 
-            Xamarin.Essentials.Platform.Init(this, savedInstanceState);
+            Platform.Init(this, savedInstanceState);
             Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init(enableFastRenderer: true);
