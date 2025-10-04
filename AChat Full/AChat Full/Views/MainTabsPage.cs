@@ -20,7 +20,7 @@ namespace AChatFull
 
             //NavigationPage chats = new NavigationPage(new ChatsListPage(userToken, _repo)) { Title = "Chats", IconImageSource = "tab_chat.png" };
             NavigationPage contacts = new NavigationPage(new ContactsPage(_repo)) { Title = "Contacts", IconImageSource = "tab_contacts.png" };
-            NavigationPage calls = new NavigationPage(new CallsPage(_repo)) { Title = "Calls", IconImageSource = "tab_contacts.png" };
+            NavigationPage calls = new NavigationPage(new CallsPage(_repo)) { Title = "Calls", IconImageSource = "header_call_black.png" };
 
             _youPlaceholderNav = new NavigationPage(new ContentPage { Title = "Settings" })
             {
@@ -29,6 +29,7 @@ namespace AChatFull
 
             //Children.Add(chats);
             Children.Add(contacts);
+            Children.Add(calls);
             Children.Add(_youPlaceholderNav);
 
             // Android: вкладки внизу
