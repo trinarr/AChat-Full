@@ -30,7 +30,7 @@ namespace AChatFull.Views
             ApplyLayoutMode(); // дефолт: список
         }
 
-        private void OnLayoutToggleClicked(object sender, System.EventArgs e)
+        private void OnLayoutToggleClicked(object sender, EventArgs e)
         {
             _isGrid = !_isGrid;
             ApplyLayoutMode();
@@ -52,7 +52,7 @@ namespace AChatFull.Views
                 Resources["Size.NameFont"] = 14.0;  // было 18
                 Resources["Size.StatusFont"] = 11.0;  // было 12
 
-                LayoutToggleButton.Source = "ic_view_list.png";
+                LayoutToggleButton.Source = "view_column_1.png";
             }
             else
             {
@@ -65,7 +65,7 @@ namespace AChatFull.Views
                 Resources["Size.NameFont"] = 18.0;
                 Resources["Size.StatusFont"] = 12.0;
 
-                LayoutToggleButton.Source = "ic_view_grid.png";
+                LayoutToggleButton.Source = "view_column_2.png";
             }
         }
 

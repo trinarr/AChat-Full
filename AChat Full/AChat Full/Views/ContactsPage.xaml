@@ -15,7 +15,7 @@
 
     <NavigationPage.TitleView>
         <ContentView Padding="0">
-            <Grid Padding="8" ColumnDefinitions="Auto,*,Auto,Auto" RowDefinitions="Auto">
+            <Grid Padding="8" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">
                 <ImageButton Grid.Column="0"
                      Source="arrow_back.png"
                      BackgroundColor="Transparent"
@@ -43,8 +43,15 @@
                VerticalOptions="Center"
                IsVisible="{Binding IsSearchMode}" />
 
-                <ImageButton Grid.Column="2"
+                <StackLayout Grid.Column="2"
+                   Orientation="Horizontal"
+                   Spacing="16"
+                   VerticalOptions="Center"
+                   HorizontalOptions="End">
+
+                    <ImageButton Grid.Column="2"
                      Source="search.png"
+                                 Opacity="1"
                      HeightRequest="24" WidthRequest="24"
                      BackgroundColor="Transparent"
                      VerticalOptions="Center"
@@ -56,15 +63,17 @@
                     </ImageButton.Triggers>
                 </ImageButton>
 
-                <!-- ПЕРЕКЛЮЧАТЕЛЬ СПИСОК/СЕТКА -->
-                <ImageButton x:Name="LayoutToggleButton"
-                   Grid.Column="3"
-                             IsVisible="true"
-                   Source="search.png"
-                   BackgroundColor="Transparent"
-                   HeightRequest="24" WidthRequest="24"
-                   VerticalOptions="Center"
-                   Clicked="OnLayoutToggleClicked" />
+                    <ImageButton Grid.Column="2"
+                                 x:Name="LayoutToggleButton"
+                                 Source="info.png"
+                                 Opacity="1"
+                                 HeightRequest="24" WidthRequest="24"
+                                 BackgroundColor="Transparent"
+                                 VerticalOptions="Center"
+                                 Clicked="OnLayoutToggleClicked">
+                    </ImageButton>
+
+                </StackLayout>
             </Grid>
         </ContentView>
     </NavigationPage.TitleView>
@@ -94,12 +103,12 @@
 
                             <!-- Аватар + индикатор статуса — ЗАМЕНА на иконку статуса -->
                             <Image Grid.Column="0"
-       Source="{Binding Presence, Converter={StaticResource PresenceToImageConverter}}"
-       WidthRequest="{DynamicResource Size.PresenceIcon}"
-       HeightRequest="{DynamicResource Size.PresenceIcon}"
-       HorizontalOptions="Start"
-       VerticalOptions="Center"
-       Aspect="AspectFit" />
+                               Source="{Binding Presence, Converter={StaticResource PresenceToImageConverter}}"
+                               WidthRequest="{DynamicResource Size.PresenceIcon}"
+                               HeightRequest="{DynamicResource Size.PresenceIcon}"
+                               HorizontalOptions="Start"
+                               VerticalOptions="Center"
+                               Aspect="AspectFit" />
 
                             <!-- Имя и статус -->
                             <StackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">

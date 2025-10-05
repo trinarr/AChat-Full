@@ -83,7 +83,6 @@
 	<EmbeddedResource Include="Resources\Icons\attach_file.png" />
 	<EmbeddedResource Include="Resources\Icons\arrow_back.png" />
 	<EmbeddedResource Include="Resources\Icons\header_call.png" />
-	<EmbeddedResource Include="Resources\Icons\view_column.png" />
 	<EmbeddedResource Include="Resources\Icons\header_more.png" />
 	<EmbeddedResource Include="Resources\Icons\header_video.png" />
 	<EmbeddedResource Include="Resources\Icons\fingerprint.png" />
