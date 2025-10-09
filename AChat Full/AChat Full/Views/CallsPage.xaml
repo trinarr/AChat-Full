@@ -73,7 +73,7 @@
                                    Text="{Binding Title}"
                                    FontSize="17"
                                    FontAttributes="Bold"
-                                   TextColor="{DynamicResource Color.TextPrimary}" />
+                                   TextColor="#000" />
 
                             <!-- Подзаголовок: стрелка + дата/время -->
                             <StackLayout Grid.Row="1" Grid.Column="1"

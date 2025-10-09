@@ -120,8 +120,8 @@
     <AndroidResource Include="..\AChat Full\Resources\Icons\header_call.png">
       <Link>Resources\drawable\header_call.png</Link>
     </AndroidResource>
-	    <AndroidResource Include="..\AChat Full\Resources\Icons\header_call_black.png">
-      <Link>Resources\drawable\header_call_black.png</Link>
+		<AndroidResource Include="..\AChat Full\Resources\Icons\header_call_black.png">
+    <Link>Resources\drawable\header_call_black.png</Link>
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\header_video.png">
       <Link>Resources\drawable\header_video.png</Link>
@@ -131,6 +131,12 @@
     </AndroidResource>    
 	<AndroidResource Include="..\AChat Full\Resources\Icons\birthday.png">
       <Link>Resources\drawable\birthday.png</Link>
+    </AndroidResource>
+		<AndroidResource Include="..\AChat Full\Resources\Icons\view_column_1.png">
+      <Link>Resources\drawable\view_column_1.png</Link>
+    </AndroidResource>
+		<AndroidResource Include="..\AChat Full\Resources\Icons\view_column_2.png">
+      <Link>Resources\drawable\view_column_2.png</Link>
     </AndroidResource>
 		<AndroidResource Include="..\AChat Full\Resources\Icons\info.png">
       <Link>Resources\drawable\info.png</Link>

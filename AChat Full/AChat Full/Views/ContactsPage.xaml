@@ -4,6 +4,15 @@
              x:Name="ThisPage"
              Padding="0">
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- размеры по умолчанию для режима СПИСОК -->
+            <x:Double x:Key="Size.PresenceIcon">30</x:Double>
+            <x:Double x:Key="Size.NameFont">18</x:Double>
+            <x:Double x:Key="Size.StatusFont">12</x:Double>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <NavigationPage.TitleView>
         <ContentView Padding="0">
             <Grid Padding="8" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">
@@ -34,8 +43,15 @@
                VerticalOptions="Center"
                IsVisible="{Binding IsSearchMode}" />
 
-                <ImageButton Grid.Column="2"
+                <StackLayout Grid.Column="2"
+                   Orientation="Horizontal"
+                   Spacing="16"
+                   VerticalOptions="Center"
+                   HorizontalOptions="End">
+
+                    <ImageButton Grid.Column="2"
                      Source="search.png"
+                                 Opacity="1"
                      HeightRequest="24" WidthRequest="24"
                      BackgroundColor="Transparent"
                      VerticalOptions="Center"
@@ -46,6 +62,18 @@
                         </DataTrigger>
                     </ImageButton.Triggers>
                 </ImageButton>
+
+                    <ImageButton Grid.Column="2"
+                                 x:Name="LayoutToggleButton"
+                                 Source="info.png"
+                                 Opacity="1"
+                                 HeightRequest="24" WidthRequest="24"
+                                 BackgroundColor="Transparent"
+                                 VerticalOptions="Center"
+                                 Clicked="OnLayoutToggleClicked">
+                    </ImageButton>
+
+                </StackLayout>
             </Grid>
         </ContentView>
     </NavigationPage.TitleView>
@@ -58,6 +86,7 @@
                         ItemsSource="{Binding ContactsGroups}"
                         IsGrouped="True"
                         SelectionMode="None"
+                        x:Name="ContactsList"
                         IsVisible="{Binding IsSearchMode, Converter={StaticResource InverseBoolConverter}}">
 
                 <CollectionView.GroupHeaderTemplate>
@@ -74,23 +103,23 @@
 
                             <!-- Аватар + индикатор статуса — ЗАМЕНА на иконку статуса -->
                             <Image Grid.Column="0"
-                                   Source="{Binding Presence, Converter={StaticResource PresenceToImageConverter}}"
-                                   WidthRequest="30"
-                                   HeightRequest="30"
-                                   HorizontalOptions="Start"
-                                   VerticalOptions="Center"
-                                   Aspect="AspectFit" />
+                               Source="{Binding Presence, Converter={StaticResource PresenceToImageConverter}}"
+                               WidthRequest="{DynamicResource Size.PresenceIcon}"
+                               HeightRequest="{DynamicResource Size.PresenceIcon}"
+                               HorizontalOptions="Start"
+                               VerticalOptions="Center"
+                               Aspect="AspectFit" />
 
                             <!-- Имя и статус -->
                             <StackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                                 <Label Text="{Binding DisplayName}"
-                                   FontAttributes="Bold"
-                                   FontSize="18"
-                                   TextColor="#000" />
+       FontAttributes="Bold"
+       FontSize="{DynamicResource Size.NameFont}"
+       TextColor="#000" />
                                 <Label Text="{Binding StatusCustom}"
-                                   FontSize="Small"
-                                   TextColor="#666"
-                                   IsVisible="{Binding HasStatus}" />
+       FontSize="{DynamicResource Size.StatusFont}"
+       TextColor="#666"
+       IsVisible="{Binding HasStatus}" />
                             </StackLayout>
 
                             <!-- Кнопки действий справа (если были) остаются без изменений -->
@@ -135,23 +164,24 @@
 
                             <!-- Аватар + индикатор статуса — ЗАМЕНА на иконку статуса -->
                             <Image Grid.Column="0"
-                                   Source="{Binding Presence, Converter={StaticResource PresenceToImageConverter}}"
-                                   WidthRequest="30"
-                                   HeightRequest="30"
-                                   HorizontalOptions="Start"
-                                   VerticalOptions="Center"
-                                   Aspect="AspectFit" />
+       Source="{Binding Presence, Converter={StaticResource PresenceToImageConverter}}"
+       WidthRequest="{DynamicResource Size.PresenceIcon}"
+       HeightRequest="{DynamicResource Size.PresenceIcon}"
+       HorizontalOptions="Start"
+       VerticalOptions="Center"
+       Aspect="AspectFit" />
+
 
                             <!-- Имя и кастомный статус -->
                             <StackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                                 <Label Text="{Binding DisplayName}"
-                                   FontAttributes="Bold"
-                                   FontSize="18"
-                                   TextColor="#000" />
+       FontAttributes="Bold"
+       FontSize="{DynamicResource Size.NameFont}"
+       TextColor="#000" />
                                 <Label Text="{Binding StatusCustom}"
-                                   FontSize="Small"
-                                   TextColor="#666"
-                                   IsVisible="{Binding HasStatus}" />
+       FontSize="{DynamicResource Size.StatusFont}"
+       TextColor="#666"
+       IsVisible="{Binding HasStatus}" />
                             </StackLayout>
 
                             <!-- Кнопки справа (если есть) -->
