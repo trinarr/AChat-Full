@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AChatFull.Views.ContactListSettingsPage"
+             Title="Contact List">
+
+    <!-- Хедер как в EditProfilePage/SettingsPage -->
+    <NavigationPage.TitleView>
+        <ContentView Padding="0">
+            <Grid Padding="8" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">
+                <ImageButton Grid.Column="0"
+                     Source="arrow_back.png"
+                     BackgroundColor="Transparent"
+                     HeightRequest="24" WidthRequest="24"
+                     Margin="0,0,8,0"
+                     Clicked="OnBackClicked" />
+                <Label Grid.Column="1"
+               Text="Contact List"
+               FontAttributes="Bold"
+               FontSize="18"
+               HorizontalTextAlignment="Center"
+               VerticalTextAlignment="Center"
+               TextColor="#fff" />
+                <BoxView Grid.Column="2" WidthRequest="24" HeightRequest="1" Opacity="0"/>
+            </Grid>
+        </ContentView>
+    </NavigationPage.TitleView>
+
+    <!-- Стили рядов — 1-в-1 как на ProfilePage -->
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="RowStyle" TargetType="Grid">
+                <Setter Property="Padding" Value="16,12"/>
+                <Setter Property="ColumnDefinitions">
+                    <Setter.Value>
+                        <ColumnDefinitionCollection>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </ColumnDefinitionCollection>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="RowIcon" TargetType="Image">
+                <Setter Property="HeightRequest" Value="22"/>
+                <Setter Property="WidthRequest" Value="22"/>
+                <Setter Property="Margin" Value="0,0,12,0"/>
+            </Style>
+            <Style x:Key="RowTitle" TargetType="Label">
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="TextColor" Value="{StaticResource TextColor}"/>
+            </Style>
+            <Style x:Key="RowDivider" TargetType="BoxView">
+                <Setter Property="Color" Value="#1A000000"/>
+                <Setter Property="HeightRequest" Value="1"/>
+                <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <!-- Контент: карточка с двумя пунктами -->
+    <Frame Margin="16,16,16,8"
+         Padding="0"
+         CornerRadius="16"
+         HasShadow="False"
+         BackgroundColor="{DynamicResource Color.Surface}">
+        <StackLayout Spacing="0">
+
+            <!-- Number of columns -->
+            <Grid Style="{StaticResource RowStyle}">
+                <Image Style="{StaticResource RowIcon}"
+               Source="ic_settings_columns.png" />
+                <Label Grid.Column="1"
+               Text="Number of columns"
+               Style="{StaticResource RowTitle}" />
+                <!-- значение справа -->
+                <Label x:Name="ColumnsValueLabel"
+               Grid.Column="2"
+               FontSize="16"
+               TextColor="{StaticResource TextColor}"
+               VerticalTextAlignment="Center" />
+                <!-- весь ряд кликабелен -->
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnColumnsTapped"/>
+                </Grid.GestureRecognizers>
+            </Grid>
+
+            <!-- Show groups (нативный Switch справа) -->
+            <Grid Style="{StaticResource RowStyle}">
+                <Image Style="{StaticResource RowIcon}"
+               Source="ic_settings_groups.png" />
+                <Label Grid.Column="1"
+               Text="Show groups"
+               Style="{StaticResource RowTitle}" />
+                <Switch x:Name="ShowGroupsSwitch"
+                Grid.Column="2"
+                VerticalOptions="Center"
+                Toggled="OnShowGroupsToggled"/>
+            </Grid>
+
+        </StackLayout>
+    </Frame>
+</ContentPage>

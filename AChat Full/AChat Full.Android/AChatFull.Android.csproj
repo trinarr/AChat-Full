@@ -102,7 +102,13 @@
     <AndroidResource Include="..\AChat Full\Resources\Avatars\hax_192.png">
       <Link>Resources\drawable\hax_192.png</Link>
     </AndroidResource>
-	<AndroidResource Include="..\AChat Full\Resources\Avatars\annaf_192.png">
+	    <AndroidResource Include="..\AChat Full\Resources\Icons\contacts_list.png">
+      <Link>Resources\drawable\contacts_list.png</Link>
+    </AndroidResource>
+		    <AndroidResource Include="..\AChat Full\Resources\Icons\notifications.png">
+      <Link>Resources\drawable\notifications.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\AChat Full\Resources\Avatars\annaf_192.png">
       <Link>Resources\drawable\annaf_192.png</Link>
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Avatars\ellis_redding_192.png">
@@ -120,31 +126,31 @@
     <AndroidResource Include="..\AChat Full\Resources\Icons\header_call.png">
       <Link>Resources\drawable\header_call.png</Link>
     </AndroidResource>
-		<AndroidResource Include="..\AChat Full\Resources\Icons\header_call_black.png">
-    <Link>Resources\drawable\header_call_black.png</Link>
+    <AndroidResource Include="..\AChat Full\Resources\Icons\header_call_black.png">
+      <Link>Resources\drawable\header_call_black.png</Link>
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\header_video.png">
       <Link>Resources\drawable\header_video.png</Link>
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\header_video_black.png">
       <Link>Resources\drawable\header_video_black.png</Link>
-    </AndroidResource>    
-	<AndroidResource Include="..\AChat Full\Resources\Icons\birthday.png">
+    </AndroidResource>
+    <AndroidResource Include="..\AChat Full\Resources\Icons\birthday.png">
       <Link>Resources\drawable\birthday.png</Link>
     </AndroidResource>
-		<AndroidResource Include="..\AChat Full\Resources\Icons\view_column_1.png">
+    <AndroidResource Include="..\AChat Full\Resources\Icons\view_column_1.png">
       <Link>Resources\drawable\view_column_1.png</Link>
     </AndroidResource>
-		<AndroidResource Include="..\AChat Full\Resources\Icons\view_column_2.png">
+    <AndroidResource Include="..\AChat Full\Resources\Icons\view_column_2.png">
       <Link>Resources\drawable\view_column_2.png</Link>
     </AndroidResource>
-		<AndroidResource Include="..\AChat Full\Resources\Icons\info.png">
+    <AndroidResource Include="..\AChat Full\Resources\Icons\info.png">
       <Link>Resources\drawable\info.png</Link>
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\header_more.png">
       <Link>Resources\drawable\header_more.png</Link>
     </AndroidResource>
-	    <AndroidResource Include="..\AChat Full\Resources\Icons\header_more_black.png">
+    <AndroidResource Include="..\AChat Full\Resources\Icons\header_more_black.png">
       <Link>Resources\drawable\header_more_black.png</Link>
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\attach_file.png">
@@ -156,7 +162,7 @@
     <AndroidResource Include="..\AChat Full\Resources\Icons\arrow_back.png">
       <Link>Resources\drawable\arrow_back.png</Link>
     </AndroidResource>
-	<AndroidResource Include="..\AChat Full\Resources\Icons\arrow_back_black.png">
+    <AndroidResource Include="..\AChat Full\Resources\Icons\arrow_back_black.png">
       <Link>Resources\drawable\arrow_back_black.png</Link>
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\search.png">
@@ -168,28 +174,28 @@
     <AndroidResource Include="..\AChat Full\Resources\Icons\settings.png">
       <Link>Resources\drawable\settings.png</Link>
     </AndroidResource>
-	<AndroidResource Include="..\AChat Full\Resources\Icons\status.png">
+    <AndroidResource Include="..\AChat Full\Resources\Icons\status.png">
       <Link>Resources\drawable\status.png</Link>
     </AndroidResource>
-	<AndroidResource Include="..\AChat Full\Resources\Icons\account.png">
+    <AndroidResource Include="..\AChat Full\Resources\Icons\account.png">
       <Link>Resources\drawable\account.png</Link>
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\tab_contacts.png">
       <Link>Resources\drawable\tab_contacts.png</Link>
     </AndroidResource>
-	<AndroidResource Include="..\AChat Full\Resources\Statuses\icon_away.png">
+    <AndroidResource Include="..\AChat Full\Resources\Statuses\icon_away.png">
       <Link>Resources\drawable\icon_away.png</Link>
     </AndroidResource>
-	<AndroidResource Include="..\AChat Full\Resources\Statuses\icon_online.png">
+    <AndroidResource Include="..\AChat Full\Resources\Statuses\icon_online.png">
       <Link>Resources\drawable\icon_online.png</Link>
     </AndroidResource>
-	<AndroidResource Include="..\AChat Full\Resources\Statuses\icon_dnd.png">
+    <AndroidResource Include="..\AChat Full\Resources\Statuses\icon_dnd.png">
       <Link>Resources\drawable\icon_dnd.png</Link>
     </AndroidResource>
-	<AndroidResource Include="..\AChat Full\Resources\Statuses\icon_invisible.png">
+    <AndroidResource Include="..\AChat Full\Resources\Statuses\icon_invisible.png">
       <Link>Resources\drawable\icon_invisible.png</Link>
     </AndroidResource>
-	<AndroidResource Include="..\AChat Full\Resources\Statuses\icon_offline.png">
+    <AndroidResource Include="..\AChat Full\Resources\Statuses\icon_offline.png">
       <Link>Resources\drawable\icon_offline.png</Link>
     </AndroidResource>
   </ItemGroup>
