@@ -22,6 +22,7 @@
             <conv:PresenceToColorConverter x:Key="EqualsConverter" />
             <conv:PresenceToTextConverter x:Key="PresenceToTextConverter" Compact="True"/>
             <conv:PresenceToImageConverter x:Key="PresenceToImageConverter" />
+            <conv:ClientToImageConverter x:Key="ClientToImageConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

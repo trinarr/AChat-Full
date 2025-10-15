@@ -100,6 +100,35 @@
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
+  <AndroidResource Include="..\AChat Full\Resources\Clients\ICQ.png">
+  <Link>Resources\drawable\ICQ.png</Link>
+  </AndroidResource>
+		    <AndroidResource Include="..\AChat Full\Resources\Clients\ICQ2.png">
+      <Link>Resources\drawable\ICQ2.png</Link>
+    </AndroidResource>
+    		    <AndroidResource Include="..\AChat Full\Resources\Clients\AIM.png">
+      <Link>Resources\drawable\AIM.png</Link>
+    </AndroidResource>
+        		    <AndroidResource Include="..\AChat Full\Resources\Clients\QIP.png">
+      <Link>Resources\drawable\QIP.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\AChat Full\Resources\Clients\INFIUM.png">
+      <Link>Resources\drawable\INFIUM.png</Link>
+    </AndroidResource>
+        <AndroidResource Include="..\AChat Full\Resources\Clients\RQ.png">
+      <Link>Resources\drawable\RQ.png</Link>
+    </AndroidResource>
+            <AndroidResource Include="..\AChat Full\Resources\Clients\JIMM.png">
+      <Link>Resources\drawable\JIMM.png</Link>
+    </AndroidResource>
+                <AndroidResource Include="..\AChat Full\Resources\Clients\MIRC.png">
+      <Link>Resources\drawable\MIRC.png</Link>
+    </AndroidResource>
+                    <AndroidResource Include="..\AChat Full\Resources\Clients\MIRANDA.png">
+      <Link>Resources\drawable\MIRANDA.png</Link>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
     <AndroidResource Include="..\AChat Full\Resources\Avatars\hax_192.png">
       <Link>Resources\drawable\hax_192.png</Link>
     </AndroidResource>

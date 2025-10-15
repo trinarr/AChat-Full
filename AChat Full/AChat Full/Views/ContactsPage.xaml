@@ -125,6 +125,14 @@
                             </StackLayout>
 
                             <!-- Кнопки действий справа (если были) остаются без изменений -->
+                            <Image Grid.Column="2"
+       WidthRequest="20"
+       HeightRequest="20"
+       VerticalOptions="Center"
+       HorizontalOptions="End"
+       Source="{Binding ClientType, Converter={StaticResource ClientToImageConverter}}" />
+                            
+                            
                             <StackLayout Grid.Column="2"
                                      Orientation="Horizontal"
                                      HorizontalOptions="End"

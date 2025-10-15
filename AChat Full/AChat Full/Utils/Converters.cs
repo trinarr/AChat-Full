@@ -20,6 +20,45 @@ namespace AChatFull.Utils
         }
     }
 
+    public class ClientToImageConverter : IValueConverter
+    {
+        public string ICQImage { get; set; } = "ICQ.png";
+        public string ICQ2Image { get; set; } = "ICQ2.png";
+        public string AIMImage { get; set; } = "AIM.png";
+        public string QIPImage { get; set; } = "QIP.png";
+        public string RQImage { get; set; } = "RQ.png";
+        public string MIRCImage { get; set; } = "MIRC.png";
+        public string MIRANDAImage { get; set; } = "MIRANDA.png";
+        public string JIMMImage { get; set; } = "JIMM.png";
+        public string INFIUMImage { get; set; } = "INFIUM.png";
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is ClientType p)
+            {
+                switch (p)
+                {
+                    case ClientType.ICQ2: return ICQ2Image;
+                    case ClientType.ICQ: return ICQImage;
+                    case ClientType.AIM: return AIMImage;
+                    case ClientType.QIP: return QIPImage;
+                    case ClientType.RQ: return RQImage;
+                    case ClientType.MIRC: return MIRCImage;
+                    case ClientType.MIRANDA: return MIRANDAImage;
+                    case ClientType.JIMM: return JIMMImage;
+                    case ClientType.INFIUM: return INFIUMImage;
+                }
+            }
+            if (value is string s && Enum.TryParse<Presence>(s, true, out var pres))
+                return Convert(pres, targetType, parameter, culture);
+
+            return ICQImage;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotSupportedException();
+    }
+
     public class PresenceToImageConverter : IValueConverter
     {
         // Имена файлов (лежать в Resources/Icons/*). Можно переопределить в XAML.

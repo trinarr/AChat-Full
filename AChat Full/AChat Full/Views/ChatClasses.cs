@@ -19,6 +19,18 @@ namespace AChatFull.Views
         Invisible,
         DoNotDisturb
     }
+    public enum ClientType
+    {
+        ICQ,
+        ICQ2,
+        QIP,
+        INFIUM,
+        AIM,
+        JIMM,
+        MIRANDA,
+        MIRC,
+        RQ
+    }
 
     public class CustomStatusModel
     {
@@ -81,6 +93,9 @@ namespace AChatFull.Views
 
         [Column("StatusDefault")]
         public Presence Presence { get; set; } = Presence.Offline;
+
+        [Column("ClientType")]
+        public ClientType ClientType { get; set; } = ClientType.ICQ;
 
         [Ignore]
         public DateTime BirthDateDate
