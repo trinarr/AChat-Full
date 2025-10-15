@@ -105,6 +105,9 @@
 	    <AndroidResource Include="..\AChat Full\Resources\Icons\contacts_list.png">
       <Link>Resources\drawable\contacts_list.png</Link>
     </AndroidResource>
+		    <AndroidResource Include="..\AChat Full\Resources\Icons\groups.png">
+      <Link>Resources\drawable\groups.png</Link>
+    </AndroidResource>
 		    <AndroidResource Include="..\AChat Full\Resources\Icons\notifications.png">
       <Link>Resources\drawable\notifications.png</Link>
     </AndroidResource>
