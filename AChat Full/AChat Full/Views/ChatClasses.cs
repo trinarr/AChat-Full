@@ -33,10 +33,8 @@ namespace AChatFull.Views
 
         public DocumentInfo Document { get; set; }    // если Kind=Document
 
-        /// <summary>Флаг: входящее (true) или исходящее (false).</summary>
         public bool IsIncoming { get; set; }
 
-        /// <summary>Метка времени (необязательно).</summary>
         public DateTime Timestamp { get; set; }
     }
     public class ChatSummary

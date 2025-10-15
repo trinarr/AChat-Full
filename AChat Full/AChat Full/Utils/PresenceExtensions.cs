@@ -1,4 +1,4 @@
-﻿using AChatFull.Views; 
+﻿using AChatFull.Views;
 
 namespace AChatFull.Utils
 {

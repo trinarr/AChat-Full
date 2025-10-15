@@ -120,7 +120,8 @@
                                 <Label Text="{Binding StatusCustom}"
        FontSize="{DynamicResource Size.StatusFont}"
        TextColor="#666"
-       IsVisible="{Binding HasStatus}" />
+       IsVisible="{Binding HasStatus}" >
+                                </Label>
                             </StackLayout>
 
                             <!-- Кнопки действий справа (если были) остаются без изменений -->
