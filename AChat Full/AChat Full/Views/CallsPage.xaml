@@ -26,8 +26,7 @@
     </NavigationPage.TitleView>
 
     <Grid RowDefinitions="Auto,*">
-        <!-- Заголовок «Недавние» -->
-        <Label Text="Недавние"
+        <Label Text="Recents"
                Margin="16,16,16,8"
                FontSize="20"
                FontAttributes="Bold"

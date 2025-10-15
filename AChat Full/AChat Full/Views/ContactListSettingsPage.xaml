@@ -184,7 +184,7 @@
             </Frame>
 
             <!-- ===== СЕКЦИЯ 2: Group Headers ===== -->
-            <Label Text="Group Headers"
+            <Label Text="User Group Headers"
              Margin="16,16,16,0"
              FontSize="12"
              FontAttributes="Bold"
@@ -197,7 +197,7 @@
              BackgroundColor="{DynamicResource Color.Surface}">
                 <Grid Style="{StaticResource RowStyle}">
                     <Label Grid.Column="1"
-                 Text="Show groups"
+                 Text="Show user groups"
                  Style="{StaticResource RowTitle}" />
                     <Switch x:Name="ShowGroupsSwitch"
                   Grid.Column="2"

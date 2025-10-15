@@ -15693,12 +15693,6 @@ namespace AChatFull.Droid
 			// aapt resource value: 0x7F0800B0
 			public const int tooltip_frame_light = 2131230896;
 			
-			// aapt resource value: 0x7F0800B1
-			public const int view_column_1 = 2131230897;
-			
-			// aapt resource value: 0x7F0800B2
-			public const int view_column_2 = 2131230898;
-			
 			static Drawable()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();

@@ -1,12 +1,13 @@
 ﻿using Xamarin.Forms;
 using Xamarin.Essentials;
+using AChatFull.Services;
 
 namespace AChatFull.Views
 {
     public partial class ContactListSettingsPage : ContentPage
     {
-        const string ColumnsKey = "contacts.columns";     // int: 1 или 2
-        const string ShowGroupsKey = "contacts.showgroups";  // bool
+        public const string ColumnsKey = "contacts.columns";    // int: 1 или 2
+        public const string ShowGroupsKey = "contacts.showgroups"; // bool
 
         int _selectedColumns;
         public int SelectedColumns
@@ -16,10 +17,15 @@ namespace AChatFull.Views
             {
                 if (_selectedColumns == value) return;
                 _selectedColumns = value;
-                OnPropertyChanged(nameof(SelectedColumns));   // обновляет радио-индикаторы
-                Preferences.Set(ColumnsKey, _selectedColumns);
-                // при желании — уведомить ContactsPage:
-                // MessagingCenter.Send(this, "Contacts.ColumnsChanged", _selectedColumns);
+                OnPropertyChanged(nameof(SelectedColumns));
+
+                // ⬇⬇ сохраняем в SharedPreferences (Android), fallback — Essentials
+                var svc = DependencyService.Get<ISettingsService>();
+                if (svc != null) svc.SetInt(ColumnsKey, _selectedColumns);
+                Preferences.Set(ColumnsKey, _selectedColumns); // запасной вариант
+
+                // оповестим ContactsPage (живое обновление)
+                MessagingCenter.Send(this, "Contacts.ColumnsChanged", _selectedColumns);
             }
         }
 
@@ -27,9 +33,13 @@ namespace AChatFull.Views
         {
             InitializeComponent();
 
-            // init
-            SelectedColumns = Preferences.Get(ColumnsKey, 1);
-            ShowGroupsSwitch.IsToggled = Preferences.Get(ShowGroupsKey, true);
+            // init: читаем из SharedPreferences, если доступен; иначе из Essentials
+            var svc = DependencyService.Get<ISettingsService>();
+            var initCols = svc?.GetInt(ColumnsKey, 1) ?? Preferences.Get(ColumnsKey, 1);
+            SelectedColumns = initCols;
+
+            var showGroups = svc?.GetBool(ShowGroupsKey, true) ?? Preferences.Get(ShowGroupsKey, true);
+            ShowGroupsSwitch.IsToggled = showGroups;
         }
 
         async void OnBackClicked(object sender, System.EventArgs e)
@@ -40,18 +50,20 @@ namespace AChatFull.Views
                 await Navigation.PopAsync();
         }
 
-        // Тапы по строкам с радиокнопками
         void OnOneColumnTapped(object sender, System.EventArgs e) => SelectedColumns = 1;
         void OnTwoColumnsTapped(object sender, System.EventArgs e) => SelectedColumns = 2;
 
-        // Show groups
         void OnShowGroupsTapped(object sender, System.EventArgs e)
             => ShowGroupsSwitch.IsToggled = !ShowGroupsSwitch.IsToggled;
 
         void OnShowGroupsToggled(object sender, ToggledEventArgs e)
         {
+            var svc = DependencyService.Get<ISettingsService>();
+            if (svc != null) svc.SetBool(ShowGroupsKey, e.Value);
             Preferences.Set(ShowGroupsKey, e.Value);
-            // MessagingCenter.Send(this, "Contacts.ShowGroupsChanged", e.Value);
+
+            // ⬇️ уведомляем ContactsPage
+            MessagingCenter.Send(this, "Contacts.ShowGroupsChanged", e.Value);
         }
     }
 }
