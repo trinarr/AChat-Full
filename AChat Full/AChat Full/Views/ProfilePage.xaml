@@ -18,8 +18,8 @@
             </Setter>
         </Style>
         <Style x:Key="RowIcon" TargetType="Image">
-            <Setter Property="HeightRequest" Value="22"/>
-            <Setter Property="WidthRequest" Value="22"/>
+            <Setter Property="HeightRequest" Value="25"/>
+            <Setter Property="WidthRequest" Value="25"/>
             <Setter Property="Margin" Value="0,0,12,0"/>
         </Style>
         <Style x:Key="RowTitle" TargetType="Label">
@@ -116,8 +116,6 @@
                     <Label Text="{Binding PresenceDisplay}" TextColor="#6F7683" FontSize="14"/>
                 </StackLayout>
             </Grid>
-
-            <!-- Custom status under avatar -->
             <Frame
     IsVisible="{Binding HasCustomStatus}"
     Margin="0,6,0,12"
@@ -126,7 +124,6 @@
     BackgroundColor="#F3F4F6"
     CornerRadius="12">
 
-                <!-- 👇 тап по чипу открывает редактор -->
                 <Frame.GestureRecognizers>
                     <TapGestureRecognizer Tapped="OnCustomStatusTapped"/>
                 </Frame.GestureRecognizers>
@@ -138,7 +135,6 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Эмодзи (если нет – просто пусто, остаётся отступ) -->
                     <Label Text="{Binding CustomStatusEmoji}"
                FontSize="18"
                VerticalTextAlignment="Center"
@@ -209,7 +205,7 @@
                     <!-- Preferences / Settings -->
                     <Grid Style="{StaticResource RowStyle}">
                         <Image Style="{StaticResource RowIcon}" Source="settings.png"/>
-                        <Label Grid.Column="1" Style="{StaticResource RowTitle}" Text="Preferences"/>
+                        <Label Grid.Column="1" Style="{StaticResource RowTitle}" Text="Advanced"/>
                         <Image Grid.Column="2" Source="ic_chevron_right.png" HeightRequest="20" WidthRequest="20" />
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding OpenSettingsCommand}" />

@@ -2,6 +2,7 @@
 using AChatFull.Views;
 using Xamarin.Essentials;
 using System;
+using AChatFull.Services;
 using System.Threading.Tasks;
 
 namespace AChatFull
@@ -30,6 +31,10 @@ namespace AChatFull
             var bio = (await SecureStorage.GetAsync("bio_enabled")) == "1";
 
             _lockShown = true;
+
+            var svc = DependencyService.Get<ISettingsService>();
+            if (svc != null) svc.SetBool("contacts.showgroups", true);
+            Preferences.Set("contacts.showgroups", true);
 
             if (string.IsNullOrEmpty(pin))
                 MainPage = new NavigationPage(new PinPage(isFirstRun: true, biometricsEnabled: false, OnPinSuccess));

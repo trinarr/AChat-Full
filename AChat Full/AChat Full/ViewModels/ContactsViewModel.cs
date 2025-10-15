@@ -102,7 +102,6 @@ namespace AChatFull.ViewModels
                 {
                     _searchText = value;
                     OnPropertyChanged();
-                    // дебаунс по набору
                     _ = DebouncedSearchAsync(_searchText);
                 }
             }
@@ -128,7 +127,16 @@ namespace AChatFull.ViewModels
                     .OrderBy(u => u.DisplayName, StringComparer.CurrentCultureIgnoreCase)
                     .ToList();
 
-                Contacts.Clear();
+                // Костыль, чтобы не показывать статусы у Оффлайн
+                foreach (User c in sorted)
+                {
+                    if (c.Presence == Presence.Offline || c.Presence == Presence.Invisible)
+                    {
+                        c.StatusCustom = null;
+                    }
+                }
+
+                    Contacts.Clear();
                 foreach (var c in sorted)
                     Contacts.Add(c);
 
@@ -167,6 +175,15 @@ namespace AChatFull.ViewModels
                 }
 
                 var all = await _repo.SearchUsersAsync(text, limit: 200);
+
+                // Костыль, чтобы не показывать статусы у Оффлайн
+                foreach (User c in all)
+                {
+                    if (c.Presence == Presence.Offline || c.Presence == Presence.Invisible)
+                    {
+                        c.StatusCustom = null;
+                    }
+                }
 
                 if (!string.IsNullOrWhiteSpace(App.USER_TOKEN_TEST))
                     all = all.Where(u => !string.Equals(u.UserId, App.USER_TOKEN_TEST, StringComparison.OrdinalIgnoreCase))

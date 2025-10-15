@@ -282,14 +282,7 @@ namespace AChatFull.ViewModels
 
         async Task OpenSettingsAsync()
         {
-            try
-            {
-                //await _nav.PushAsync(new SettingsPage()); // подставь свой
-            }
-            catch
-            {
-                await Application.Current.MainPage.DisplayAlert("Info", "Settings page is not wired yet.", "OK");
-            }
+            await _nav.PushModalAsync(new NavigationPage(new SettingsPage()));
         }
 
         // helpers

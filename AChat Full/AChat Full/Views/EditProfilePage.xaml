@@ -28,7 +28,7 @@
            FontAttributes="Bold"
            FontSize="18"
            VerticalTextAlignment="Center"
-           HorizontalTextAlignment="Start"
+           HorizontalTextAlignment="Center"
            TextColor="#fff"/>
         </Grid>
     </NavigationPage.TitleView>

@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AChatFull.Views.SettingsPage"
+             Title="Advanced">
+
+    <!-- Хедер как в EditProfilePage -->
+    <NavigationPage.TitleView>
+        <ContentView Padding="0">
+            <Grid Padding="8" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">
+                <!-- back -->
+                <ImageButton Grid.Column="0"
+                     Source="arrow_back.png"
+                     BackgroundColor="Transparent"
+                     HeightRequest="24" WidthRequest="24"
+                     Margin="0,0,8,0"
+                     Clicked="OnBackClicked" />
+
+                <!-- centered title -->
+                <Label Grid.Column="1"
+               Text="Advanced"
+               FontAttributes="Bold"
+               FontSize="18"
+               HorizontalTextAlignment="Center"
+               VerticalTextAlignment="Center"
+               TextColor="#fff" />
+
+                <!-- пустой правый сайд для идеального центрирования -->
+                <BoxView Grid.Column="2" WidthRequest="24" HeightRequest="1" Opacity="0"/>
+            </Grid>
+        </ContentView>
+    </NavigationPage.TitleView>
+
+    <!-- стили строк 1-в-1 как в ProfilePage -->
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="RowStyle" TargetType="Grid">
+                <Setter Property="Padding" Value="16,12"/>
+                <Setter Property="ColumnDefinitions">
+                    <Setter.Value>
+                        <ColumnDefinitionCollection>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </ColumnDefinitionCollection>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="RowIcon" TargetType="Image">
+                <Setter Property="HeightRequest" Value="25"/>
+                <Setter Property="WidthRequest" Value="25"/>
+                <Setter Property="Margin" Value="0,0,12,0"/>
+            </Style>
+            <Style x:Key="RowTitle" TargetType="Label">
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="TextColor" Value="{StaticResource TextColor}"/>
+            </Style>
+            <Style x:Key="RowDivider" TargetType="BoxView">
+                <Setter Property="Color" Value="#1A000000"/>
+                <Setter Property="HeightRequest" Value="1"/>
+                <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <!-- Контент -->
+    <Grid RowDefinitions="Auto,*,Auto"
+        BackgroundColor="{DynamicResource Color.Background}">
+
+        <!-- Карточка с пунктами -->
+        <Frame Grid.Row="0"
+           Margin="16,16,16,8"
+           Padding="0"
+           CornerRadius="16"
+           HasShadow="False"
+           BackgroundColor="{DynamicResource Color.Surface}">
+            <StackLayout Spacing="0">
+
+                <!-- Notifications -->
+                <Grid Style="{StaticResource RowStyle}">
+                    <Image Style="{StaticResource RowIcon}"
+                 Source="notifications.png" />
+                    <Label Grid.Column="1"
+                 Text="Notifications"
+                 Style="{StaticResource RowTitle}" />
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnNotificationsTapped"/>
+                    </Grid.GestureRecognizers>
+                </Grid>
+
+                <!-- Contact List -->
+                <Grid Style="{StaticResource RowStyle}">
+                    <Image Style="{StaticResource RowIcon}"
+                 Source="contacts_list.png" />
+                    <Label Grid.Column="1"
+                 Text="Contact List"
+                 Style="{StaticResource RowTitle}" />
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnContactListTapped"/>
+                    </Grid.GestureRecognizers>
+                </Grid>
+
+            </StackLayout>
+        </Frame>
+
+        <!-- Блок версии: без фона, по центру -->
+        <StackLayout Grid.Row="2" Margin="16,8,16,16" Spacing="4"
+                 HorizontalOptions="Center" VerticalOptions="Center">
+            <Label x:Name="VersionLabel"
+             FontAttributes="Bold"
+             HorizontalTextAlignment="Center"
+             TextColor="{DynamicResource Color.TextPrimary}" />
+        </StackLayout>
+
+    </Grid>
+</ContentPage>
