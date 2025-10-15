@@ -111,6 +111,7 @@ namespace AChatFull.Views
 
         public string DisplayStatus => StatusCustom;
         public bool HasStatus => !string.IsNullOrWhiteSpace(StatusCustom);
+        public bool IsOnline => Presence != Presence.Offline && Presence != Presence.Invisible;
 
         public bool HasAvatar => !string.IsNullOrWhiteSpace(AvatarUrl);
         public bool NoAvatar => string.IsNullOrWhiteSpace(AvatarUrl);

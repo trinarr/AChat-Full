@@ -129,6 +129,7 @@
        WidthRequest="20"
        HeightRequest="20"
        VerticalOptions="Center"
+       IsVisible="{Binding IsOnline}"
        HorizontalOptions="End"
        Source="{Binding ClientType, Converter={StaticResource ClientToImageConverter}}" />
                             

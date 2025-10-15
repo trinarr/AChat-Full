@@ -200,7 +200,6 @@ namespace AChatFull.Utils
         public object ConvertBack(object v, Type t, object p, CultureInfo c) => throw new NotSupportedException();
     }
 
-    // BoolToTextConverter: ConverterParameter="Открыть|Скачать"
     public class BoolToTextConverter : IValueConverter
     {
         public object Convert(object value, Type t, object parameter, CultureInfo c)
