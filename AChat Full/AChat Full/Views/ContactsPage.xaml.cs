@@ -121,14 +121,14 @@ namespace AChatFull.Views
 
             // 1) Прочитать настройку колонок (SharedPreferences, fallback — Essentials)
             var svc = DependencyService.Get<ISettingsService>();
-            var cols = svc?.GetInt(ContactListSettingsPage.ColumnsKey, 1)
-                       ?? Preferences.Get(ContactListSettingsPage.ColumnsKey, 1);
+            var cols = svc?.GetInt(AppearanceSettingsPage.ColumnsKey, 1)
+                       ?? Preferences.Get(AppearanceSettingsPage.ColumnsKey, 1);
 
             _isGrid = cols >= 2;
 
             // 2) Применяем ShowGroups
-            var showGroups = svc?.GetBool(ContactListSettingsPage.ShowGroupsKey, true)
-                           ?? Preferences.Get(ContactListSettingsPage.ShowGroupsKey, true);
+            var showGroups = svc?.GetBool(AppearanceSettingsPage.ShowGroupsKey, true)
+                           ?? Preferences.Get(AppearanceSettingsPage.ShowGroupsKey, true);
 
             VM.IsSearchMode = false;   // обычный режим при входе
             await VM.LoadContactsAsync(); // полный список контактов
@@ -137,14 +137,14 @@ namespace AChatFull.Views
             ShowGroups = showGroups; // триггер в XAML сам спрячет/покажет хедеры
 
             // 3) Live-обновления из экрана настроек
-            MessagingCenter.Subscribe<ContactListSettingsPage, int>(this, "Contacts.ColumnsChanged",
+            MessagingCenter.Subscribe<AppearanceSettingsPage, int>(this, "Contacts.ColumnsChanged",
                 (sender, newCols) =>
                 {
                     _isGrid = newCols >= 2;
                     ApplyLayoutMode();
                 });
 
-            MessagingCenter.Subscribe<ContactListSettingsPage, bool>(this, "Contacts.ShowGroupsChanged",
+            MessagingCenter.Subscribe<AppearanceSettingsPage, bool>(this, "Contacts.ShowGroupsChanged",
                 (sender, value) =>
                 {
                     ShowGroups = value; // хедеры мгновенно скрываются/появляются
@@ -155,8 +155,8 @@ namespace AChatFull.Views
         {
             base.OnDisappearing();
 
-            MessagingCenter.Unsubscribe<ContactListSettingsPage, int>(this, "Contacts.ColumnsChanged");
-            MessagingCenter.Unsubscribe<ContactListSettingsPage, bool>(this, "Contacts.ShowGroupsChanged");
+            MessagingCenter.Unsubscribe<AppearanceSettingsPage, int>(this, "Contacts.ColumnsChanged");
+            MessagingCenter.Unsubscribe<AppearanceSettingsPage, bool>(this, "Contacts.ShowGroupsChanged");
         }
 
         private void OnSearchBackClicked(object sender, EventArgs e)

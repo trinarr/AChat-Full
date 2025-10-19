@@ -30,7 +30,7 @@ namespace AChatFull.Views
         {
             // TODO: переход к экрану настроек списка контактов
 
-            await Navigation.PushModalAsync(new NavigationPage(new ContactListSettingsPage()));
+            await Navigation.PushModalAsync(new NavigationPage(new AppearanceSettingsPage()));
         }
     }
 }

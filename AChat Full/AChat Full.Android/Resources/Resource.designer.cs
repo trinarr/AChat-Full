@@ -15448,55 +15448,55 @@ namespace AChatFull.Droid
 			public const int annaf_192 = 2131230814;
 			
 			// aapt resource value: 0x7F08005F
-			public const int arrow_back = 2131230815;
+			public const int appearance = 2131230815;
 			
 			// aapt resource value: 0x7F080060
-			public const int arrow_back_black = 2131230816;
+			public const int arrow_back = 2131230816;
 			
 			// aapt resource value: 0x7F080061
-			public const int attach_file = 2131230817;
+			public const int arrow_back_black = 2131230817;
 			
 			// aapt resource value: 0x7F080062
-			public const int avd_hide_password = 2131230818;
+			public const int attach_file = 2131230818;
 			
 			// aapt resource value: 0x7F080063
-			public const int avd_show_password = 2131230819;
+			public const int avd_hide_password = 2131230819;
 			
 			// aapt resource value: 0x7F080064
-			public const int backspace = 2131230820;
+			public const int avd_show_password = 2131230820;
 			
 			// aapt resource value: 0x7F080065
-			public const int birthday = 2131230821;
+			public const int backspace = 2131230821;
 			
 			// aapt resource value: 0x7F080066
-			public const int boris_the_blade_192 = 2131230822;
+			public const int birthday = 2131230822;
 			
 			// aapt resource value: 0x7F080067
-			public const int btn_checkbox_checked_mtrl = 2131230823;
+			public const int boris_the_blade_192 = 2131230823;
 			
 			// aapt resource value: 0x7F080068
-			public const int btn_checkbox_checked_to_unchecked_mtrl_animation = 2131230824;
+			public const int btn_checkbox_checked_mtrl = 2131230824;
 			
 			// aapt resource value: 0x7F080069
-			public const int btn_checkbox_unchecked_mtrl = 2131230825;
+			public const int btn_checkbox_checked_to_unchecked_mtrl_animation = 2131230825;
 			
 			// aapt resource value: 0x7F08006A
-			public const int btn_checkbox_unchecked_to_checked_mtrl_animation = 2131230826;
+			public const int btn_checkbox_unchecked_mtrl = 2131230826;
 			
 			// aapt resource value: 0x7F08006B
-			public const int btn_radio_off_mtrl = 2131230827;
+			public const int btn_checkbox_unchecked_to_checked_mtrl_animation = 2131230827;
 			
 			// aapt resource value: 0x7F08006C
-			public const int btn_radio_off_to_on_mtrl_animation = 2131230828;
+			public const int btn_radio_off_mtrl = 2131230828;
 			
 			// aapt resource value: 0x7F08006D
-			public const int btn_radio_on_mtrl = 2131230829;
+			public const int btn_radio_off_to_on_mtrl_animation = 2131230829;
 			
 			// aapt resource value: 0x7F08006E
-			public const int btn_radio_on_to_off_mtrl_animation = 2131230830;
+			public const int btn_radio_on_mtrl = 2131230830;
 			
 			// aapt resource value: 0x7F08006F
-			public const int contacts_list = 2131230831;
+			public const int btn_radio_on_to_off_mtrl_animation = 2131230831;
 			
 			// aapt resource value: 0x7F080070
 			public const int design_bottom_navigation_item_background = 2131230832;
@@ -17199,10 +17199,16 @@ namespace AChatFull.Droid
 			public const int icon = 2131558400;
 			
 			// aapt resource value: 0x7F0D0001
-			public const int icon_round = 2131558401;
+			public const int icon2 = 2131558401;
 			
 			// aapt resource value: 0x7F0D0002
-			public const int launcher_foreground = 2131558402;
+			public const int icon_round = 2131558402;
+			
+			// aapt resource value: 0x7F0D0003
+			public const int launcher_foreground = 2131558403;
+			
+			// aapt resource value: 0x7F0D0004
+			public const int launcher_foreground2 = 2131558404;
 			
 			static Mipmap()
 			{

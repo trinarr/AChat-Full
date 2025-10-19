@@ -34,8 +34,6 @@ namespace AChatFull.ViewModels
                 }
             }
         }
-
-        // Прокси под биндинг
         public string PeerDisplayName => Peer?.DisplayName;
         public string PeerAvatarUrl => Peer?.AvatarUrl;
         public bool PeerHasAvatar => Peer?.HasAvatar ?? false;

@@ -91,9 +91,9 @@
                 <!-- Contact List -->
                 <Grid Style="{StaticResource RowStyle}">
                     <Image Style="{StaticResource RowIcon}"
-                 Source="contacts_list.png" />
+                 Source="appearance.png" />
                     <Label Grid.Column="1"
-                 Text="Contact List"
+                 Text="Appearance"
                  Style="{StaticResource RowTitle}" />
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnContactListTapped"/>
