@@ -27,12 +27,12 @@
 
                 <!-- Заголовок -->
                 <Label Grid.Column="1"
-                   Text="Set a status"
+                   Text="Update Your Status"
                    FontSize="18"
                        FontAttributes="Bold"
                        TextColor="#fff"
                    VerticalOptions="Center"
-                   HorizontalOptions="Start" />
+                   HorizontalOptions="Center" />
         </Grid>
     </NavigationPage.TitleView>
 

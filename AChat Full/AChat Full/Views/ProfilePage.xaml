@@ -24,6 +24,7 @@
         </Style>
         <Style x:Key="RowTitle" TargetType="Label">
             <Setter Property="FontSize" Value="16"/>
+            <Setter Property="VerticalOptions" Value="Center"/>
             <Setter Property="TextColor" Value="{StaticResource TextColor}"/>
         </Style>
         <Style x:Key="RowDivider" TargetType="BoxView">
@@ -116,83 +117,55 @@
                     <Label Text="{Binding PresenceDisplay}" TextColor="#6F7683" FontSize="14"/>
                 </StackLayout>
             </Grid>
-            <Frame
-    IsVisible="{Binding HasCustomStatus}"
-    Margin="0,6,0,12"
-    Padding="10"
-    HasShadow="False"
-    BackgroundColor="#F3F4F6"
-    CornerRadius="12">
-
-                <Frame.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnCustomStatusTapped"/>
-                </Frame.GestureRecognizers>
-
-                <Grid ColumnSpacing="8">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Label Text="{Binding CustomStatusEmoji}"
-               FontSize="18"
-               VerticalTextAlignment="Center"
-                           Opacity="1"
-       TextColor="{AppThemeBinding Light=#FF000000, Dark=#FFFFFFFF}"/>
-
-                    <!-- Текст -->
-                    <Label Grid.Column="1"
-               Text="{Binding CustomStatusText}"
-               VerticalTextAlignment="Center"
-               TextColor="#111827"
-               LineBreakMode="TailTruncation"/>
-
-                    <!-- Маленькая кнопка очистки (как у Slack крестик) -->
-                    <!-- Новая иконка "×" -->
-                    <Frame Grid.Column="2"
-       WidthRequest="28" HeightRequest="28"
-       Padding="0"
-       BackgroundColor="#FFFFFF"
-       BorderColor="#D1D5DB"
-       CornerRadius="14"
-       HasShadow="False"
-       IsVisible="{Binding HasCustomStatus}">
-                        <Frame.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding ClearCustomStatusCommand}" />
-                        </Frame.GestureRecognizers>
-
-                        <!-- сам крестик -->
-                        <Label Text="✕"
-           FontSize="14"
-           HorizontalTextAlignment="Center"
-           VerticalTextAlignment="Center"
-           AutomationProperties.IsInAccessibleTree="True"
-           AutomationProperties.Name="Clear status"/>
-                    </Frame>
-                </Grid>
-            </Frame>
 
             <!-- БЛОК: быстрые действия -->
             <Frame HasShadow="False" CornerRadius="16" BackgroundColor="White" Padding="0">
                 <StackLayout Spacing="0">
-
-                    <!-- Update your status (открывает лист выбора статуса / расширенный статус) -->
                     <Grid Style="{StaticResource RowStyle}">
-                        <Image Style="{StaticResource RowIcon}" Source="status.png"/>
-                        <Label Grid.Column="1" Style="{StaticResource RowTitle}" Text="Update your status"/>
-                        <Image Grid.Column="2" Source="ic_chevron_right.png" HeightRequest="20" WidthRequest="20" />
+                        <Image Grid.Column="0" Style="{StaticResource RowIcon}" Source="status.png" 
+                               IsVisible="{Binding HasCustomStatus, Converter={StaticResource InverseBoolConverter}}"/>
+                        <Label Grid.Column="0" Style="{StaticResource RowTitle}" 
+                               FontSize="25"
+                               Padding="0,0,5,0"
+                               Text="{Binding CustomStatusEmoji}"/>
+                        <Label Grid.Column="1" Style="{StaticResource RowTitle}" 
+                               LineBreakMode="TailTruncation"
+                               Text="{Binding CustomStatusText}"/>
+                        <Label Grid.Column="1" Style="{StaticResource RowTitle}" 
+                               Text="Update your status" 
+                               IsVisible="{Binding HasCustomStatus, Converter={StaticResource InverseBoolConverter}}"/>
+                        <Frame Grid.Column="2"
+                           WidthRequest="25" HeightRequest="25"
+                           Padding="0"
+                           BackgroundColor="#FFFFFF"
+                           CornerRadius="14"
+                           HasShadow="False"
+                           IsVisible="{Binding HasCustomStatus}">   
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ClearCustomStatusCommand}" />
+                            </Frame.GestureRecognizers>
+
+                            <Label Text="✕"
+                               FontSize="14"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               AutomationProperties.IsInAccessibleTree="True"
+                               AutomationProperties.Name="Clear status"/>
+                        </Frame>
+
                         <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding ChangeStatusCommand}" />
+                            <TapGestureRecognizer Tapped="OnCustomStatusTapped"/>
                         </Grid.GestureRecognizers>
                     </Grid>
 
+                    <!-- Update your status (открывает лист выбора статуса / расширенный статус) -->
                     <Grid Style="{StaticResource RowStyle}">
-                        <Image Style="{StaticResource RowIcon}" Source="account.png"/>
-                        <Label Grid.Column="1" Style="{StaticResource RowTitle}" Text="Edit profile"/>
-                        <Image Grid.Column="2" Source="ic_chevron_right.png" HeightRequest="20" WidthRequest="20" />
+                        <Image Grid.Column="0" WidthRequest="25" HeightRequest="25"
+                           Style="{StaticResource RowIcon}"
+                           Source="{Binding Presence, Converter={StaticResource PresenceToImageConverter}}" />
+                        <Label Grid.Column="1" Style="{StaticResource RowTitle}" Text="{Binding PresenceDisplay}"/>
                         <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding EditProfileCommand}" />
+                            <TapGestureRecognizer Command="{Binding ChangeStatusCommand}" />
                         </Grid.GestureRecognizers>
                     </Grid>
                 </StackLayout>
@@ -201,12 +174,17 @@
             <!-- БЛОК: переходы -->
             <Frame HasShadow="False" CornerRadius="16" BackgroundColor="White" Padding="0">
                 <StackLayout Spacing="0">
-
-                    <!-- Preferences / Settings -->
+                    <Grid Style="{StaticResource RowStyle}">
+                        <Image Grid.Column="0" 
+                               Style="{StaticResource RowIcon}" Source="account.png"/>
+                        <Label Grid.Column="1" Style="{StaticResource RowTitle}" Text="Edit profile"/>
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding EditProfileCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
                     <Grid Style="{StaticResource RowStyle}">
                         <Image Style="{StaticResource RowIcon}" Source="settings.png"/>
                         <Label Grid.Column="1" Style="{StaticResource RowTitle}" Text="Advanced"/>
-                        <Image Grid.Column="2" Source="ic_chevron_right.png" HeightRequest="20" WidthRequest="20" />
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding OpenSettingsCommand}" />
                         </Grid.GestureRecognizers>
