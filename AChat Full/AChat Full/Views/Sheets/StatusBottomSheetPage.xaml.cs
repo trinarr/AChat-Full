@@ -36,25 +36,8 @@ namespace AChatFull.Views.Sheets
             pan.PanUpdated += OnPanUpdated;
             //SheetPanel.GestureRecognizers.Add(pan);
             DragArea.GestureRecognizers.Add(pan);
-
-            MessagingCenter.Subscribe<object>(this, "ProfileChanged", async _ => await LoadCurrentPresenceAsync());
         }
 
-        async void OnCustomStatusClicked(object sender, EventArgs e)
-        {
-            // сначала плавно закрываем шит
-            await CloseAsync();
-
-            // затем открываем страницу кастомного статуса в основной навигации
-            Device.BeginInvokeOnMainThread(async () =>
-            {
-                try
-                {
-                    await (_mainNav ?? Application.Current.MainPage?.Navigation).PushModalAsync(new NavigationPage(new CustomStatusPage(_repo)));
-                }
-                catch { /* ignore */ }
-            });
-        }
 
         string _selectedPresence; // "Online" | "Away" | "Busy" | "Offline"
         public string SelectedPresence
@@ -73,44 +56,7 @@ namespace AChatFull.Views.Sheets
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            await LoadCurrentPresenceAsync();
             await AnimateInAsync();
-        }
-
-        async Task LoadCurrentPresenceAsync()
-        {
-            try
-            {
-                var user = await _repo.GetCurrentUserProfileAsync();
-                _initializing = true;
-                SelectedPresence = MapPresence(user?.Presence.ToString());
-
-                // 👇 тянем и отображаем кастомный статус
-                var (e, t) = SplitStatus(user?.StatusCustom);
-                CustomStatusEmoji = e;
-                CustomStatusText = t;
-            }
-            catch { }
-            finally
-            {
-                _initializing = false;
-            }
-        }
-
-        async void OnClearCustomStatusClicked(object sender, EventArgs e)
-        {
-            try
-            {
-                await _repo.ClearCustomStatusAsync();
-                CustomStatusEmoji = "";
-                CustomStatusText = "";
-                // чтобы таб "You" и профиль обновились:
-                MessagingCenter.Send<object>(this, "ProfileChanged");
-            }
-            catch
-            {
-                await DisplayAlert("Error", "Failed to clear status.", "OK");
-            }
         }
 
         async void OnRadioCheckedChanged(object sender, CheckedChangedEventArgs e)
@@ -149,35 +95,6 @@ namespace AChatFull.Views.Sheets
 
             // на всякий случай
             return "Offline";
-        }
-
-        // --- Custom status for bottom sheet ---
-        string _customStatusEmoji;
-        string _customStatusText;
-
-        public string CustomStatusEmoji
-        {
-            get => _customStatusEmoji;
-            set { if (_customStatusEmoji == value) return; _customStatusEmoji = value; OnPropertyChanged(nameof(CustomStatusEmoji)); OnPropertyChanged(nameof(HasCustomStatus)); }
-        }
-
-        public string CustomStatusText
-        {
-            get => _customStatusText;
-            set { if (_customStatusText == value) return; _customStatusText = value; OnPropertyChanged(nameof(CustomStatusText)); OnPropertyChanged(nameof(HasCustomStatus)); }
-        }
-
-        public bool HasCustomStatus =>
-            !string.IsNullOrWhiteSpace(CustomStatusEmoji) || !string.IsNullOrWhiteSpace(CustomStatusText);
-
-        static (string emoji, string text) SplitStatus(string raw)
-        {
-            if (string.IsNullOrWhiteSpace(raw)) return ("", "");
-            var s = raw.Trim();
-            var i = s.IndexOf(' ');
-            if (i > 0 && i <= 4)
-                return (s.Substring(0, i).Trim(), s.Substring(i + 1).Trim());
-            return ("", s);
         }
 
         async Task SetPresenceAsync(string presence)

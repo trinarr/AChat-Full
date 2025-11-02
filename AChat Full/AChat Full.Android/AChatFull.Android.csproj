@@ -92,12 +92,42 @@
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AvatarIconBuilder_Android.cs" />
+    <Compile Include="Services\IIconSwitchService.cs" />
     <Compile Include="Services\SettingsService_Android.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
     <None Include="Properties\AndroidManifest.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="..\AChat Full\Resources\Clients\ICQ.png">
+      <Link>Resources\drawable\ICQ.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\AChat Full\Resources\Clients\ICQ2.png">
+      <Link>Resources\drawable\ICQ2.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\AChat Full\Resources\Clients\AIM.png">
+      <Link>Resources\drawable\AIM.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\AChat Full\Resources\Clients\QIP.png">
+      <Link>Resources\drawable\QIP.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\AChat Full\Resources\Clients\INFIUM.png">
+      <Link>Resources\drawable\INFIUM.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\AChat Full\Resources\Clients\RQ.png">
+      <Link>Resources\drawable\RQ.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\AChat Full\Resources\Clients\JIMM.png">
+      <Link>Resources\drawable\JIMM.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\AChat Full\Resources\Clients\MIRC.png">
+      <Link>Resources\drawable\MIRC.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\AChat Full\Resources\Clients\MIRANDA.png">
+      <Link>Resources\drawable\MIRANDA.png</Link>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="..\AChat Full\Resources\Avatars\hax_192.png">
@@ -118,11 +148,11 @@
     <AndroidResource Include="..\AChat Full\Resources\Icons\backspace.png">
       <Link>Resources\drawable\backspace.png</Link>
     </AndroidResource>
-	    <AndroidResource Include="..\AChat Full\Resources\Icons\notifications.png">
+    <AndroidResource Include="..\AChat Full\Resources\Icons\notifications.png">
       <Link>Resources\drawable\notifications.png</Link>
     </AndroidResource>
-	    <AndroidResource Include="..\AChat Full\Resources\Icons\contacts_list.png">
-      <Link>Resources\drawable\contacts_list.png</Link>
+    <AndroidResource Include="..\AChat Full\Resources\Icons\appearance.png">
+      <Link>Resources\drawable\appearance.png</Link>
     </AndroidResource>
     <AndroidResource Include="..\AChat Full\Resources\Icons\header_call.png">
       <Link>Resources\drawable\header_call.png</Link>
@@ -198,17 +228,28 @@
     <AndroidResource Include="Resources\values\styles.xml" />
     <AndroidResource Include="Resources\values\colors.xml" />
     <AndroidResource Include="Resources\mipmap-anydpi-v26\icon.xml" />
+    <AndroidResource Include="Resources\mipmap-anydpi-v26\icon2.xml" />
     <AndroidResource Include="Resources\mipmap-anydpi-v26\icon_round.xml" />
     <AndroidResource Include="Resources\mipmap-hdpi\icon.png" />
+    <AndroidResource Include="Resources\mipmap-hdpi\icon2.png" />
     <AndroidResource Include="Resources\mipmap-hdpi\launcher_foreground.png" />
+    <AndroidResource Include="Resources\mipmap-hdpi\launcher_foreground2.png" />
     <AndroidResource Include="Resources\mipmap-mdpi\icon.png" />
+    <AndroidResource Include="Resources\mipmap-mdpi\icon2.png" />
     <AndroidResource Include="Resources\mipmap-mdpi\launcher_foreground.png" />
+    <AndroidResource Include="Resources\mipmap-mdpi\launcher_foreground2.png" />
     <AndroidResource Include="Resources\mipmap-xhdpi\icon.png" />
+    <AndroidResource Include="Resources\mipmap-xhdpi\icon2.png" />
     <AndroidResource Include="Resources\mipmap-xhdpi\launcher_foreground.png" />
+    <AndroidResource Include="Resources\mipmap-xhdpi\launcher_foreground2.png" />
     <AndroidResource Include="Resources\mipmap-xxhdpi\icon.png" />
+    <AndroidResource Include="Resources\mipmap-xxhdpi\icon2.png" />
     <AndroidResource Include="Resources\mipmap-xxhdpi\launcher_foreground.png" />
+    <AndroidResource Include="Resources\mipmap-xxhdpi\launcher_foreground2.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\icon.png" />
+    <AndroidResource Include="Resources\mipmap-xxxhdpi\icon2.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png" />
+    <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground2.png"/>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

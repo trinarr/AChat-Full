@@ -1,6 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="2" android:versionName="1.1" package="com.companyname.achat_full" android:installLocation="auto">
+<manifest 
+  xmlns:android="http://schemas.android.com/apk/res/android" 
+  android:versionCode="3" 
+  android:versionName="1.1.3" 
+  package="com.companyname.achatfull" 
+  android:installLocation="auto">
+  
 	<uses-sdk android:minSdkVersion="28" android:targetSdkVersion="30" />
-	<application android:label="ICQ2" android:theme="@style/MainTheme" android:icon="@mipmap/icon"></application>
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  
+  <application
+    android:label="ICQ2"
+    android:theme="@style/MainTheme"
+    android:icon="@mipmap/icon">
+
+    <activity-alias
+       android:name="com.companyname.achatfull.MainActivity_Old"
+       android:enabled="false"
+       android:icon="@mipmap/icon2"
+       android:label="ICQ2"
+       android:targetActivity="com.companyname.achatfull.MainActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity-alias>
+  </application>
 </manifest>

@@ -19,6 +19,18 @@ namespace AChatFull.Views
         Invisible,
         DoNotDisturb
     }
+    public enum ClientType
+    {
+        ICQ,
+        ICQ2,
+        QIP,
+        INFIUM,
+        AIM,
+        JIMM,
+        MIRANDA,
+        MIRC,
+        RQ
+    }
 
     public class CustomStatusModel
     {
@@ -82,6 +94,9 @@ namespace AChatFull.Views
         [Column("StatusDefault")]
         public Presence Presence { get; set; } = Presence.Offline;
 
+        [Column("ClientType")]
+        public ClientType ClientType { get; set; } = ClientType.ICQ;
+
         [Ignore]
         public DateTime BirthDateDate
             => DateTime.ParseExact(
@@ -96,6 +111,7 @@ namespace AChatFull.Views
 
         public string DisplayStatus => StatusCustom;
         public bool HasStatus => !string.IsNullOrWhiteSpace(StatusCustom);
+        public bool IsOnline => Presence != Presence.Offline && Presence != Presence.Invisible;
 
         public bool HasAvatar => !string.IsNullOrWhiteSpace(AvatarUrl);
         public bool NoAvatar => string.IsNullOrWhiteSpace(AvatarUrl);

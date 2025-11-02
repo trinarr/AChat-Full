@@ -134,11 +134,6 @@ namespace AChatFull.ViewModels
             return (parts[0].Substring(0, 1) + parts[1].Substring(0, 1)).ToUpperInvariant();
         }
     }
-
-    /// <summary>
-    /// Временная заглушка: берём контакты из репозитория и генерим «недавние».
-    /// Заменишь содержимое на свой реальный метод истории звонков, когда будет готов.
-    /// </summary>
     public static class ChatRepositoryCallsExtensions
     {
         public static async Task<CallItem[]> TryGetCallHistoryAsync(this ChatRepository repo)
