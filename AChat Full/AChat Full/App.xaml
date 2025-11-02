@@ -23,6 +23,7 @@
             <conv:PresenceToTextConverter x:Key="PresenceToTextConverter" Compact="True"/>
             <conv:PresenceToImageConverter x:Key="PresenceToImageConverter" />
             <conv:ClientToImageConverter x:Key="ClientToImageConverter" />
+            <conv:BoolToArrowConverter x:Key="BoolToArrowConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

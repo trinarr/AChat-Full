@@ -71,13 +71,59 @@ namespace AChatFull.ViewModels
                 .OrderBy(u => u.DisplayName, StringComparer.CurrentCultureIgnoreCase)
                 .ToList();
 
+            // 1) запомним, какие группы были раскрыты
+            var expandedState = ContactsGroups.ToDictionary(g => g.Title, g => g.IsExpanded);
+
             Device.BeginInvokeOnMainThread(() =>
             {
-                ContactsGroups.Clear();
+                // 2) если группы уже существуют — просто переиспользуем их и обновим Items
+                //    (так мы сохраним привязки и не мигнём UI)
+                UserGroup onlineGroup = ContactsGroups.FirstOrDefault(g => g.Title == "Online");
+                UserGroup offlineGroup = ContactsGroups.FirstOrDefault(g => g.Title == "Offline");
+
                 if (online.Count > 0)
-                    ContactsGroups.Add(new UserGroup("Online", online));
+                {
+                    if (onlineGroup == null)
+                    {
+                        onlineGroup = new UserGroup("Online", online);
+                        ContactsGroups.Add(onlineGroup);
+                    }
+                    else
+                    {
+                        onlineGroup.ResetItems(online);
+                    }
+                }
+                else if (onlineGroup != null)
+                {
+                    ContactsGroups.Remove(onlineGroup);
+                }
+
                 if (offline.Count > 0)
-                    ContactsGroups.Add(new UserGroup("Offline", offline));
+                {
+                    if (offlineGroup == null)
+                    {
+                        offlineGroup = new UserGroup("Offline", offline);
+                        ContactsGroups.Add(offlineGroup);
+                    }
+                    else
+                    {
+                        offlineGroup.ResetItems(offline);
+                    }
+                }
+                else if (offlineGroup != null)
+                {
+                    ContactsGroups.Remove(offlineGroup);
+                }
+
+                // 3) восстановим IsExpanded (по умолчанию true)
+                foreach (var g in ContactsGroups)
+                    if (expandedState.TryGetValue(g.Title, out var expanded))
+                        g.IsExpanded = expanded;
+                    else
+                        g.IsExpanded = true;
+
+                for (int i = 0; i < ContactsGroups.Count; i++)
+                    ContactsGroups[i].IsLastGroup = (i == ContactsGroups.Count - 1);
             });
         }
 
@@ -218,14 +264,71 @@ namespace AChatFull.ViewModels
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
-    public class UserGroup : ObservableCollection<User>
+    public class UserGroup : ObservableCollection<User>, INotifyPropertyChanged
     {
         public string Title { get; }
-        public UserGroup(string title) { Title = title; }
-        public UserGroup(string title, IEnumerable<User> items = null)
-        : base(items ?? Enumerable.Empty<User>())
+
+        bool _isExpanded = true;
+        // Полный список элементов группы — то, что будет показано когда IsExpanded == true
+        readonly List<User> _allItems = new List<User>();
+
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set
+            {
+                if (_isExpanded == value) return;
+                _isExpanded = value;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsExpanded)));
+                UpdateVisibleItems();
+            }
+        }
+
+        public UserGroup(string title) => Title = title;
+
+        public UserGroup(string title, IEnumerable<User> items = null) : base(items ?? Enumerable.Empty<User>())
         {
             Title = title;
+            if (items != null) _allItems.AddRange(items);
+        }
+
+        public int TotalCount => _allItems.Count;
+
+        /// <summary>
+        /// Вызывай это, если нужно полностью переинициализировать состав группы,
+        /// сохранив текущее состояние IsExpanded.
+        /// </summary>
+        public void ResetItems(IEnumerable<User> items)
+        {
+            _allItems.Clear();
+            if (items != null) _allItems.AddRange(items);
+            UpdateVisibleItems();
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(TotalCount)));
+        }
+
+        void UpdateVisibleItems()
+        {
+            // Перерисовываем видимую часть коллекции
+            base.ClearItems();
+            if (_isExpanded)
+            {
+                foreach (var u in _allItems)
+                    base.Add(u);
+            }
+            // Если свернуто — коллекция пустая (заголовок при этом остаётся)
+            // Для CollectionView заголовок группы отрисовывается независимо от наличия элементов.
+        }
+
+        bool _isLastGroup;
+        public bool IsLastGroup
+        {
+            get => _isLastGroup;
+            set
+            {
+                if (_isLastGroup == value) return;
+                _isLastGroup = value;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsLastGroup)));
+            }
         }
     }
 }

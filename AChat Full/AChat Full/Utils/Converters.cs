@@ -210,6 +210,14 @@ namespace AChatFull.Utils
         public object ConvertBack(object v, Type t, object p, CultureInfo c) => throw new NotSupportedException();
     }
 
+    public class BoolToArrowConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            => (value is bool b && b) ? "▼" : "▶";
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException();
+    }
+
     public class BoolToHorzOptionsConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
