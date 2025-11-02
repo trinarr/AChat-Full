@@ -115,6 +115,14 @@ namespace AChatFull.Views
             }
         }
 
+        void OnGroupHeaderTapped(object sender, EventArgs e)
+        {
+            if (sender is BindableObject bo && bo.BindingContext is UserGroup group)
+            {
+                group.IsExpanded = !group.IsExpanded;
+            }
+        }
+
         protected override async void OnAppearing()
         {
             base.OnAppearing();
