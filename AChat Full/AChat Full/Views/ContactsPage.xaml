@@ -6,8 +6,8 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <x:Double x:Key="Size.PresenceIcon">30</x:Double>
-            <x:Double x:Key="Size.NameFont">18</x:Double>
+            <x:Double x:Key="Size.PresenceIcon">26</x:Double>
+            <x:Double x:Key="Size.NameFont">16</x:Double>
             <x:Double x:Key="Size.StatusFont">12</x:Double>
         </ResourceDictionary>
     </ContentPage.Resources>
@@ -222,15 +222,16 @@
 
 
                             <!-- Имя и кастомный статус -->
-                            <StackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <StackLayout Grid.Column="1" Spacing="2" 
+                                         VerticalOptions="Center">
                                 <Label Text="{Binding DisplayName}"
-       FontAttributes="Bold"
-       FontSize="{DynamicResource Size.NameFont}"
-       TextColor="#000" />
+                                       FontAttributes="Bold"
+                                       FontSize="{DynamicResource Size.NameFont}"
+                                       TextColor="#000" />
                                 <Label Text="{Binding StatusCustom}"
-       FontSize="{DynamicResource Size.StatusFont}"
-       TextColor="#666"
-       IsVisible="{Binding HasStatus}" />
+                                       FontSize="{DynamicResource Size.StatusFont}"
+                                       TextColor="#666"
+                                       IsVisible="{Binding HasStatus}" />
                             </StackLayout>
 
                             <!-- Кнопки справа (если есть) -->
@@ -245,8 +246,9 @@
                             <!-- Клик по строке -->
                             <Grid Grid.ColumnSpan="2">
                                 <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding BindingContext.OpenChatCommand, Source={x:Reference ThisPage}}"
-                                                      CommandParameter="{Binding .}"/>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding BindingContext.OpenChatCommand, Source={x:Reference ThisPage}}"
+                                        CommandParameter="{Binding .}"/>
                                 </Grid.GestureRecognizers>
                             </Grid>
                         </Grid>
